@@ -1,4 +1,6 @@
-﻿namespace Pro4Soft.BackgroundWorker.Execution.SettingsFramework;
+﻿using Pro4Soft.BackgroundWorker.Execution.SettingsFramework;
+
+namespace Pro4Soft.BackgroundWorker;
 
 public class IntegrationSettings : Settings
 {
