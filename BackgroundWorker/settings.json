@@ -1,0 +1,104 @@
+﻿{
+  "SqlConnection": "Server=localhost;Database=int_sample;User Id=sa;Password=;TrustServerCertificate=True;",
+
+  "P4WUrl": "https://api.p4warehouse.com/",
+  "P4WApiKey": "89b12525-46da-4be9-9401-f65cb4dda728_Lacvx+B4mYd9IRXFqTZLmjqsrFLEGJsJdlH5IZKal4pSlNcff98drUSsVuM2YlXIRXRruq9s60V56NoIwXwgFQ==",
+
+  "TempFolder": "C:\\Temp",
+
+  "Schedules": [
+    {
+      "Name": "ProductToDb",
+      "Active": true,
+      "RunOnStartup": true,
+      "Start": "2020-01-01T00:00:00-05:00",
+      "Sleep": "00:00:10",
+      "Class": "Pro4Soft.BackgroundWorker.Workers.Download.ToDb.ProductToDb",
+      "ThreadName": "Download"
+    },
+    {
+      "Name": "CustomerToDb",
+      "Active": true,
+      "RunOnStartup": true,
+      "Start": "2020-01-01T00:00:00-05:00",
+      "Sleep": "00:00:10",
+      "Class": "Pro4Soft.BackgroundWorker.Workers.Download.ToDb.CustomerToDb",
+      "ThreadName": "Download"
+    },
+    {
+      "Name": "VendorToDb",
+      "Active": true,
+      "RunOnStartup": true,
+      "Start": "2020-01-01T00:00:00-05:00",
+      "Sleep": "00:00:10",
+      "Class": "Pro4Soft.BackgroundWorker.Workers.Download.ToDb.VendorToDb",
+      "ThreadName": "Download"
+    },
+    {
+      "Name": "PurchaseOrderToDb",
+      "Active": true,
+      "RunOnStartup": true,
+      "Start": "2020-01-01T00:00:00-05:00",
+      "Sleep": "00:00:10",
+      "Class": "Pro4Soft.BackgroundWorker.Workers.Download.ToDb.PurchaseOrderToDb",
+      "ThreadName": "Download"
+    },
+
+    {
+      "Name": "ProductToP4W",
+      "Active": true,
+      "RunOnStartup": true,
+      "Start": "2020-01-01T00:00:00-05:00",
+      "Sleep": "00:00:10",
+      "Class": "Pro4Soft.BackgroundWorker.Workers.Download.ToP4W.ProductToP4W",
+      "ThreadName": "Download"
+    },
+    {
+      "Name": "CustomerToP4W",
+      "Active": true,
+      "RunOnStartup": true,
+      "Start": "2020-01-01T00:00:00-05:00",
+      "Sleep": "00:00:10",
+      "Class": "Pro4Soft.BackgroundWorker.Workers.Download.ToP4W.CustomerToP4W",
+      "ThreadName": "Download"
+    },
+    {
+      "Name": "VendorToP4W",
+      "Active": true,
+      "RunOnStartup": true,
+      "Start": "2020-01-01T00:00:00-05:00",
+      "Sleep": "00:00:10",
+      "Class": "Pro4Soft.BackgroundWorker.Workers.Download.ToP4W.VendorToP4W",
+      "ThreadName": "Download"
+    },
+    {
+      "Name": "PurchaseOrderToP4W",
+      "Active": true,
+      "RunOnStartup": true,
+      "Start": "2020-01-01T00:00:00-05:00",
+      "Sleep": "00:00:10",
+      "Class": "Pro4Soft.BackgroundWorker.Workers.Download.ToP4W.PurchaseOrderToP4W",
+      "ThreadName": "Download"
+    },
+
+
+    {
+      "Name": "ClientFromP4W",
+      "Active": true,
+      "RunOnStartup": true,
+      "Start": null,
+      "Sleep": null,
+      "Class": "Pro4Soft.BackgroundWorker.Workers.Upload.FromP4W.ClientFromP4W",
+      "ThreadName": "Upload"
+    },
+    {
+      "Name": "WarehouseFromP4W",
+      "Active": true,
+      "RunOnStartup": true,
+      "Start": null,
+      "Sleep": null,
+      "Class": "Pro4Soft.BackgroundWorker.Workers.Upload.FromP4W.WarehouseFromP4W",
+      "ThreadName": "Upload"
+    }
+  ]
+}

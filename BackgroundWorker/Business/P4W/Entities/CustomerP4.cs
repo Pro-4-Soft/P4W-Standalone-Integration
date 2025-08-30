@@ -1,0 +1,19 @@
+﻿using Newtonsoft.Json;
+using Pro4Soft.BackgroundWorker.Business.P4W.Entities.Base;
+
+namespace Pro4Soft.BackgroundWorker.Business.P4W.Entities;
+
+public class CustomerP4 : BaseP4Entity
+{
+    [JsonProperty("customerCode")]
+    public string Code { get; set; }
+
+    [JsonProperty("companyName")]
+    public string CompanyName { get; set; }
+
+    [JsonProperty("description")]
+    public string Description { get; set; }
+
+    [JsonProperty("clientId")]
+    public Guid? ClientId { get; set; }
+}

@@ -1,0 +1,60 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Pro4Soft.BackgroundWorker.Business.Database.Entities.Base;
+using Pro4Soft.BackgroundWorker.Business.P4W.Entities;
+using Pro4Soft.BackgroundWorker.Execution;
+using Pro4Soft.BackgroundWorker.Execution.SettingsFramework;
+
+namespace Pro4Soft.BackgroundWorker.Workers.Download.ToP4W;
+
+public class VendorToP4W(ScheduleSetting settings) : BaseWorker(settings)
+{
+    public override async Task ExecuteAsync()
+    {
+        await using var context = CreateContext();
+
+        var vendors = await context.Vendors
+            .Where(c => c.Client.P4WId != null)
+            .Where(c => c.State == DownloadState.ReadyForDownload)
+            .Include(c => c.Client)
+            .ToListAsync();
+
+        foreach (var vend in vendors)
+        {
+            var payload = new VendorP4
+            {
+                ClientId = vend.Client?.P4WId,
+                
+                Code = vend.Code,
+                Description = vend.Description,
+                CompanyName = vend.CompanyName
+            };
+
+            try
+            {
+                var existing = await P4WClient.GetInvokeAsync<List<VendorP4>>($"/vendors?code={payload.Code}&clientId={payload.ClientId}");
+                if (existing.Count > 0)
+                    payload.Id = existing.First().Id;
+
+                VendorP4 p4Prod;
+                if (payload.Id != null)
+                    p4Prod = await P4WClient.PutInvokeAsync<VendorP4>("/vendors", payload);
+                else
+                    p4Prod = await P4WClient.PostInvokeAsync<VendorP4>("/vendors", payload);
+
+                vend.P4WId = p4Prod.Id;
+                vend.State = DownloadState.Downloaded;
+
+                await LogAsync($"Vendor [{vend.Code}] sent to P4W");
+            }
+            catch (Exception e)
+            {
+                vend.DownloadError = e.ToString();
+                vend.State = DownloadState.Failed;
+
+                await LogAsync($"Vendor [{vend.Code}] failed to be sent to P4W\n{e}");
+            }
+
+            await context.SaveChangesAsync();
+        }
+    }
+}

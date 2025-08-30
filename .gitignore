@@ -1,0 +1,15 @@
+**/packages/**
+**/node_modules/**
+*.DotSettings
+**/bin/**
+**/obj/**
+**/node_modules/**
+.vs/
+*.user
+*.suo
+*.vshost.*
+Frontend/**/.vite/
+.idea/
+**/launchSettings.json
+Frontend/**/node_modules/
+app/

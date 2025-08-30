@@ -1,0 +1,21 @@
+//Create service
+sc.exe create "Pro4Soft - Background worker" binpath="C:\Pro4Soft\BackgroundWorker\BackgroundWorker.exe"
+
+//Stop service
+sc stop "Pro4Soft - Background worker"
+
+//Delete service
+sc delete "Pro4Soft - Background worker"
+
+
+//Update a database to the specific Migration
+Update-Database -Context DatabaseContext -Project BackgroundWorker -Migration 20220511210903_Init1 -StartupProject BackgroundWorker -Verbose
+
+//Removes last migration - updates snapshot
+Remove-Migration -Context DatabaseContext -Project BackgroundWorker -StartupProject BackgroundWorker -Force
+
+//Adds new migration
+Add-Migration -Name Init1 -Context DatabaseContext -Project BackgroundWorker -StartupProject BackgroundWorker
+
+//Update a database to the latest Migration
+Update-Database -Context DatabaseContext -Project BackgroundWorker -StartupProject BackgroundWorker
