@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Pro4Soft.BackgroundWorker.Business.Database.Entities;
 using Pro4Soft.BackgroundWorker.Business.Database.Entities.Base;
+using Pro4Soft.BackgroundWorker.Business.P4W.Entities;
 using Pro4Soft.BackgroundWorker.Execution;
+using Pro4Soft.BackgroundWorker.Execution.Common;
 using Pro4Soft.BackgroundWorker.Execution.SettingsFramework;
 
 namespace Pro4Soft.BackgroundWorker.Workers.Download.ToDb;
@@ -10,36 +12,41 @@ public class VendorToDb(ScheduleSetting settings) : BaseWorker(settings)
 {
     public override async Task ExecuteAsync()
     {
-        await using var context = CreateContext();
-
-        var defaultClient = await context.Clients.FirstOrDefaultAsync();
-        if (defaultClient == null)
-            return;
-
-        foreach (var vend in _sampleVendors)
+        foreach (var company in Config.Companies)
         {
-            var existing = await context.Vendors
-                .Where(c => c.Code == vend.Code && c.ClientId == defaultClient.Id)
-                .SingleOrDefaultAsync();
-
-            if (existing == null)
+            await using var context = await company.CreateContext(Config.SqlConnection);
+            var client = await P4WClient.GetInvokeAsync<ClientP4>($"clients?clientName={company.P4WClientName}");
+            if (client == null)
             {
-                existing = new()
-                {
-                    Code = vend.Code,
-                    ClientId = defaultClient.Id
-                };
-                await context.Vendors.AddAsync(existing);
+                await LogErrorAsync($"Client [{company.P4WClientName}] does not exist in P4W");
+                continue;
             }
 
-            existing.Description = $"{vend.Description} - {Guid.NewGuid()}";
+            foreach (var vend in _sampleVendors)
+            {
+                var existing = await context.Vendors
+                    .Where(c => c.Code == vend.Code && c.ClientId == client.Id)
+                    .SingleOrDefaultAsync();
 
-            existing.State = DownloadState.ReadyForDownload;
-            existing.DownloadError = null;
+                if (existing == null)
+                {
+                    existing = new()
+                    {
+                        Code = vend.Code,
+                        ClientId = client.Id ?? throw new BusinessWebException($"Client id does not exist"),
+                    };
+                    await context.Vendors.AddAsync(existing);
+                }
 
-            await context.SaveChangesAsync();
+                existing.Description = $"{vend.Description} - {Guid.NewGuid()}";
 
-            await LogAsync($"Vendor [{existing.Code}] saved to db");
+                existing.State = DownloadState.ReadyForDownload;
+                existing.DownloadError = null;
+
+                await context.SaveChangesAsync();
+
+                await LogAsync($"Vendor [{existing.Code}] saved to db");
+            }
         }
     }
 

@@ -7,7 +7,6 @@ namespace Pro4Soft.BackgroundWorker.Business.Database.Entities;
 public class Customer : DownloableP4WEntity
 {
     public Guid ClientId { get; set; }
-    public virtual Client Client { get; set; }
 
     [Required]
     public string Code { get; set; }

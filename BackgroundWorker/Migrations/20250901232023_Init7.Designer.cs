@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Pro4Soft.BackgroundWorker.Business.Database;
 
@@ -11,9 +12,11 @@ using Pro4Soft.BackgroundWorker.Business.Database;
 namespace Pro4Soft.BackgroundWorker.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250901232023_Init7")]
+    partial class Init7
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -915,18 +918,22 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Category")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
                     b.Property<Guid>("ClientId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ColorDescription")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("CommodityDescription")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("CountryOfOrigin")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Customer")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -991,13 +998,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<bool>("IsLotControlled")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsPacksizeControlled")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsSerialControlled")
+                    b.Property<bool>("IsPacksizeController")
                         .HasColumnType("bit");
 
                     b.Property<decimal?>("Length")

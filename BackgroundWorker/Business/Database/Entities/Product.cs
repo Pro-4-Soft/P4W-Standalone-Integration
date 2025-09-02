@@ -10,13 +10,13 @@ namespace Pro4Soft.BackgroundWorker.Business.Database.Entities;
 public class Product : DownloableP4WEntity
 {
     public Guid ClientId { get; set; }
-    public virtual Client Client { get; set; }
 
     [Required]
     [MaxLength(36)]
     public string Sku { get; set; }
 
     public string Description { get; set; }
+    public string Category { get; set; }
     public string Upc { get; set; }
 
     public string Nmfc { get; set; }
@@ -28,8 +28,9 @@ public class Product : DownloableP4WEntity
     public decimal? Width { get; set; }
     public decimal? Length { get; set; }
 
-    public string ColorDescription { get; set; }
-    public string Customer { get; set; }
+    public bool IsPacksizeControlled { get; set; }
+    public bool IsSerialControlled { get; set; }
+    public bool IsLotControlled { get; set; }
 
     public string Info1 { get; set; }
     public string Info2 { get; set; }
@@ -40,8 +41,6 @@ public class Product : DownloableP4WEntity
     public string Info8 { get; set; }
     public string Info9 { get; set; }
     public string Info10 { get; set; }
-
-    public bool IsPacksizeController { get; set; }
 
     //Small Parcel
     public string HtsNumber { get; set; }

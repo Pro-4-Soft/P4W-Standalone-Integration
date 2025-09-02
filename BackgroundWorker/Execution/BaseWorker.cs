@@ -1,4 +1,5 @@
 ﻿using Pro4Soft.BackgroundWorker.Business.Database;
+using Pro4Soft.BackgroundWorker.Business.SAP;
 using Pro4Soft.BackgroundWorker.Execution.Common;
 using Pro4Soft.BackgroundWorker.Execution.SettingsFramework;
 
@@ -9,17 +10,14 @@ public abstract class BaseWorker
     protected ScheduleSetting Settings { get; }
     protected readonly IntegrationSettings Config = App<IntegrationSettings>.Instance;
 
-    protected WebClient P4WClient;
-
-    protected DatabaseContext CreateContext()
-    {
-        return new(Config.SqlConnection);
-    }
+    protected readonly WebClient P4WClient;
+    //protected readonly SapServiceClient SapClient;
 
     protected BaseWorker(ScheduleSetting settings)
     {
         Settings = settings;
         P4WClient = new(Config.P4WUrl, Config.P4WApiKey);
+        //SapClient = new(Config.SapUrl, Config.SapCompanyDb, Config.SapUsername, Config.SapPassword);
     }
 
     public virtual void Execute()

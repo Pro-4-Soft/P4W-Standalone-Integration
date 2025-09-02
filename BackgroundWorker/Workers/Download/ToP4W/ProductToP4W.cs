@@ -10,62 +10,63 @@ public class ProductToP4W(ScheduleSetting settings) : BaseWorker(settings)
 {
     public override async Task ExecuteAsync()
     {
-        await using var context = CreateContext();
-
-        var products = await context.Products
-            .Where(c => c.Client.P4WId != null)
-            .Where(c => c.State == DownloadState.ReadyForDownload)
-            .Include(c => c.Packsizes)
-            .Include(c => c.Client)
-            .ToListAsync();
-
-        foreach (var prod in products)
+        foreach (var company in Config.Companies)
         {
-            var payload = new ProductP4
+            await using var context = await company.CreateContext(Config.SqlConnection);
+
+            var products = await context.Products
+                .Where(c => c.State == DownloadState.ReadyForDownload)
+                .Include(c => c.Packsizes)
+                .ToListAsync();
+
+            foreach (var prod in products)
             {
-                ClientId = prod.Client?.P4WId,
-
-                Sku = prod.Sku,
-                Description = prod.Description,
-
-                IsPacksizeController = prod.IsPacksizeController
-            };
-
-            if (payload.IsPacksizeController)
-            {
-                payload.Packsizes = prod.Packsizes.Select(c => new PacksizeP4()
+                var payload = new ProductP4
                 {
-                    Name = c.Name,
-                    EachCount = c.EachCount
-                }).ToList();
+                    ClientId = prod.ClientId,
+
+                    Sku = prod.Sku,
+                    Description = prod.Description,
+
+                    IsPacksizeController = prod.IsPacksizeControlled
+                };
+
+                if (payload.IsPacksizeController)
+                {
+                    payload.Packsizes = prod.Packsizes.Select(c => new PacksizeP4()
+                    {
+                        Name = c.Name,
+                        EachCount = c.EachCount
+                    }).ToList();
+                }
+
+                try
+                {
+                    var existing = await P4WClient.GetInvokeAsync<List<ProductP4>>($"/products?sku={payload.Sku}&clientId={payload.ClientId}");
+                    if (existing.Count > 0)
+                        payload.Id = existing.First().Id;
+
+                    ProductP4 p4Prod;
+                    if (payload.Id != null)
+                        p4Prod = await P4WClient.PutInvokeAsync<ProductP4>("/products", payload);
+                    else
+                        p4Prod = await P4WClient.PostInvokeAsync<ProductP4>("/products", payload);
+
+                    prod.P4WId = p4Prod.Id;
+                    prod.State = DownloadState.Downloaded;
+
+                    await LogAsync($"Product [{prod.Sku}] sent to P4W");
+                }
+                catch (Exception e)
+                {
+                    prod.DownloadError = e.ToString();
+                    prod.State = DownloadState.Failed;
+
+                    await LogAsync($"Product [{prod.Sku}] failed to be sent to P4W\n{e}");
+                }
+
+                await context.SaveChangesAsync();
             }
-
-            try
-            {
-                var existing = await P4WClient.GetInvokeAsync<List<ProductP4>>($"/products?sku={payload.Sku}&clientId={payload.ClientId}");
-                if (existing.Count > 0)
-                    payload.Id = existing.First().Id;
-
-                ProductP4 p4Prod;
-                if (payload.Id != null)
-                    p4Prod = await P4WClient.PutInvokeAsync<ProductP4>("/products", payload);
-                else
-                    p4Prod = await P4WClient.PostInvokeAsync<ProductP4>("/products", payload);
-
-                prod.P4WId = p4Prod.Id;
-                prod.State = DownloadState.Downloaded;
-
-                await LogAsync($"Product [{prod.Sku}] sent to P4W");
-            }
-            catch (Exception e)
-            {
-                prod.DownloadError = e.ToString();
-                prod.State = DownloadState.Failed;
-
-                await LogAsync($"Product [{prod.Sku}] failed to be sent to P4W\n{e}");
-            }
-
-            await context.SaveChangesAsync();
         }
     }
 }

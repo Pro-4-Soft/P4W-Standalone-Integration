@@ -12,8 +12,7 @@ public class PurchaseOrder : DownloableP4WEntity
     public Guid VendorId { get; set; }
     public virtual Vendor Vendor { get; set; }
 
-    public Guid WarehouseId { get; set; }
-    public virtual Warehouse Warehouse { get; set; }
+    public string WarehouseCode { get; set; }
 
     [Required]
     [MaxLength(36)]

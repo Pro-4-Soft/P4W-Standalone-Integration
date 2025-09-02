@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Pro4Soft.BackgroundWorker.Business.Database;
 
@@ -11,9 +12,11 @@ using Pro4Soft.BackgroundWorker.Business.Database;
 namespace Pro4Soft.BackgroundWorker.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250901225730_Init5")]
+    partial class Init5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -303,9 +306,8 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<string>("WarehouseCode")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                    b.Property<Guid>("WarehouseId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -317,6 +319,8 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.HasIndex("P4WId");
 
                     b.HasIndex("State");
+
+                    b.HasIndex("WarehouseId");
 
                     b.ToTable("CustomerReturns");
                 });
@@ -796,9 +800,8 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<string>("WarehouseCode")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                    b.Property<Guid>("WarehouseId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -810,6 +813,8 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                         .IsUnique();
 
                     b.HasIndex("State");
+
+                    b.HasIndex("WarehouseId");
 
                     b.ToTable("PickTickets");
                 });
@@ -915,18 +920,22 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Category")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
                     b.Property<Guid>("ClientId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ColorDescription")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("CommodityDescription")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("CountryOfOrigin")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Customer")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -991,13 +1000,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<bool>("IsLotControlled")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsPacksizeControlled")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsSerialControlled")
+                    b.Property<bool>("IsPacksizeController")
                         .HasColumnType("bit");
 
                     b.Property<decimal?>("Length")
@@ -1150,9 +1153,8 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.Property<Guid>("VendorId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("WarehouseCode")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                    b.Property<Guid>("WarehouseId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -1164,6 +1166,8 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.HasIndex("State");
 
                     b.HasIndex("VendorId");
+
+                    b.HasIndex("WarehouseId");
 
                     b.ToTable("PurchaseOrders");
                 });
@@ -1491,13 +1495,54 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.ToTable("Vendors");
                 });
 
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.Warehouse", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTimeOffset>("DateCreated")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset>("DateModified")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid?>("P4WId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("P4WId");
+
+                    b.ToTable("Warehouses");
+                });
+
             modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.CustomerReturn", b =>
                 {
                     b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.Customer", "Customer")
                         .WithMany()
                         .HasForeignKey("CustomerId");
 
+                    b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.Warehouse", "Warehouse")
+                        .WithMany()
+                        .HasForeignKey("WarehouseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Customer");
+
+                    b.Navigation("Warehouse");
                 });
 
             modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.CustomerReturnLine", b =>
@@ -1538,7 +1583,15 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.Warehouse", "Warehouse")
+                        .WithMany()
+                        .HasForeignKey("WarehouseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Customer");
+
+                    b.Navigation("Warehouse");
                 });
 
             modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.PickTicketLine", b =>
@@ -1568,7 +1621,15 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.Warehouse", "Warehouse")
+                        .WithMany()
+                        .HasForeignKey("WarehouseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Vendor");
+
+                    b.Navigation("Warehouse");
                 });
 
             modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.PurchaseOrderLine", b =>

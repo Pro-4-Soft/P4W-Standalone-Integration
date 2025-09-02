@@ -1,8 +1,19 @@
 ﻿{
-  "SqlConnection": "Server=localhost;Database=int_sample;User Id=sa;Password=;TrustServerCertificate=True;",
+  "SqlConnection": "Server=localhost;Database=master;User Id=sa;Password=;TrustServerCertificate=True;",
 
   "P4WUrl": "https://api.p4warehouse.com/",
-  "P4WApiKey": "89b12525-46da-4be9-9401-f65cb4dda728_Lacvx+B4mYd9IRXFqTZLmjqsrFLEGJsJdlH5IZKal4pSlNcff98drUSsVuM2YlXIRXRruq9s60V56NoIwXwgFQ==",
+  "P4WApiKey": "8c5e71f4-b094-4719-b4cb-2e960c0c12db_7cy2Ih7K4ObnyTmKdP+ofYDP/1KrV8wbkBptiEssvH7gXafW093BLJCqS0szm+EHXBMHFqBt95NLPAGO8H8ySQ==",
+
+  "Companies": [
+    {
+      "SapUrl": "https://rp.boyala.com/su11/b1s/v2",
+      "SapCompanyDb": "DEMO_MAPIEX_AVIATION",
+      "SapUsername": "mpx188",
+      "SapPassword": "Panama123@@",
+      "P4WClientName": "mapiexdev2",
+      "Warehouse": ["01","06"]
+    }
+  ],
 
   "TempFolder": "C:\\Temp",
 
@@ -18,7 +29,7 @@
     },
     {
       "Name": "CustomerToDb",
-      "Active": true,
+      "Active": false,
       "RunOnStartup": true,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
@@ -27,7 +38,7 @@
     },
     {
       "Name": "VendorToDb",
-      "Active": true,
+      "Active": false,
       "RunOnStartup": true,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
@@ -36,7 +47,7 @@
     },
     {
       "Name": "PurchaseOrderToDb",
-      "Active": true,
+      "Active": false,
       "RunOnStartup": true,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
@@ -46,7 +57,7 @@
 
     {
       "Name": "ProductToP4W",
-      "Active": true,
+      "Active": false,
       "RunOnStartup": true,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
@@ -55,7 +66,7 @@
     },
     {
       "Name": "CustomerToP4W",
-      "Active": true,
+      "Active": false,
       "RunOnStartup": true,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
@@ -64,7 +75,7 @@
     },
     {
       "Name": "VendorToP4W",
-      "Active": true,
+      "Active": false,
       "RunOnStartup": true,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
@@ -73,7 +84,7 @@
     },
     {
       "Name": "PurchaseOrderToP4W",
-      "Active": true,
+      "Active": false,
       "RunOnStartup": true,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
@@ -81,19 +92,9 @@
       "ThreadName": "Download"
     },
 
-
-    {
-      "Name": "ClientFromP4W",
-      "Active": true,
-      "RunOnStartup": true,
-      "Start": null,
-      "Sleep": null,
-      "Class": "Pro4Soft.BackgroundWorker.Workers.Upload.FromP4W.ClientFromP4W",
-      "ThreadName": "Upload"
-    },
     {
       "Name": "WarehouseFromP4W",
-      "Active": true,
+      "Active": false,
       "RunOnStartup": true,
       "Start": null,
       "Sleep": null,

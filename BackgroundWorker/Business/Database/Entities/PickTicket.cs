@@ -12,8 +12,7 @@ public class PickTicket : DownloableP4WEntity
     public Guid CustomerId { get; set; }
     public virtual Customer Customer { get; set; }
 
-    public Guid WarehouseId { get; set; }
-    public virtual Warehouse Warehouse { get; set; }
+    public string WarehouseCode { get; set; }
 
     [Required]
     [MaxLength(36)]

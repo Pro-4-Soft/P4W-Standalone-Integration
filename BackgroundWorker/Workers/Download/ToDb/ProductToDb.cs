@@ -1,8 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Pro4Soft.BackgroundWorker.Business.Database.Entities;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore;
+using Pro4Soft.BackgroundWorker.Business;
 using Pro4Soft.BackgroundWorker.Business.Database.Entities.Base;
+using Pro4Soft.BackgroundWorker.Business.P4W.Entities;
 using Pro4Soft.BackgroundWorker.Execution;
+using Pro4Soft.BackgroundWorker.Execution.Common;
 using Pro4Soft.BackgroundWorker.Execution.SettingsFramework;
+using Pro4Soft.P4E.Common.Utilities;
 
 namespace Pro4Soft.BackgroundWorker.Workers.Download.ToDb;
 
@@ -10,144 +14,96 @@ public class ProductToDb(ScheduleSetting settings) : BaseWorker(settings)
 {
     public override async Task ExecuteAsync()
     {
-        await using var context = CreateContext();
-
-        var defaultClient = await context.Clients.FirstOrDefaultAsync();
-        if (defaultClient == null)
-            return;
-
-        foreach (var prod in _sampleProds)
+        foreach (var company in Config.Companies)
         {
-            var existing = await context.Products
-                .Include(c => c.Packsizes)
-                .Where(c => c.Sku == prod.Sku && c.ClientId == defaultClient.Id)
-                .SingleOrDefaultAsync();
+            var masterContext = await company.CreateContext(Config.SqlConnection, true);
 
-            if (existing == null)
+            //Reset config
+            //await masterContext.SetStringConfig(ConfigConstants.Download_Product_LastSync, null);
+
+            var clients = await P4WClient.GetInvokeAsync<List<ClientP4>>($"clients?clientName={company.P4WClientName}");
+            if (clients.Count == 0)
             {
-                existing = new()
-                {
-                    Sku = prod.Sku,
-                    ClientId = defaultClient.Id
-                };
-                await context.Products.AddAsync(existing);
+                await LogErrorAsync($"Client [{company.P4WClientName}] does not exist in P4W");
+                continue;
             }
+            var client = clients.First();
 
-            existing.IsPacksizeController = prod.IsPacksizeController;
-            if (existing.IsPacksizeController)
+            var sapService = new SapServiceClient(company.SapUrl, company.SapCompanyDb, company.SapUsername, company.SapPassword, LogAsync, LogErrorAsync);
+            var lastRead = await masterContext.GetStringAsync(ConfigConstants.Download_Product_LastSync);
+            var products = await sapService.GetProducts(lastRead?.ParseDateTimeNullable());
+            if (products.Count == 0)
+                continue;
+
+            var itemGroupsCodes = await sapService.GetGroupCodes();
+
+            await products.ExecuteInParallel(async prod =>
             {
-                foreach (var pack in prod.Packsizes)
+                try
                 {
-                    var existingPack = existing.Packsizes.SingleOrDefault(c => c.EachCount == pack.EachCount);
-                    if (existingPack == null)
+                    var context = await company.CreateContext(Config.SqlConnection);
+                    var existing = await context.Products
+                        .Include(c => c.Packsizes)
+                        .Where(c => c.Sku == prod.ItemCode && c.ClientId == client.Id)
+                        .SingleOrDefaultAsync();
+
+                    if (existing == null)
                     {
-                        existingPack = new()
+                        existing = new()
                         {
-                            EachCount = pack.EachCount
+                            Sku = prod.ItemCode,
+                            ClientId = client.Id ?? throw new BusinessWebException($"Client id does not exist"),
                         };
-                        existing.Packsizes.Add(existingPack);
+                        await context.Products.AddAsync(existing);
                     }
 
-                    existingPack.Name = pack.Name;
+                    //existing.IsPacksizeController = prod.IsPacksizeController;
+                    //if (existing.IsPacksizeController)
+                    //{
+                    //    foreach (var pack in prod.Packsizes)
+                    //    {
+                    //        var existingPack = existing.Packsizes.SingleOrDefault(c => c.EachCount == pack.EachCount);
+                    //        if (existingPack == null)
+                    //        {
+                    //            existingPack = new()
+                    //            {
+                    //                EachCount = pack.EachCount
+                    //            };
+                    //            existing.Packsizes.Add(existingPack);
+                    //        }
+
+                    //        existingPack.Name = pack.Name;
+                    //    }
+                    //}
+
+                    existing.Description = prod.ItemName;
+                    existing.Category = itemGroupsCodes.SingleOrDefault(c => c.Number == prod.ItemsGroupCode)?.GroupName;
+
+                    existing.Upc = prod.BarCode;
+
+                    existing.Length = prod.PurchaseUnitLength;
+                    existing.Width = prod.PurchaseUnitWidth;
+                    existing.Height = prod.PurchaseUnitHeight;
+                    existing.Weight = prod.PurchaseUnitWeight;
+
+                    existing.IsSerialControlled = prod.ManageSerialNumbers == "tYes";
+                    existing.IsLotControlled = prod.ManageBatchNumbers == "tYes";
+
+                    existing.State = DownloadState.ReadyForDownload;
+                    existing.DownloadError = null;
+
+                    await context.SaveChangesAsync();
+
+                    await LogAsync($"Product [{existing.Sku}] saved to db");
                 }
-            }
+                catch (Exception e)
+                {
+                    await LogErrorAsync(e);
+                }
+            }, 20);
 
-            existing.Description = $"{prod.Description} - {Guid.NewGuid()}";
-
-            existing.State = DownloadState.ReadyForDownload;
-            existing.DownloadError = null;
-
-            await context.SaveChangesAsync();
-
-            await LogAsync($"Product [{existing.Sku}] saved to db");
+            var maxUpdated = products.Max(c => c.ActualUpdated);
+            await masterContext.SetStringConfig(ConfigConstants.Download_Product_LastSync, maxUpdated?.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'"));
         }
     }
-
-    private readonly List<Product> _sampleProds =
-    [
-        new()
-        {
-            Sku = "prod1",
-            Description = "Regular prod1",
-        },
-        new()
-        {
-            Sku = "prod2",
-            Description = "Regular prod2",
-        },
-        new()
-        {
-            Sku = "prod3",
-            Description = "Regular prod2",
-        },
-        new()
-        {
-            Sku = "prod4",
-            Description = "Regular prod2",
-        },
-        new()
-        {
-            Sku = "prod5",
-            Description = "Regular prod2",
-        },
-        new()
-        {
-            Sku = "prod6",
-            Description = "Regular prod2",
-        },
-        new()
-        {
-            Sku = "prod7",
-            Description = "Regular prod2",
-        },
-        new()
-        {
-            Sku = "prod8",
-            Description = "Regular prod2",
-        },
-        new()
-        {
-            Sku = "prod9",
-            Description = "Regular prod2",
-        },
-        new()
-        {
-            Sku = "prod10",
-            Description = "Regular prod2",
-        },
-        new()
-        {
-            Sku = "prod11",
-            Description = "Regular prod2",
-        },
-        new()
-        {
-            Sku = "prod12",
-            Description = "Regular prod2",
-        },
-        new()
-        {
-            Sku = "prod13",
-            Description = "Regular prod2",
-        },
-        new()
-        {
-            Sku = "pack1",
-            Description = "Packsized prod 1",
-            IsPacksizeController = true,
-            Packsizes =
-            [
-                new()
-                {
-                    Name = "x6",
-                    EachCount = 6
-                },
-                new()
-                {
-                    Name = "x24",
-                    EachCount = 24
-                }
-            ]
-        }
-    ];
 }

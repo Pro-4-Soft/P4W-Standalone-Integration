@@ -72,17 +72,3 @@ public class ScheduleThread
         _workerThreads = new();
     }
 }
-
-public class WorkerDeploymentConsoleRecord
-{
-    public Guid? WorkerDeploymentId { get; set; }
-    public string StdType { get; set; }
-    public int? Pid { get; set; }
-    public string ProcessName { get; set; }
-    public string WorkerName { get; set; }
-    public string MachineName { get; set; }
-    public string Ip { get; set; }
-    public string Data { get; set; }
-    public string TenantId { get; set; }
-    public DateTimeOffset Timestamp { get; set; }
-}

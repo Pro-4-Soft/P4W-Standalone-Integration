@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.8">
@@ -26,7 +27,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Workers\NewFolder\" />
     <Folder Include="Workers\Upload\FromDb\" />
+    <Folder Include="Workers\Upload\FromP4W\" />
   </ItemGroup>
 
 </Project>

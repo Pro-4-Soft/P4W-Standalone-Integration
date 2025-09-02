@@ -17,3 +17,4 @@ public class DownloableP4WEntity : P4WEntity
     [MaxLength(int.MaxValue)]
     public string DownloadError { get; set; }
 }
+

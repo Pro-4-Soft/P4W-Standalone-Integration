@@ -1,13 +1,17 @@
+using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Pro4Soft.BackgroundWorker.Business.Database.Entities;
 using Pro4Soft.BackgroundWorker.Business.Database.Entities.Base;
+using Pro4Soft.BackgroundWorker.Execution.Common;
+using System.Data;
+using System.Reflection;
 
 namespace Pro4Soft.BackgroundWorker.Business.Database;
 
 public class DatabaseContext(DbContextOptions options) : DbContext(options)
 {
-    public DatabaseContext() : this($"Server=localhost;Database=int_sample;User Id=sa;Password=;TrustServerCertificate=True;")
+    public DatabaseContext() : this($"Server=localhost;Database=p4i_mapiexdev2;User Id=sa;Password=;TrustServerCertificate=True;")
     {
         
     }
@@ -19,8 +23,7 @@ public class DatabaseContext(DbContextOptions options) : DbContext(options)
         ConnectionString = connectionString;
     }
 
-    public DbSet<Client> Clients { get; set; }
-    public DbSet<Warehouse> Warehouses { get; set; }
+    public DbSet<ConfigEntry> ConfigEntries { get; set; }
 
     public DbSet<Product> Products { get; set; }
     public DbSet<Packsize> Packsizes { get; set; }
@@ -137,5 +140,160 @@ public class DatabaseContext(DbContextOptions options) : DbContext(options)
         // below line to watch the ef core sql queries generation
         // not recommended for the production code
         //optionsBuilder.LogTo(Console.WriteLine);
+    }
+
+    public IDbConnection GetConnection() => Database.GetDbConnection();
+
+    //Seed
+    public async Task Seed()
+    {
+        var props = typeof(ConfigConstants).GetFields(BindingFlags.Public | BindingFlags.Static);
+        foreach (var oldVal in ConfigEntries.ToList().Where(oldVal => !props.Select(c => c.Name).Contains(oldVal.Name)))
+            ConfigEntries.Remove(oldVal);
+
+        foreach (var prop in props)
+        {
+            if (Attribute.GetCustomAttribute(prop, typeof(ConfigDefinitionAttribute)) is not ConfigDefinitionAttribute attr)
+                continue;
+            if (ConfigEntries.Any(c => c.Name == prop.Name))
+                continue;
+
+            var newConfig = new ConfigEntry
+            {
+                Name = prop.Name,
+                Type = attr.Type
+            };
+
+            switch (newConfig.Type)
+            {
+                case ConfigType.String:
+                case ConfigType.MultilineString:
+                case ConfigType.MultiSelect:
+                case ConfigType.EmailBody:
+                    newConfig.StringValue = (string)attr.DefaultValue;
+                    break;
+                case ConfigType.Password:
+                    newConfig.StringValue = !string.IsNullOrWhiteSpace((string)attr.DefaultValue) ? SymmetricCrypt.Encrypt((string)attr.DefaultValue) : null;
+                    break;
+                case ConfigType.Int:
+                    newConfig.IntValue = (int?)attr.DefaultValue ?? default;
+                    break;
+                case ConfigType.Double:
+                    newConfig.DoubleValue = (double?)attr.DefaultValue ?? default;
+                    break;
+                case ConfigType.Bool:
+                    newConfig.BoolValue = (bool?)attr.DefaultValue ?? default;
+                    break;
+            }
+            ConfigEntries.Add(newConfig);
+        }
+
+        await SaveChangesAsync();
+    }
+
+    //Configuration
+    public async Task<ConfigEntry> GetAsync(string name) => await Database.GetDbConnection().QuerySingleOrDefaultAsync<ConfigEntry>($@"
+select 
+    * 
+from 
+    {nameof(ConfigEntries)} 
+where 
+    {nameof(ConfigEntry.Name)} = @Name", new
+    {
+        Name = name,
+    }) ?? throw new BusinessWebException($"Config [{name}] does not exist");
+
+    public async Task<bool> GetBoolAsync(string name)
+    {
+        return (await GetAsync(name)).BoolValue ?? false;
+    }
+
+    public async Task<int> GetIntAsync(string name)
+    {
+        return (await GetAsync(name)).IntValue ?? 0;
+    }
+
+    public async Task<string> GetStringAsync(string name)
+    {
+        return (await GetAsync(name))?.StringValue;
+    }
+
+    public async Task<string> GetPasswordAsync(string name)
+    {
+        var res = (await GetAsync(name))?.StringValue;
+        if (string.IsNullOrWhiteSpace(res))
+            return res;
+        return SymmetricCrypt.TryDecrypt(res, out var s) ? s : null;
+    }
+
+    public async Task<double> GetDoubleAsync(string name)
+    {
+        return (await GetAsync(name)).DoubleValue ?? 0;
+    }
+
+    public async Task<T> GetEnumAsync<T>(string name) where T : struct
+    {
+        var strValue = (await GetAsync(name))?.StringValue;
+        return Enum.TryParse(strValue, out T result) ? result : throw new BusinessWebException($"Cannot parse [{strValue}] as [{typeof(T).Name}]");
+    }
+
+    public async Task SetStringConfig(string name, string value)
+    {
+        await Database.GetDbConnection().ExecuteAsync($@"
+update 
+    {nameof(ConfigEntries)} 
+set 
+    {nameof(ConfigEntry.StringValue)} = @Value 
+where 
+    {nameof(ConfigEntry.Name)} = @Name", new
+        {
+            Name = name,
+            Value = value,
+        });
+    }
+
+    public async Task SetIntConfig(string name, int? value)
+    {
+        await Database.GetDbConnection().ExecuteAsync($@"
+update 
+    {nameof(ConfigEntries)} 
+set 
+    {nameof(ConfigEntry.IntValue)} = @Value 
+where 
+    {nameof(ConfigEntry.Name)} = @Name", new
+        {
+            Name = name,
+            Value = value,
+        });
+    }
+
+    public async Task SetDoubleConfig(string name, double? value)
+    {
+        await Database.GetDbConnection().ExecuteAsync($@"
+update 
+    {nameof(ConfigEntries)} 
+set 
+    {nameof(ConfigEntry.DoubleValue)} = @Value 
+where 
+    {nameof(ConfigEntry.Name)} = @Name", new
+        {
+            Name = name,
+            Value = value,
+        });
+    }
+
+    public async Task SetBoolConfig(string name, bool? value)
+    {
+        await Database.GetDbConnection().ExecuteAsync($@"
+update 
+    {nameof(ConfigEntries)} 
+set 
+    {nameof(ConfigEntry.BoolValue)} = @Value 
+where 
+    {nameof(ConfigEntry.Name)} = @Name", new
+        {
+            Name = name,
+            Value = value,
+        });
     }
 }
