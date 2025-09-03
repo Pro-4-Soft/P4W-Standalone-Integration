@@ -12,7 +12,7 @@ public class P4WEntity : EntityBase
 [Index(nameof(State))]
 public class DownloableP4WEntity : P4WEntity
 {
-    public DownloadState State { get; set; }
+    public DownloadState State { get; set; } = DownloadState.ReadyForDownload;
 
     [MaxLength(int.MaxValue)]
     public string DownloadError { get; set; }

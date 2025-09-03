@@ -12,8 +12,6 @@ public class Vendor : DownloableP4WEntity
     public string Code { get; set; }
     public string CompanyName { get; set; }
 
-    public string Description { get; set; }
-
     public string Info2 { get; set; }
     public string Info3 { get; set; }
     public string Info4 { get; set; }

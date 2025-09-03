@@ -27,6 +27,14 @@ public class ProductToP4W(ScheduleSetting settings) : BaseWorker(settings)
 
                     Sku = prod.Sku,
                     Description = prod.Description,
+                    Category = prod.Category,
+                    Upc = prod.Upc,
+                    Length = prod.Length,
+                    Width = prod.Width,
+                    Height = prod.Height,
+                    Weight = prod.Weight,
+                    IsSerialControlled = prod.IsSerialControlled,
+                    IsLotControlled = prod.IsLotControlled,
 
                     IsPacksizeController = prod.IsPacksizeControlled
                 };
@@ -68,5 +76,7 @@ public class ProductToP4W(ScheduleSetting settings) : BaseWorker(settings)
                 await context.SaveChangesAsync();
             }
         }
+
+        await new ProductToP4W(Settings).ExecuteAsync();
     }
 }

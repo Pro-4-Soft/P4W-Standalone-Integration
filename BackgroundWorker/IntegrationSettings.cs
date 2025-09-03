@@ -35,13 +35,12 @@ public class CompanySettings
         {
             InitialCatalog = "master",
         };
-        var dbName = $"{Constants.DatabasePrefix}_{P4WClientName}";
-
-        builder.InitialCatalog = dbName;
-        
-        var context = new DatabaseContext(builder.ConnectionString);
-        if (!forceCreateMigrate) 
-            return context;
+        var dbName = $"{Constants.DatabasePrefix}_{SapCompanyDb}";
+        if (!forceCreateMigrate)
+        {
+            builder.InitialCatalog = dbName;
+            return new(builder.ConnectionString);
+        }
 
         using IDbConnection masterDbConnection = new SqlConnection(builder.ConnectionString);
         var dbExist = await masterDbConnection.ExecuteScalarAsync($"SELECT 1 FROM sys.databases WHERE Name = '{dbName}'") != null;
@@ -51,6 +50,8 @@ public class CompanySettings
             await masterDbConnection.ExecuteAsync($"ALTER DATABASE [{dbName}] SET READ_COMMITTED_SNAPSHOT ON WITH ROLLBACK IMMEDIATE");
         }
 
+        builder.InitialCatalog = dbName;
+        DatabaseContext context = new(builder.ConnectionString);
         await context.Database.MigrateAsync();
         await context.Seed();
 

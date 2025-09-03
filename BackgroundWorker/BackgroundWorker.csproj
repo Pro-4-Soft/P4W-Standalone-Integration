@@ -27,7 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Workers\NewFolder\" />
     <Folder Include="Workers\Upload\FromDb\" />
     <Folder Include="Workers\Upload\FromP4W\" />
   </ItemGroup>

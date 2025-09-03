@@ -23,6 +23,8 @@ public class PurchaseOrder : DownloableP4WEntity
 
     public string ReferenceNumber { get; set; }
 
+    public string Reference1 { get; set; }
+
     public string Container { get; set; }
     public string Carrier { get; set; }
     public string Comments { get; set; }
@@ -50,6 +52,8 @@ public class PurchaseOrderLine : EntityBase
     public Guid ProductId { get; set; }
     public virtual Product Product { get; set; }
 
+    public string Description { get; set; }
+
     public int LineNumber { get; set; }
 
     public string Info1 { get; set; }
@@ -63,9 +67,9 @@ public class PurchaseOrderLine : EntityBase
     public string Info9 { get; set; }
     public string Info10 { get; set; }
 
-    public int Quantity { get; set; }
+    public decimal Quantity { get; set; }
 
-    public int? ReceivedQuantity { get; set; }
+    public decimal? ReceivedQuantity { get; set; }
 }
 
 public class PurchaseOrderLineMap : EntityBaseMap<PurchaseOrderLine>

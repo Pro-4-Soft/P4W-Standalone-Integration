@@ -1,7 +1,7 @@
-﻿using Pro4Soft.BackgroundWorker.Business.Database;
-using Pro4Soft.BackgroundWorker.Business.SAP;
+﻿using Pro4Soft.BackgroundWorker.Business.P4W.Entities;
 using Pro4Soft.BackgroundWorker.Execution.Common;
 using Pro4Soft.BackgroundWorker.Execution.SettingsFramework;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Pro4Soft.BackgroundWorker.Execution;
 
@@ -11,13 +11,11 @@ public abstract class BaseWorker
     protected readonly IntegrationSettings Config = App<IntegrationSettings>.Instance;
 
     protected readonly WebClient P4WClient;
-    //protected readonly SapServiceClient SapClient;
 
     protected BaseWorker(ScheduleSetting settings)
     {
         Settings = settings;
         P4WClient = new(Config.P4WUrl, Config.P4WApiKey);
-        //SapClient = new(Config.SapUrl, Config.SapCompanyDb, Config.SapUsername, Config.SapPassword);
     }
 
     public virtual void Execute()
@@ -57,5 +55,15 @@ public abstract class BaseWorker
         catch { }
 
         await Console.Error.WriteLineAsync(msg);
+    }
+
+    //Business
+
+    public async Task<Guid?> GetClientId(CompanySettings company)
+    {
+        var clients = await P4WClient.GetInvokeAsync<List<ClientP4>>($"clients?clientName={company.P4WClientName}");
+        if (clients.Count == 0)
+            throw new BusinessWebException($"Client [{company.P4WClientName}] does not exist in P4W");
+        return clients.First().Id;
     }
 }

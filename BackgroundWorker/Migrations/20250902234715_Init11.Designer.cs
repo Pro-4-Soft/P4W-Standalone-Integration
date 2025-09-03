@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Pro4Soft.BackgroundWorker.Business.Database;
 
@@ -11,9 +12,11 @@ using Pro4Soft.BackgroundWorker.Business.Database;
 namespace Pro4Soft.BackgroundWorker.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250902234715_Init11")]
+    partial class Init11
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1129,10 +1132,6 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                         .HasMaxLength(36)
                         .HasColumnType("nvarchar(36)");
 
-                    b.Property<string>("Reference1")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
                     b.Property<string>("ReferenceNumber")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -1184,10 +1183,6 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.Property<DateTimeOffset>("DateModified")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("Description")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
                     b.Property<string>("Info1")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -1237,13 +1232,11 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.Property<Guid>("PurchaseOrderId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal>("Quantity")
-                        .HasPrecision(15, 6)
-                        .HasColumnType("decimal(15,6)");
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
 
-                    b.Property<decimal?>("ReceivedQuantity")
-                        .HasPrecision(15, 6)
-                        .HasColumnType("decimal(15,6)");
+                    b.Property<int?>("ReceivedQuantity")
+                        .HasColumnType("int");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()

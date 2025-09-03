@@ -6,6 +6,7 @@ using Pro4Soft.BackgroundWorker.Business.Database.Entities.Base;
 using Pro4Soft.BackgroundWorker.Execution.Common;
 using System.Data;
 using System.Reflection;
+using Pro4Soft.BackgroundWorker.Workers;
 
 namespace Pro4Soft.BackgroundWorker.Business.Database;
 

@@ -74,10 +74,6 @@ public class SapServiceClient : IDisposable
     {
         try
         {
-            //await _log($"Logging into Service Layer for company {_companyDb}");
-            //await _log($"Service Layer Base URL: {_serviceLayerUrl}");
-            //await _log($"Full Login URL: {_serviceLayerUrl}/Login");
-
             var loginData = new
             {
                 CompanyDB = _companyDb,
@@ -122,7 +118,71 @@ public class SapServiceClient : IDisposable
     }
 
     //Business
-    public async Task<List<ProductSap>> GetProducts(DateTime? lastUpdated = null, int maxCount = int.MaxValue)
+    public async Task<VendorSap> GetVendor(string cardCode)
+    {
+        var result = await Get<VendorSap>("BusinessPartners", new()
+        {
+            Condition = ConditionType.And,
+            Rules =
+            [
+                new FilterRule()
+                {
+                    Field = "CardCode",
+                    Operator = Operator.Eq,
+                    Value = $"'{cardCode}'"
+                },
+                new FilterRule()
+                {
+                    Field = "CardType",
+                    Operator = Operator.Eq,
+                    Value = "'cSupplier'"
+                },
+            ]
+        });
+        return result.FirstOrDefault();
+    }
+
+    public async Task<List<PurchaseOrderSap>> GetPurchaseOrders(DateTime? lastUpdated = null)
+    {
+        var dateCondition = lastUpdated == null
+            ? null
+            : new FilterRule()
+            {
+                Condition = ConditionType.And,
+                Rules =
+                [
+                    new FilterRule()
+                    {
+                        Field = nameof(ProductSap.UpdateDate),
+                        Operator = Operator.Ge,
+                        Value = $"'{lastUpdated.Value:yyyy-MM-dd}'"
+                    },
+                    new FilterRule()
+                    {
+                        Field = nameof(ProductSap.UpdateTime),
+                        Operator = Operator.Gt,
+                        Value = $"'{lastUpdated.Value:HH:mm:ss}'"
+                    }
+                ]
+            };
+
+        return await Get<PurchaseOrderSap>("PurchaseOrders", new()
+        {
+            Condition = ConditionType.And,
+            Rules =
+            [
+                new FilterRule()
+                {
+                    Field = "DocumentStatus",
+                    Operator = Operator.Eq,
+                    Value = "'bost_Open'"
+                },
+                dateCondition
+            ]
+        });
+    }
+
+    public async Task<List<ProductSap>> GetProducts(DateTime? lastUpdated = null)
     {
         var dateCondition = lastUpdated == null
             ? null
@@ -159,36 +219,21 @@ public class SapServiceClient : IDisposable
                 },
                 dateCondition
             ]
-        }, maxCount);
+        });
     }
 
-    public async Task<List<ItemGroupCodeSap>> GetGroupCodes(DateTime? lastUpdated = null)
+    public async Task<List<ItemGroupCodeSap>> GetGroupCodes()
     {
-        return await Get<ItemGroupCodeSap>("ItemGroups", lastUpdated == null
-            ? null
-            : new()
-            {
-                Condition = ConditionType.And,
-                Rules =
-                [
-                    new FilterRule()
-                    {
-                        Field = nameof(ProductSap.UpdateDate),
-                        Operator = Operator.Ge,
-                        Value = $"'{lastUpdated.Value:yyyy-MM-dd}'"
-                    },
-                    new FilterRule()
-                    {
-                        Field = nameof(ProductSap.UpdateTime),
-                        Operator = Operator.Ge,
-                        Value = $"'{lastUpdated.Value:hh:mm:ss}'"
-                    }
-                ]
-            });
+        return await Get<ItemGroupCodeSap>("ItemGroups");
+    }
+
+    public async Task<List<UnitOfMeasurementGroup>> GetUnitOfMeasurementGroups()
+    {
+        return await Get<UnitOfMeasurementGroup>("UnitOfMeasurementGroups");
     }
 
     //Utility
-    public async Task<List<T>> Get<T>(string endpoint, FilterRule rule = null, int maxCount = int.MaxValue) where T : BaseSapEntity
+    public async Task<List<T>> Get<T>(string endpoint, FilterRule rule = null) where T : BaseSapEntity
     {
         var props = typeof(T)
             .GetProperties(BindingFlags.Public | BindingFlags.Instance)
@@ -201,9 +246,6 @@ public class SapServiceClient : IDisposable
         var pageSize = 20;
         while (true)
         {
-            if (result.Count >= maxCount)
-                break;
-
             var queryParams = new Dictionary<string, object>();
             if (rule != null)
                 queryParams["$filter"] = rule.ToOdataQuery();// $"UpdateDate ge '{lastUpdated.Value:yyyy-MM-dd}' and UpdatedTime ge '{lastUpdated.Value:HH:mm:ss'Z'}'";

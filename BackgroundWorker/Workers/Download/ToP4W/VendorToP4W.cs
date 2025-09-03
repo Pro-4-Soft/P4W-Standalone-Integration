@@ -23,9 +23,7 @@ public class VendorToP4W(ScheduleSetting settings) : BaseWorker(settings)
                 var payload = new VendorP4
                 {
                     ClientId = vend.ClientId,
-
                     Code = vend.Code,
-                    Description = vend.Description,
                     CompanyName = vend.CompanyName
                 };
 
