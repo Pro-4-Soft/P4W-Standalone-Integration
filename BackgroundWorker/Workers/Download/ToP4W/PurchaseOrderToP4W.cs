@@ -19,7 +19,7 @@ public class PurchaseOrderToP4W(ScheduleSetting settings) : BaseWorker(settings)
                 await using var context = await company.CreateContext(Config.SqlConnection);
 
                 var pos = await context.PurchaseOrders
-                    .Where(c => c.Lines.Count > 0 && c.Lines.All(c1 => c1.Product.P4WId != null))
+                    .Where(c => c.Lines.Count > 0)
                     .Where(c => c.State == DownloadState.ReadyForDownload)
                     .Include(c => c.Vendor)
                     .Include(c => c.Lines).ThenInclude(c => c.Product)
@@ -35,16 +35,27 @@ public class PurchaseOrderToP4W(ScheduleSetting settings) : BaseWorker(settings)
                         WarehouseId = warehouses.SingleOrDefault(c => c.Code == po.WarehouseCode)?.Id ?? throw new BusinessWebException($"Warehouse [{po.WarehouseCode}] is not setup in P4W"),
                         PurchaseOrderNumber = po.PurchaseOrderNumber,
                         Comments = po.Comments,
-                        Lines = po.Lines.OrderBy(c => c.LineNumber).Select(c => new PurchaseOrderLineP4()
-                        {
-                            LineNumber = ++count,
-                            ProductId = c.Product.P4WId ?? throw new BusinessWebException($"Product [{c.Product.Sku}] has not been synced"),
-                            OrderedQuantity = c.NumberOfPacks* c.Packsize?? c.Quantity,
-                            NumberOfPacks = c.NumberOfPacks,
-                            Packsize = c.Packsize,
-                            Reference1 = c.Id.ToString()
-                        }).ToList()
+                        Lines = po.Lines
+                            .Where(c => (c.NumberOfPacks * c.Packsize ?? c.Quantity) > 0)
+                            .Where(c => c.Product.IsInventoryItem)
+                            .OrderBy(c => c.LineNumber).Select(c => new PurchaseOrderLineP4()
+                            {
+                                LineNumber = ++count,
+                                ProductId = c.Product.P4WId ?? throw new BusinessWebException($"Product [{c.Product.Sku}] has not been synced"),
+                                OrderedQuantity = c.NumberOfPacks * c.Packsize ?? c.Quantity,
+                                NumberOfPacks = c.NumberOfPacks,
+                                Packsize = c.Packsize,
+                                Reference1 = c.Id.ToString()
+                            }).ToList()
                     };
+
+                    if (payload.Lines.Count == 0)
+                    {
+                        po.State = DownloadState.External;
+                        await context.SaveChangesAsync();
+                        await LogAsync($"PO [{po.PurchaseOrderNumber}] not downloaded. No lines on an order");
+                        continue;
+                    }
 
                     try
                     {

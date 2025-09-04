@@ -41,6 +41,8 @@ public class PurchaseOrder : DownloableP4WEntity
     public string Info9 { get; set; }
     public string Info10 { get; set; }
 
+    public bool Uploaded { get; set; }
+
     [ForeignKey(nameof(PurchaseOrderLine.PurchaseOrderId))]
     public virtual ICollection<PurchaseOrderLine> Lines { get; set; } = new List<PurchaseOrderLine>();
 }

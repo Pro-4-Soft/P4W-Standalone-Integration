@@ -2,11 +2,8 @@
 
 namespace Pro4Soft.BackgroundWorker.Business.SAP;
 
-public class PurchaseOrderSap : BaseSapEntity
+public class PurchaseOrderSap : BaseDocumentSap
 {
-    public string DocNum { get; set; }
-    public string DocEntry { get; set; }
-    
     public string CardCode { get; set; }
     public string Comments { get; set; }
 

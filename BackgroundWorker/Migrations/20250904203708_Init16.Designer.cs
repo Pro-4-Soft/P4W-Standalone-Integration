@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Pro4Soft.BackgroundWorker.Business.Database;
 
@@ -11,9 +12,11 @@ using Pro4Soft.BackgroundWorker.Business.Database;
 namespace Pro4Soft.BackgroundWorker.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250904203708_Init16")]
+    partial class Init16
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -992,9 +995,6 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<bool>("IsExpiryControlled")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsInventoryItem")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsLotControlled")

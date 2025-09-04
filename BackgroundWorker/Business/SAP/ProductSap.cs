@@ -19,6 +19,8 @@ public class ProductSap: BaseSapEntity
     public string ManageSerialNumbers { get; set; }
     public string ManageBatchNumbers { get; set; }
 
+    public string InventoryItem { get; set; }
+
     public int UoMGroupEntry { get;set; }
 
     public DateTime? CreateDate { get; set; }

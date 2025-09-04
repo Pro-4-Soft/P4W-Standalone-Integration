@@ -2,6 +2,23 @@ namespace Pro4Soft.BackgroundWorker.Execution;
 
 public class FilterRule
 {
+    public FilterRule()
+    {
+    }
+
+    public FilterRule(string field, Operator op, dynamic value)
+    {
+        Field = field;
+        Operator = op;
+        Value = value;
+    }
+
+    public FilterRule(ConditionType condition, List<FilterRule> rules)
+    {
+        Condition = condition;
+        Rules = rules;
+    }
+
     public ConditionType Condition { get; set; }
     public string Field { get; set; }
     public Operator Operator { get; set; }
@@ -23,7 +40,7 @@ public class FilterRule
             if (rules.Count == 1)
                 return rules[0].ToOdataQuery();
 
-            return string.Join($" {condition} ", rules.Select(c => $"{c.ToOdataQuery()}"));
+            return $"({string.Join($" {condition} ", rules.Select(c => $"{c.ToOdataQuery()}"))})";
         }
 
         var op = Operator switch

@@ -77,6 +77,8 @@ public class PurchaseOrderFromP4W(ScheduleSetting settings) : BaseWorker(setting
                             Ids = [poHeader.Id.Value],
                             UploadSucceeded = true,
                         });
+
+                        await LogAsync($"PO [{po.PurchaseOrderNumber}] uploaded from P4W");
                     }
                     catch (Exception e)
                     {

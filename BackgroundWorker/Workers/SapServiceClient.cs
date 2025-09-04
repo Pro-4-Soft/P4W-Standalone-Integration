@@ -1,6 +1,8 @@
+using System.Collections.Concurrent;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Pro4Soft.BackgroundWorker.Business.SAP;
 using Pro4Soft.BackgroundWorker.Execution;
@@ -24,7 +26,17 @@ public class SapServiceClient : IDisposable
     private readonly Func<string, Task> _log = _ => Task.CompletedTask;
     private readonly Func<string, Task> _logError = _ => Task.CompletedTask;
 
-    public SapServiceClient(string serviceLayerUrl, string companyDb, string userName, string password, Func<string, Task> log = null, Func<string, Task> logError = null)
+    private static readonly ConcurrentDictionary<string, SapServiceClient> Instances = new();
+    public static SapServiceClient GetInstance(string serviceLayerUrl, string companyDb, string userName, string password, Func<string, Task> log = null, Func<string, Task> logError = null)
+    {
+        var key = $"{serviceLayerUrl}{companyDb}{userName}{password}";
+        if (Instances.TryGetValue(key, out var instance))
+            return instance;
+        Instances[key] = new(serviceLayerUrl, companyDb, userName, password, log, logError);
+        return Instances[key];
+    }
+
+    private SapServiceClient(string serviceLayerUrl, string companyDb, string userName, string password, Func<string, Task> log = null, Func<string, Task> logError = null)
     {
         _log = log ?? _log;
         _logError = logError ?? _logError;
@@ -114,122 +126,12 @@ public class SapServiceClient : IDisposable
         _httpClient?.Dispose();
     }
 
-    //Business
-    public async Task<VendorSap> GetVendor(string cardCode)
+    //Get
+    public async Task<T> GetFirst<T>(string endpoint, FilterRule rule = null) where T : BaseSapEntity
     {
-        var result = await Get<VendorSap>("BusinessPartners", new()
-        {
-            Condition = ConditionType.And,
-            Rules =
-            [
-                new FilterRule()
-                {
-                    Field = "CardCode",
-                    Operator = Operator.Eq,
-                    Value = $"'{cardCode}'"
-                },
-                new FilterRule()
-                {
-                    Field = "CardType",
-                    Operator = Operator.Eq,
-                    Value = "'cSupplier'"
-                },
-            ]
-        });
-        return result.FirstOrDefault();
+        return (await Get<T>(endpoint, rule)).FirstOrDefault();
     }
 
-    public async Task<List<PurchaseOrderSap>> GetPurchaseOrders(DateTime? lastUpdated = null)
-    {
-        var dateCondition = lastUpdated == null
-            ? null
-            : new FilterRule()
-            {
-                Condition = ConditionType.And,
-                Rules =
-                [
-                    new FilterRule()
-                    {
-                        Field = nameof(ProductSap.UpdateDate),
-                        Operator = Operator.Ge,
-                        Value = $"'{lastUpdated.Value:yyyy-MM-dd}'"
-                    },
-                    new FilterRule()
-                    {
-                        Field = nameof(ProductSap.UpdateTime),
-                        Operator = Operator.Gt,
-                        Value = $"'{lastUpdated.Value:HH:mm:ss}'"
-                    }
-                ]
-            };
-
-        return await Get<PurchaseOrderSap>("PurchaseOrders", new()
-        {
-            Condition = ConditionType.And,
-            Rules =
-            [
-                new FilterRule()
-                {
-                    Field = "DocumentStatus",
-                    Operator = Operator.Eq,
-                    Value = "'bost_Open'"
-                },
-                dateCondition
-            ]
-        });
-    }
-
-    public async Task<List<ProductSap>> GetProducts(DateTime? lastUpdated = null)
-    {
-        var dateCondition = lastUpdated == null
-            ? null
-            : new FilterRule()
-            {
-                Condition = ConditionType.And,
-                Rules =
-                [
-                    new FilterRule()
-                    {
-                        Field = nameof(ProductSap.UpdateDate),
-                        Operator = Operator.Ge,
-                        Value = $"'{lastUpdated.Value:yyyy-MM-dd}'"
-                    },
-                    new FilterRule()
-                    {
-                        Field = nameof(ProductSap.UpdateTime),
-                        Operator = Operator.Gt,
-                        Value = $"'{lastUpdated.Value:HH:mm:ss}'"
-                    }
-                ]
-            };
-
-        return await Get<ProductSap>("Items", new()
-        {
-            Condition = ConditionType.And,
-            Rules =
-            [
-                new FilterRule()
-                {
-                    Field = "InventoryItem",
-                    Operator = Operator.Eq,
-                    Value = "'Y'"
-                },
-                dateCondition
-            ]
-        });
-    }
-
-    public async Task<List<ItemGroupCodeSap>> GetGroupCodes()
-    {
-        return await Get<ItemGroupCodeSap>("ItemGroups");
-    }
-
-    public async Task<List<UnitOfMeasurementGroup>> GetUnitOfMeasurementGroups()
-    {
-        return await Get<UnitOfMeasurementGroup>("UnitOfMeasurementGroups");
-    }
-
-    //Utility
     public async Task<List<T>> Get<T>(string endpoint, FilterRule rule = null) where T : BaseSapEntity
     {
         var props = typeof(T)
@@ -263,8 +165,6 @@ public class SapServiceClient : IDisposable
         return result;
     }
 
-    
-
     //Low level
     public async Task<T> GetAsync<T>(string endpoint)
     {
@@ -282,7 +182,13 @@ public class SapServiceClient : IDisposable
         throw new BusinessWebException(response.StatusCode, error);
     }
 
-    public async Task<string> Post(string endpoint, object payload)
+    public async Task<T> Post<T>(string endpoint, object payload, Func<string, Task> printLog = null)
+    {
+        var content = await this.Post(endpoint, payload, printLog);
+        return (T)Utils.DeserializeFromJson<T>(content);
+    }
+
+    public async Task<string> Post(string endpoint, object payload, Func<string, Task> printLog = null)
     {
         await EnsureAuthenticatedAsync();
 
@@ -302,6 +208,25 @@ public class SapServiceClient : IDisposable
         }
 
         var error = await response.Content.ReadAsStringAsync();
+
+        if (printLog != null)
+            await printLog($@"
+Request: POST - {_httpClient.BaseAddress}{endpoint}
+{Utils.SerializeToStringJson(payload, Formatting.Indented)}
+Response: {response.StatusCode.ToString()} ({(int)response.StatusCode})
+{error}");
+        
         throw new BusinessWebException(response.StatusCode, error);
     }
+
+    //Static helpers
+    public static FilterRule GetLastUpdatedRule(DateTime? lastUpdated) => lastUpdated == null
+        ? null
+        : new FilterRule(ConditionType.Or, [
+            new(nameof(ProductSap.UpdateDate), Operator.Gt, $"'{lastUpdated.Value:yyyy-MM-dd}'"),
+            new(ConditionType.And, [
+                new(nameof(ProductSap.UpdateDate), Operator.Eq, $"'{lastUpdated.Value:yyyy-MM-dd}'"),
+                new(nameof(ProductSap.UpdateTime), Operator.Gt, $"'{lastUpdated.Value:HH:mm:ss}'"),
+            ])
+        ]);
 }

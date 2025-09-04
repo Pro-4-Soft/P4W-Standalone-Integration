@@ -28,6 +28,8 @@ public class Product : DownloableP4WEntity
     public decimal? Width { get; set; }
     public decimal? Length { get; set; }
 
+    public bool IsInventoryItem { get; set; }
+
     public bool IsExpiryControlled { get; set; }
     public bool IsPacksizeControlled { get; set; }
     public bool IsSerialControlled { get; set; }

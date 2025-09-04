@@ -76,8 +76,8 @@ public class WorkerThread
                     _queue.RemoveAt(0);
                 }
 
-                lock (lockObj)
-                    BaseWorker.LogAsync($"Thread: [{Thread.CurrentThread.Name}]: [{task.Name}] started.").Wait();
+                //lock (lockObj)
+                //    BaseWorker.LogAsync($"Thread: [{Thread.CurrentThread.Name}]: [{task.Name}] started.").Wait();
 
                 var type = Assembly.GetEntryAssembly()?.GetType(task.Class);
                 if (type == null)
@@ -88,8 +88,8 @@ public class WorkerThread
                 {
                     worker.Execute();
 
-                    lock (lockObj)
-                        BaseWorker.LogAsync($"Thread: [{Thread.CurrentThread.Name}]: [{task.Name}] finished.").Wait();
+                    //lock (lockObj)
+                    //    BaseWorker.LogAsync($"Thread: [{Thread.CurrentThread.Name}]: [{task.Name}] finished.").Wait();
                 }
                 catch (Exception e)
                 {

@@ -21,6 +21,13 @@ public class ProductToP4W(ScheduleSetting settings) : BaseWorker(settings)
 
             foreach (var prod in products)
             {
+                if (!prod.IsInventoryItem)
+                {
+                    prod.State = DownloadState.External;
+                    await context.SaveChangesAsync();
+                    continue;
+                }
+
                 var payload = new ProductP4
                 {
                     ClientId = prod.ClientId,

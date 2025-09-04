@@ -1,8 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Pro4Soft.BackgroundWorker.Business;
-using Pro4Soft.BackgroundWorker.Business.Database.Entities;
 using Pro4Soft.BackgroundWorker.Business.Database.Entities.Base;
 using Pro4Soft.BackgroundWorker.Business.P4W.Entities;
+using Pro4Soft.BackgroundWorker.Business.SAP;
 using Pro4Soft.BackgroundWorker.Execution;
 using Pro4Soft.BackgroundWorker.Execution.Common;
 using Pro4Soft.BackgroundWorker.Execution.SettingsFramework;
@@ -15,21 +14,21 @@ public class ProductToDb(ScheduleSetting settings) : BaseWorker(settings)
 {
     public override async Task ExecuteAsync()
     {
-        foreach (CompanySettings company in Config.Companies)
+        foreach (var company in Config.Companies)
         {
             var masterContext = await company.CreateContext(Config.SqlConnection);
 
             //Reset config
             //await masterContext.SetStringConfig(ConfigConstants.Download_Product_LastSync, null);
 
-            var sapService = new SapServiceClient(company.SapUrl, company.SapCompanyDb, company.SapUsername, company.SapPassword, LogAsync, LogErrorAsync);
+            var sapService = SapServiceClient.GetInstance(company.SapUrl, company.SapCompanyDb, company.SapUsername, company.SapPassword, LogAsync, LogErrorAsync);
             var lastRead = await masterContext.GetStringAsync(ConfigConstants.Download_Product_LastSync);
-            var products = await sapService.GetProducts(lastRead?.ParseDateTimeNullable());
+            var products = await sapService.Get<ProductSap>("Items", SapServiceClient.GetLastUpdatedRule(lastRead?.ParseDateTimeNullable()));
             if (products.Count == 0)
                 continue;
 
-            var itemGroupsCodes = await sapService.GetGroupCodes();
-            var packsizeGroups = await sapService.GetUnitOfMeasurementGroups();
+            var itemGroupsCodes = await sapService.Get<ItemGroupCodeSap>("ItemGroups");
+            var packsizeGroups = await sapService.Get<UnitOfMeasurementGroup>("UnitOfMeasurementGroups");
 
             var clients = await P4WClient.GetInvokeAsync<List<ClientP4>>($"clients?clientName={company.P4WClientName}");
             if (clients.Count == 0)
@@ -70,6 +69,7 @@ public class ProductToDb(ScheduleSetting settings) : BaseWorker(settings)
                     existing.Height = prod.PurchaseUnitHeight;
                     existing.Weight = prod.PurchaseUnitWeight;
 
+                    existing.IsInventoryItem = prod.InventoryItem?.ToLower() == "tyes";
                     existing.IsSerialControlled = prod.ManageSerialNumbers?.ToLower() == "tyes";
                     existing.IsLotControlled = prod.ManageBatchNumbers?.ToLower() == "tyes";
                     existing.IsPacksizeControlled = prod.UoMGroupEntry != -1;
