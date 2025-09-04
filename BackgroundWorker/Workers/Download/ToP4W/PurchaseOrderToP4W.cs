@@ -27,18 +27,21 @@ public class PurchaseOrderToP4W(ScheduleSetting settings) : BaseWorker(settings)
 
                 foreach (var po in pos)
                 {
-                    var payload = new PurchaseOrderP4()
+                    var count = 0;
+                    var payload = new PurchaseOrderP4
                     {
-                        Id = po.P4WId,
+                        //Id = po.P4WId,
                         VendorId = po.Vendor.P4WId ?? throw new BusinessWebException($"Vendor [{po.Vendor.Code}] has not been synced"),
                         WarehouseId = warehouses.SingleOrDefault(c => c.Code == po.WarehouseCode)?.Id ?? throw new BusinessWebException($"Warehouse [{po.WarehouseCode}] is not setup in P4W"),
                         PurchaseOrderNumber = po.PurchaseOrderNumber,
                         Comments = po.Comments,
                         Lines = po.Lines.OrderBy(c => c.LineNumber).Select(c => new PurchaseOrderLineP4()
                         {
+                            LineNumber = ++count,
                             ProductId = c.Product.P4WId ?? throw new BusinessWebException($"Product [{c.Product.Sku}] has not been synced"),
-                            //LineNumber = c.LineNumber,
-                            OrderedQuantity = c.Quantity,
+                            OrderedQuantity = c.NumberOfPacks* c.Packsize?? c.Quantity,
+                            NumberOfPacks = c.NumberOfPacks,
+                            Packsize = c.Packsize,
                             Reference1 = c.Id.ToString()
                         }).ToList()
                     };
@@ -62,8 +65,8 @@ public class PurchaseOrderToP4W(ScheduleSetting settings) : BaseWorker(settings)
                     }
                     catch (Exception e)
                     {
-                        po.DownloadError = e.ToString();
-                        po.State = DownloadState.Failed;
+                        po.ErrorMessage = e.ToString();
+                        po.State = DownloadState.DownloadFailed;
 
                         await LogAsync($"PO [{po.PurchaseOrderNumber}] failed to be sent to P4W\n{e}");
                     }

@@ -15,7 +15,7 @@ Update-Database -Context DatabaseContext -Project BackgroundWorker -Migration 20
 Remove-Migration -Context DatabaseContext -Project BackgroundWorker -StartupProject BackgroundWorker -Force
 
 //Adds new migration
-Add-Migration -Name Init1 -Context DatabaseContext -Project BackgroundWorker -StartupProject BackgroundWorker
+Add-Migration -Name Init14 -Context DatabaseContext -Project BackgroundWorker -StartupProject BackgroundWorker
 
 //Update a database to the latest Migration
 Update-Database -Context DatabaseContext -Project BackgroundWorker -StartupProject BackgroundWorker

@@ -1,7 +1,6 @@
 using System.Net;
 using System.Reflection;
 using System.Text;
-using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 using Pro4Soft.BackgroundWorker.Business.SAP;
 using Pro4Soft.BackgroundWorker.Execution;
@@ -89,11 +88,9 @@ public class SapServiceClient : IDisposable
 
             if (response.IsSuccessStatusCode)
             {
-                // Extract session cookies
                 var cookies = _cookieContainer.GetCookies(new Uri(_serviceLayerUrl));
                 _sessionId = cookies["B1SESSION"]?.Value;
                 _lastLoginTime = DateTime.UtcNow;
-                //await _log("Successfully logged into Service Layer");
                 return;
             }
 
@@ -102,7 +99,7 @@ public class SapServiceClient : IDisposable
         }
         catch (Exception ex)
         {
-            await _logError($"Exception during Service Layer login: {ex}");
+            await _logError($"Login failed: {ex}");
         }
     }
 
@@ -266,17 +263,42 @@ public class SapServiceClient : IDisposable
         return result;
     }
 
+    
+
     //Low level
     public async Task<T> GetAsync<T>(string endpoint)
     {
         await EnsureAuthenticatedAsync();
 
-        var response = await _httpClient.GetAsync($"{endpoint}");
+        var response = await _httpClient.GetAsync(endpoint);
 
         if (response.IsSuccessStatusCode)
         {
             var content = await response.Content.ReadAsStringAsync();
             return Utils.DeserializeFromJson<T>(content, "value");
+        }
+
+        var error = await response.Content.ReadAsStringAsync();
+        throw new BusinessWebException(response.StatusCode, error);
+    }
+
+    public async Task<string> Post(string endpoint, object payload)
+    {
+        await EnsureAuthenticatedAsync();
+
+        var request = new HttpRequestMessage(HttpMethod.Post, endpoint);
+        if (payload != null)
+        {
+            var serializedData = Utils.SerializeToStringJson(payload);
+            request.Content = new StringContent(serializedData, Encoding.UTF8, "application/json");
+        }
+
+        var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            return content;
         }
 
         var error = await response.Content.ReadAsStringAsync();

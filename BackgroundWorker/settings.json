@@ -1,8 +1,8 @@
 ﻿{
   "SqlConnection": "Server=localhost;Database=master;User Id=sa;Password=;TrustServerCertificate=True;",
 
-  //"P4WUrl": "https://api.p4warehouse.com/",
-  "P4WUrl": "http://localhost:3000/",
+  "P4WUrl": "https://api.p4warehouse.com/",
+  //"P4WUrl": "http://localhost:3000/",
   "P4WApiKey": "079fd2b7-1a30-4969-9706-4b55c76d1ba9_wL2UprrzI/SHeYm3QdEUgoR4a/jRsJmmDrM6LrvW5DlQV8bAXxzscEP8S7SaEmJowj4BV/vG0EaFFQFGxaxbSg==",
 
   "Companies": [
@@ -26,7 +26,7 @@
       "Start": null,
       "Sleep": null,
       "Class": "Pro4Soft.BackgroundWorker.Workers.Setup.Install",
-      "ThreadName": "Download"
+      "ThreadName": "Default"
     },
 
     {
@@ -36,7 +36,7 @@
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
       "Class": "Pro4Soft.BackgroundWorker.Workers.Download.ToDb.ProductToDb",
-      "ThreadName": "Download"
+      "ThreadName": "Default"
     },
     {
       "Name": "PurchaseOrderToDb",
@@ -45,26 +45,17 @@
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
       "Class": "Pro4Soft.BackgroundWorker.Workers.Download.ToDb.PurchaseOrderToDb",
-      "ThreadName": "Download"
+      "ThreadName": "Default"
     },
 
     {
-      "Name": "ProductToP4W",
+      "Name": "PurchaseOrderFromP4W",
       "Active": true,
       "RunOnStartup": true,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
-      "Class": "Pro4Soft.BackgroundWorker.Workers.Download.ToP4W.ProductToP4W",
-      "ThreadName": "Download"
-    },
-    {
-      "Name": "PurchaseOrderToP4W",
-      "Active": false,
-      "RunOnStartup": true,
-      "Start": "2020-01-01T00:00:00-05:00",
-      "Sleep": "00:00:10",
-      "Class": "Pro4Soft.BackgroundWorker.Workers.Download.ToP4W.PurchaseOrderToP4W",
-      "ThreadName": "Download"
+      "Class": "Pro4Soft.BackgroundWorker.Workers.Upload.FromP4W.PurchaseOrderFromP4W",
+      "ThreadName": "Default"
     }
   ]
 }

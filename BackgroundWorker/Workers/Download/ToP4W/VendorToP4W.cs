@@ -46,8 +46,8 @@ public class VendorToP4W(ScheduleSetting settings) : BaseWorker(settings)
                 }
                 catch (Exception e)
                 {
-                    vend.DownloadError = e.ToString();
-                    vend.State = DownloadState.Failed;
+                    vend.ErrorMessage = e.ToString();
+                    vend.State = DownloadState.DownloadFailed;
 
                     await LogAsync($"Vendor [{vend.Code}] failed to be sent to P4W\n{e}");
                 }

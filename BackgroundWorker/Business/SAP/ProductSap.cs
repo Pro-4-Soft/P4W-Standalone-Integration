@@ -23,7 +23,9 @@ public class ProductSap: BaseSapEntity
 
     public DateTime? CreateDate { get; set; }
     public string CreateTime { get; set; }
-    
+
+    public DateTime? UpdateDate { get; set; }
+    public string UpdateTime { get; set; }
     public DateTime? ActualUpdated => UpdateDate?.Add(TimeSpan.Parse(UpdateTime ?? "00:00:00"));
 
     public List<ItemPreferredVendor> ItemPreferredVendors { get; set; }

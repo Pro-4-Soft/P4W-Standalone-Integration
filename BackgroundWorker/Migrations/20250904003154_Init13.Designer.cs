@@ -12,7 +12,7 @@ using Pro4Soft.BackgroundWorker.Business.Database;
 namespace Pro4Soft.BackgroundWorker.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20250903000943_Init13")]
+    [Migration("20250904003154_Init13")]
     partial class Init13
     {
         /// <inheritdoc />
@@ -96,12 +96,12 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<string>("DownloadError")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Info1")
                         .HasMaxLength(256)
@@ -201,7 +201,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.Property<DateTime?>("DocumentDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DownloadError")
+                    b.Property<string>("ErrorMessage")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FromAddress1")
@@ -570,7 +570,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<string>("DownloadError")
+                    b.Property<string>("ErrorMessage")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FedexAuthenticationAccountNumber")
@@ -943,7 +943,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<string>("DownloadError")
+                    b.Property<string>("ErrorMessage")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FreightClass")
@@ -993,6 +993,9 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.Property<string>("Info9")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("IsExpiryControlled")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsLotControlled")
                         .HasColumnType("bit");
@@ -1085,7 +1088,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.Property<DateTimeOffset>("DateModified")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("DownloadError")
+                    b.Property<string>("ErrorMessage")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Info10")
@@ -1263,6 +1266,52 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.ToTable("PurchaseOrderLines");
                 });
 
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.PurchaseOrderLineDetail", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("DateCreated")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset>("DateModified")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTime?>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LotNumber")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<int?>("PacksizeEachCount")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("PurchaseOrderLineId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("ReceivedQuantity")
+                        .HasPrecision(15, 6)
+                        .HasColumnType("decimal(15,6)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("SerialNumber")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PurchaseOrderLineId");
+
+                    b.ToTable("PurchaseOrderLineDetails");
+                });
+
             modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.Tote", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1438,7 +1487,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.Property<DateTimeOffset>("DateModified")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("DownloadError")
+                    b.Property<string>("ErrorMessage")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Info10")
@@ -1599,6 +1648,17 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.Navigation("PurchaseOrder");
                 });
 
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.PurchaseOrderLineDetail", b =>
+                {
+                    b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.PurchaseOrderLine", "PurchaseOrderLine")
+                        .WithMany("Details")
+                        .HasForeignKey("PurchaseOrderLineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PurchaseOrderLine");
+                });
+
             modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.Tote", b =>
                 {
                     b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.PickTicket", "PickTicket")
@@ -1665,6 +1725,11 @@ namespace Pro4Soft.BackgroundWorker.Migrations
             modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.PurchaseOrder", b =>
                 {
                     b.Navigation("Lines");
+                });
+
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.PurchaseOrderLine", b =>
+                {
+                    b.Navigation("Details");
                 });
 
             modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.Tote", b =>

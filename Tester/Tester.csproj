@@ -11,4 +11,10 @@
     <ProjectReference Include="..\BackgroundWorker\BackgroundWorker.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="po.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

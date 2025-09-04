@@ -1,12 +1,15 @@
-﻿using Pro4Soft.BackgroundWorker.Business.P4W.Entities;
+﻿using System.Collections.Concurrent;
+using Pro4Soft.BackgroundWorker.Business.P4W.Entities;
 using Pro4Soft.BackgroundWorker.Execution.Common;
 using Pro4Soft.BackgroundWorker.Execution.SettingsFramework;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using Pro4Soft.BackgroundWorker.Workers;
 
 namespace Pro4Soft.BackgroundWorker.Execution;
 
 public abstract class BaseWorker
 {
+    protected static ConcurrentDictionary<string, SapServiceClient> SapServiceClientCache = new();
+
     protected ScheduleSetting Settings { get; }
     protected readonly IntegrationSettings Config = App<IntegrationSettings>.Instance;
 
@@ -45,7 +48,7 @@ public abstract class BaseWorker
         await LogErrorAsync(ex.ToString());
     }
 
-    public static async Task LogErrorAsync(string msg)
+    protected static async Task LogErrorAsync(string msg)
     {
         msg = $"Error [{DateTime.Now:G}] {msg}";
         try
@@ -59,7 +62,7 @@ public abstract class BaseWorker
 
     //Business
 
-    public async Task<Guid?> GetClientId(CompanySettings company)
+    protected async Task<Guid?> GetClientId(CompanySettings company)
     {
         var clients = await P4WClient.GetInvokeAsync<List<ClientP4>>($"clients?clientName={company.P4WClientName}");
         if (clients.Count == 0)

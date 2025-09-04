@@ -48,8 +48,8 @@ public class CustomerToP4W(ScheduleSetting settings) : BaseWorker(settings)
                 }
                 catch (Exception e)
                 {
-                    cust.DownloadError = e.ToString();
-                    cust.State = DownloadState.Failed;
+                    cust.ErrorMessage = e.ToString();
+                    cust.State = DownloadState.DownloadFailed;
 
                     await LogAsync($"Customer [{cust.Code}] failed to be sent to P4W\n{e}");
                 }

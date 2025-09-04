@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Pro4Soft.BackgroundWorker.Business.Database.Entities;
 using Pro4Soft.BackgroundWorker.Business.Database.Entities.Base;
 using Pro4Soft.BackgroundWorker.Execution;
@@ -18,6 +19,9 @@ public class PurchaseOrderToDb(ScheduleSetting settings) : BaseWorker(settings)
         foreach (var company in Config.Companies)
         {
             var masterContext = await company.CreateContext(Config.SqlConnection);
+
+            //reset config
+            //await masterContext.SetStringConfig(ConfigConstants.Download_PurchaseOrder_LastSync, null);
 
             var sapService = new SapServiceClient(company.SapUrl, company.SapCompanyDb, company.SapUsername, company.SapPassword, LogAsync, LogErrorAsync);
             var lastRead = await masterContext.GetStringAsync(ConfigConstants.Download_PurchaseOrder_LastSync);
@@ -60,14 +64,13 @@ public class PurchaseOrderToDb(ScheduleSetting settings) : BaseWorker(settings)
                     {
                         var poNum = $"{po.DocNum}{(whGroups.Count == 1 ? "" : $"-{whGroup.Key}")}";
 
-                        var poP4W = await context.PurchaseOrders.Include(c => c.Lines).SingleOrDefaultAsync(c => c.PurchaseOrderNumber == poNum && c.Reference1 == po.DocEntry);
+                        var poP4W = await context.PurchaseOrders.Include(c => c.Lines).SingleOrDefaultAsync(c => c.PurchaseOrderNumber == poNum);
                         if (poP4W == null)
                         {
                             poP4W = new()
                             {
                                 VendorId = vendor.Id,
                                 PurchaseOrderNumber = poNum,
-                                Reference1 = po.DocEntry,
                             };
                             await context.PurchaseOrders.AddAsync(poP4W);
                         }
@@ -78,21 +81,40 @@ public class PurchaseOrderToDb(ScheduleSetting settings) : BaseWorker(settings)
                             await context.Entry(poP4W).ReloadAsync();
                         }
 
+                        poP4W.Reference1 = po.DocEntry;
                         poP4W.WarehouseCode = whGroup.Key;
                         poP4W.Comments = po.Comments;
 
                         foreach (var line in whGroup.OrderBy(c => c.LineNum))
                         {
-                            var product = await context.Products.Where(c => c.Sku == line.ItemCode && c.ClientId == clientId)
+                            var product = await context.Products
+                                .Include(c => c.Packsizes)
+                                .Where(c => c.Sku == line.ItemCode && c.ClientId == clientId)
                                 .SingleOrDefaultAsync() ?? throw new BusinessWebException($"Product [{line.ItemCode}], line [{line.LineNum}] on PO [{po.DocNum}] does not exist");
-                            await context.PurchaseOrderLines.AddAsync(new()
+
+                            if (product.IsPacksizeControlled)
                             {
-                                ProductId = product.Id,
-                                Description = line.ItemDescription,
-                                Quantity = line.RemainingOpenQuantity,
-                                PurchaseOrderId = poP4W.Id,
-                                LineNumber = line.LineNum,
-                            });
+                                await context.PurchaseOrderLines.AddAsync(new()
+                                {
+                                    ProductId = product.Id,
+                                    Description = line.ItemDescription,
+                                    NumberOfPacks = (int)line.RemainingOpenQuantity,
+                                    Packsize = (int)line.UnitsOfMeasurment,
+                                    PurchaseOrderId = poP4W.Id,
+                                    LineNumber = line.LineNum,
+                                });
+                            }
+                            else
+                            {
+                                await context.PurchaseOrderLines.AddAsync(new()
+                                {
+                                    ProductId = product.Id,
+                                    Description = line.ItemDescription,
+                                    Quantity = line.RemainingOpenQuantity,
+                                    PurchaseOrderId = poP4W.Id,
+                                    LineNumber = line.LineNum,
+                                });
+                            }
                         }
 
                         poP4W.State = DownloadState.ReadyForDownload;

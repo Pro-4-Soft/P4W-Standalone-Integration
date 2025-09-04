@@ -37,7 +37,12 @@ public abstract class EntityBaseMap<T> : IEntityTypeConfiguration<T> where T : E
 public enum DownloadState
 {
     External,
+
     ReadyForDownload,
     Downloaded,
-    Failed
+    DownloadFailed,
+
+    ReadyForUpload,
+    Uploaded,
+    UploadFailed,
 }

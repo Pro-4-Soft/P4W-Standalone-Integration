@@ -1,10 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Pro4Soft.BackgroundWorker.Business;
+using Pro4Soft.BackgroundWorker.Business.Database.Entities;
 using Pro4Soft.BackgroundWorker.Business.Database.Entities.Base;
 using Pro4Soft.BackgroundWorker.Business.P4W.Entities;
 using Pro4Soft.BackgroundWorker.Execution;
 using Pro4Soft.BackgroundWorker.Execution.Common;
 using Pro4Soft.BackgroundWorker.Execution.SettingsFramework;
+using Pro4Soft.BackgroundWorker.Workers.Download.ToP4W;
 using Pro4Soft.P4E.Common.Utilities;
 
 namespace Pro4Soft.BackgroundWorker.Workers.Download.ToDb;
@@ -94,7 +96,7 @@ public class ProductToDb(ScheduleSetting settings) : BaseWorker(settings)
                     }
 
                     existing.State = DownloadState.ReadyForDownload;
-                    existing.DownloadError = null;
+                    existing.ErrorMessage = null;
 
                     await context.SaveChangesAsync();
 
@@ -109,5 +111,7 @@ public class ProductToDb(ScheduleSetting settings) : BaseWorker(settings)
             var maxUpdated = products.Max(c => c.ActualUpdated);
             await masterContext.SetStringConfig(ConfigConstants.Download_Product_LastSync, maxUpdated?.ToString("yyyy-MM-dd'T'HH:mm:ss"));
         }
+
+        await new ProductToP4W(Settings).ExecuteAsync();
     }
 }

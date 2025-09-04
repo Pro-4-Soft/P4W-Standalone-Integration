@@ -12,7 +12,7 @@ namespace Pro4Soft.BackgroundWorker.Business.Database;
 
 public class DatabaseContext(DbContextOptions options) : DbContext(options)
 {
-    public DatabaseContext() : this($"Server=localhost;Database=p4i_mapiexdev2;User Id=sa;Password=;TrustServerCertificate=True;")
+    public DatabaseContext() : this($"Server=localhost;Database=p4i_casamedico;User Id=sa;Password=;TrustServerCertificate=True;")
     {
         
     }
@@ -34,6 +34,7 @@ public class DatabaseContext(DbContextOptions options) : DbContext(options)
 
     public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
     public DbSet<PurchaseOrderLine> PurchaseOrderLines { get; set; }
+    public DbSet<PurchaseOrderLineDetail> PurchaseOrderLineDetails { get; set; }
 
     public DbSet<PickTicket> PickTickets { get; set; }
     public DbSet<PickTicketLine> PickTicketLines { get; set; }

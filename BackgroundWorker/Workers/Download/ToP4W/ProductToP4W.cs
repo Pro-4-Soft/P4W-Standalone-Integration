@@ -67,8 +67,8 @@ public class ProductToP4W(ScheduleSetting settings) : BaseWorker(settings)
                 }
                 catch (Exception e)
                 {
-                    prod.DownloadError = e.ToString();
-                    prod.State = DownloadState.Failed;
+                    prod.ErrorMessage = e.ToString();
+                    prod.State = DownloadState.DownloadFailed;
 
                     await LogAsync($"Product [{prod.Sku}] failed to be sent to P4W\n{e}");
                 }
@@ -76,7 +76,5 @@ public class ProductToP4W(ScheduleSetting settings) : BaseWorker(settings)
                 await context.SaveChangesAsync();
             }
         }
-
-        await new ProductToP4W(Settings).ExecuteAsync();
     }
 }

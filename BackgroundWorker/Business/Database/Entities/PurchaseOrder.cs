@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Newtonsoft.Json;
 using Pro4Soft.BackgroundWorker.Business.Database.Entities.Base;
 
 namespace Pro4Soft.BackgroundWorker.Business.Database.Entities;
@@ -67,9 +68,27 @@ public class PurchaseOrderLine : EntityBase
     public string Info9 { get; set; }
     public string Info10 { get; set; }
 
+    public int? Packsize { get; set; }
+    public int? NumberOfPacks { get; set; }
+
     public decimal Quantity { get; set; }
 
     public decimal? ReceivedQuantity { get; set; }
+
+    [ForeignKey(nameof(PurchaseOrderLineDetail.PurchaseOrderLineId))]
+    public virtual ICollection<PurchaseOrderLineDetail> Details { get; set; } = new List<PurchaseOrderLineDetail>();
+}
+
+public class PurchaseOrderLineDetail : EntityBase
+{
+    public Guid PurchaseOrderLineId { get; set; }
+    public virtual PurchaseOrderLine PurchaseOrderLine { get; set; }
+
+    public decimal ReceivedQuantity { get; set; }
+    public string LotNumber { get; set; }
+    public string SerialNumber { get; set; }
+    public DateTime? ExpiryDate { get; set; }
+    public int? PacksizeEachCount { get; set; }
 }
 
 public class PurchaseOrderLineMap : EntityBaseMap<PurchaseOrderLine>

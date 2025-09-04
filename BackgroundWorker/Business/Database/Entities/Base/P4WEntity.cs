@@ -15,6 +15,6 @@ public class DownloableP4WEntity : P4WEntity
     public DownloadState State { get; set; } = DownloadState.ReadyForDownload;
 
     [MaxLength(int.MaxValue)]
-    public string DownloadError { get; set; }
+    public string ErrorMessage { get; set; }
 }
 
