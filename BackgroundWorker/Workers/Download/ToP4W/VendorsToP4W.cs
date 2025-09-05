@@ -6,7 +6,7 @@ using Pro4Soft.BackgroundWorker.Execution.SettingsFramework;
 
 namespace Pro4Soft.BackgroundWorker.Workers.Download.ToP4W;
 
-public class VendorToP4W(ScheduleSetting settings) : BaseWorker(settings)
+public class VendorsToP4W(ScheduleSetting settings) : BaseWorker(settings)
 {
     public override async Task ExecuteAsync()
     {

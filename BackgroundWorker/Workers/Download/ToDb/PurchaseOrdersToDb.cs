@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Pro4Soft.BackgroundWorker.Business.Database.Entities;
 using Pro4Soft.BackgroundWorker.Business.Database.Entities.Base;
 using Pro4Soft.BackgroundWorker.Business.SAP;
 using Pro4Soft.BackgroundWorker.Execution;
@@ -10,12 +9,10 @@ using Pro4Soft.P4E.Common.Utilities;
 
 namespace Pro4Soft.BackgroundWorker.Workers.Download.ToDb;
 
-public class PurchaseOrderToDb(ScheduleSetting settings) : BaseWorker(settings)
+public class PurchaseOrdersToDb(ScheduleSetting settings) : BaseWorker(settings)
 {
     public override async Task ExecuteAsync()
     {
-        //var warehouses = await P4WClient.GetInvokeAsync<List<WarehouseP4>>("/warehouses");
-
         foreach (var company in Config.Companies)
         {
             var masterContext = await company.CreateContext(Config.SqlConnection);
@@ -40,7 +37,7 @@ public class PurchaseOrderToDb(ScheduleSetting settings) : BaseWorker(settings)
             await masterContext.SetStringConfig(ConfigConstants.Download_PurchaseOrder_LastSync, maxUpdated?.ToString("yyyy-MM-dd'T'HH:mm:ss"));
         }
 
-        await new PurchaseOrderToP4W(Settings).ExecuteAsync();
+        await new PurchaseOrdersToP4W(Settings).ExecuteAsync();
     }
 
     public async Task DownloadPos(CompanySettings company, List<PurchaseOrderSap> pos)
@@ -76,7 +73,7 @@ public class PurchaseOrderToDb(ScheduleSetting settings) : BaseWorker(settings)
                     await context.SaveChangesAsync();
 
                     //Push to P4W
-                    await new VendorToP4W(Settings).ExecuteAsync();
+                    await new VendorsToP4W(Settings).ExecuteAsync();
                     await context.Entry(vendor).ReloadAsync();
                 }
 

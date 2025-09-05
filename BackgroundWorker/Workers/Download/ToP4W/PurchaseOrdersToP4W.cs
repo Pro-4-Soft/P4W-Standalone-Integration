@@ -7,7 +7,7 @@ using Pro4Soft.BackgroundWorker.Execution.SettingsFramework;
 
 namespace Pro4Soft.BackgroundWorker.Workers.Download.ToP4W;
 
-public class PurchaseOrderToP4W(ScheduleSetting settings) : BaseWorker(settings)
+public class PurchaseOrdersToP4W(ScheduleSetting settings) : BaseWorker(settings)
 {
     public override async Task ExecuteAsync()
     {
@@ -63,13 +63,13 @@ public class PurchaseOrderToP4W(ScheduleSetting settings) : BaseWorker(settings)
                         if (existing.Count > 0)
                             payload.Id = existing.First().Id;
 
-                        PurchaseOrderP4 p4Prod;
+                        PurchaseOrderP4 p4Po;
                         if (payload.Id != null)
-                            p4Prod = await P4WClient.PutInvokeAsync<PurchaseOrderP4>("/purchase-orders", payload);
+                            p4Po = await P4WClient.PutInvokeAsync<PurchaseOrderP4>("/purchase-orders", payload);
                         else
-                            p4Prod = await P4WClient.PostInvokeAsync<PurchaseOrderP4>("/purchase-orders", payload);
+                            p4Po = await P4WClient.PostInvokeAsync<PurchaseOrderP4>("/purchase-orders", payload);
 
-                        po.P4WId = p4Prod.Id;
+                        po.P4WId = p4Po.Id;
                         po.State = DownloadState.Downloaded;
 
                         await LogAsync($"PO [{po.PurchaseOrderNumber}] sent to P4W");

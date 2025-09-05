@@ -36,10 +36,11 @@ public class DatabaseContext(DbContextOptions options) : DbContext(options)
     public DbSet<PurchaseOrderLine> PurchaseOrderLines { get; set; }
     public DbSet<PurchaseOrderLineDetail> PurchaseOrderLineDetails { get; set; }
 
-    public DbSet<PickTicket> PickTickets { get; set; }
+    public DbSet<Pickticket> PickTickets { get; set; }
     public DbSet<PickTicketLine> PickTicketLines { get; set; }
     public DbSet<Tote> Totes { get; set; }
     public DbSet<ToteLine> ToteLines { get; set; }
+    public DbSet<ToteLineDetail> ToteLineDetails { get; set; }
 
     public DbSet<CustomerReturn> CustomerReturns { get; set; }
     public DbSet<CustomerReturnLine> CustomerReturnLines { get; set; }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Pro4Soft.BackgroundWorker.Business.Database;
 
@@ -11,9 +12,11 @@ using Pro4Soft.BackgroundWorker.Business.Database;
 namespace Pro4Soft.BackgroundWorker.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250905181055_Init21")]
+    partial class Init21
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -478,97 +481,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.ToTable("Packsizes");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.PickTicketLine", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("DateCreated")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset>("DateModified")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Info1")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("Info10")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("Info2")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("Info3")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("Info4")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("Info5")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("Info6")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("Info7")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("Info8")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("Info9")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<int>("LineNumber")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("NumberOfPacks")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Packsize")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("PickTicketId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("Quantity")
-                        .HasPrecision(15, 6)
-                        .HasColumnType("decimal(15,6)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<decimal?>("SalesPrice")
-                        .HasPrecision(15, 6)
-                        .HasColumnType("decimal(15,6)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PickTicketId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("PickTicketLines");
-                });
-
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.Pickticket", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.PickTicket", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -741,9 +654,8 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("PaymentType")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("PickTicketNumber")
                         .IsRequired()
@@ -927,6 +839,100 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.HasIndex("State");
 
                     b.ToTable("PickTickets");
+                });
+
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.PickTicketLine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("DateCreated")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset>("DateModified")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Info1")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Info10")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Info2")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Info3")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Info4")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Info5")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Info6")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Info7")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Info8")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Info9")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<int>("LineNumber")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("NumberOfPacks")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Packsize")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("PickTicketId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(15, 6)
+                        .HasColumnType("decimal(15,6)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<decimal?>("SalesPrice")
+                        .HasPrecision(15, 6)
+                        .HasColumnType("decimal(15,6)");
+
+                    b.Property<decimal?>("ShippedQuantity")
+                        .HasPrecision(15, 6)
+                        .HasColumnType("decimal(15,6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PickTicketId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("PickTicketLines");
                 });
 
             modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.Product", b =>
@@ -1355,6 +1361,10 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<string>("CartonName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
                     b.Property<int>("CartonNumber")
                         .HasColumnType("int");
 
@@ -1379,9 +1389,6 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.Property<string>("MasterBolNumber")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
-
-                    b.Property<Guid>("P4WId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("PalletSscc18Code")
                         .HasMaxLength(256)
@@ -1467,9 +1474,6 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.Property<DateTimeOffset>("DateModified")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<Guid>("P4WId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("PickTicketLineId")
                         .HasColumnType("uniqueidentifier");
 
@@ -1479,9 +1483,8 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
 
-                    b.Property<decimal>("ShippedQuantity")
-                        .HasPrecision(15, 6)
-                        .HasColumnType("decimal(15,6)");
+                    b.Property<int>("ShippedQuantity")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("ToteId")
                         .HasColumnType("uniqueidentifier");
@@ -1493,55 +1496,6 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.HasIndex("ToteId");
 
                     b.ToTable("ToteLines");
-                });
-
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.ToteLineDetail", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("DateCreated")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset>("DateModified")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTime?>("ExpiryDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LotNumber")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<Guid>("P4WId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int?>("PacksizeEachCount")
-                        .HasColumnType("int");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<string>("SerialNumber")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<decimal>("ShippedQuantity")
-                        .HasPrecision(15, 6)
-                        .HasColumnType("decimal(15,6)");
-
-                    b.Property<Guid>("ToteLineId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ToteLineId");
-
-                    b.ToTable("ToteLineDetails");
                 });
 
             modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.Vendor", b =>
@@ -1669,9 +1623,20 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.PickTicket", b =>
+                {
+                    b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.Customer", "Customer")
+                        .WithMany("PickTickets")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
             modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.PickTicketLine", b =>
                 {
-                    b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.Pickticket", "Pickticket")
+                    b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.PickTicket", "PickTicket")
                         .WithMany("Lines")
                         .HasForeignKey("PickTicketId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1683,20 +1648,9 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Pickticket");
+                    b.Navigation("PickTicket");
 
                     b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.Pickticket", b =>
-                {
-                    b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.Customer", "Customer")
-                        .WithMany("PickTickets")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.PurchaseOrder", b =>
@@ -1742,13 +1696,13 @@ namespace Pro4Soft.BackgroundWorker.Migrations
 
             modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.Tote", b =>
                 {
-                    b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.Pickticket", "Pickticket")
+                    b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.PickTicket", "PickTicket")
                         .WithMany("Totes")
                         .HasForeignKey("PickTicketId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Pickticket");
+                    b.Navigation("PickTicket");
                 });
 
             modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.ToteLine", b =>
@@ -1770,17 +1724,6 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.Navigation("Tote");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.ToteLineDetail", b =>
-                {
-                    b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.ToteLine", "ToteLine")
-                        .WithMany("Details")
-                        .HasForeignKey("ToteLineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ToteLine");
-                });
-
             modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.Customer", b =>
                 {
                     b.Navigation("PickTickets");
@@ -1791,16 +1734,16 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.Navigation("Lines");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.PickTicketLine", b =>
-                {
-                    b.Navigation("ToteLines");
-                });
-
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.Pickticket", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.PickTicket", b =>
                 {
                     b.Navigation("Lines");
 
                     b.Navigation("Totes");
+                });
+
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.PickTicketLine", b =>
+                {
+                    b.Navigation("ToteLines");
                 });
 
             modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.Product", b =>
@@ -1827,11 +1770,6 @@ namespace Pro4Soft.BackgroundWorker.Migrations
             modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.Tote", b =>
                 {
                     b.Navigation("Lines");
-                });
-
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.ToteLine", b =>
-                {
-                    b.Navigation("Details");
                 });
 
             modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.Vendor", b =>

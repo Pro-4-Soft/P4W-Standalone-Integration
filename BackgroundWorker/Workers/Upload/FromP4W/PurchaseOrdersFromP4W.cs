@@ -11,7 +11,7 @@ using Pro4Soft.P4E.Common.Utilities;
 
 namespace Pro4Soft.BackgroundWorker.Workers.Upload.FromP4W;
 
-public class PurchaseOrderFromP4W(ScheduleSetting settings) : BaseWorker(settings)
+public class PurchaseOrdersFromP4W(ScheduleSetting settings) : BaseWorker(settings)
 {
     public override async Task ExecuteAsync()
     {
@@ -19,7 +19,7 @@ public class PurchaseOrderFromP4W(ScheduleSetting settings) : BaseWorker(setting
         {
             try
             {
-                var posForUpload = await P4WClient.GetInvokeAsync<List<PurchaseOrderP4>>("purchase-orders");
+                var posForUpload = await P4WClient.GetInvokeAsync<List<BaseP4Entity>>("purchase-orders");
                 PurchaseOrder po = null;
                 foreach (var poHeader in posForUpload)
                 {
@@ -72,9 +72,9 @@ public class PurchaseOrderFromP4W(ScheduleSetting settings) : BaseWorker(setting
                             po.State = DownloadState.ReadyForUpload;
 
                         await context.SaveChangesAsync();
-                        await P4WClient.PostInvokeAsync("/purchase-orders/upload", new UploadConfirmationP4()
+                        await P4WClient.PostInvokeAsync("/purchase-orders/upload", new UploadConfirmationP4
                         {
-                            Ids = [poHeader.Id.Value],
+                            Ids = [poHeader.Id],
                             UploadSucceeded = true,
                         });
 
@@ -89,9 +89,9 @@ public class PurchaseOrderFromP4W(ScheduleSetting settings) : BaseWorker(setting
                             await context.SaveChangesAsync();
                         }
 
-                        await P4WClient.PostInvokeAsync("/purchase-orders/upload", new UploadConfirmationP4()
+                        await P4WClient.PostInvokeAsync("/purchase-orders/upload", new UploadConfirmationP4
                         {
-                            Ids = [poHeader.Id.Value],
+                            Ids = [poHeader.Id],
                             UploadSucceeded = false,
                             UploadMessage = e.Message,
                             ResetUploadCount = false
@@ -106,6 +106,6 @@ public class PurchaseOrderFromP4W(ScheduleSetting settings) : BaseWorker(setting
             }
         }
 
-        await new PurchaseOrderFromDb(Settings).ExecuteAsync();
+        await new PurchaseOrdersFromDb(Settings).ExecuteAsync();
     }
 }

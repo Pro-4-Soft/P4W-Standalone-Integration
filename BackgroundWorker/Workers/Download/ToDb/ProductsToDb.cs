@@ -10,7 +10,7 @@ using Pro4Soft.P4E.Common.Utilities;
 
 namespace Pro4Soft.BackgroundWorker.Workers.Download.ToDb;
 
-public class ProductToDb(ScheduleSetting settings) : BaseWorker(settings)
+public class ProductsToDb(ScheduleSetting settings) : BaseWorker(settings)
 {
     public override async Task ExecuteAsync()
     {
@@ -112,6 +112,6 @@ public class ProductToDb(ScheduleSetting settings) : BaseWorker(settings)
             await masterContext.SetStringConfig(ConfigConstants.Download_Product_LastSync, maxUpdated?.ToString("yyyy-MM-dd'T'HH:mm:ss"));
         }
 
-        await new ProductToP4W(Settings).ExecuteAsync();
+        await new ProductsToP4W(Settings).ExecuteAsync();
     }
 }

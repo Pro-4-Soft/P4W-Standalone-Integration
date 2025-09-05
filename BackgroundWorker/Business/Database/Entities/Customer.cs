@@ -29,6 +29,6 @@ public class Customer : DownloableP4WEntity
     public string Info9 { get; set; }
     public string Info10 { get; set; }
 
-    [ForeignKey(nameof(PickTicket.CustomerId))]
-    public virtual ICollection<PickTicket> PickTickets { get; set; } = new List<PickTicket>();
+    [ForeignKey(nameof(Pickticket.CustomerId))]
+    public virtual ICollection<Pickticket> PickTickets { get; set; } = new List<Pickticket>();
 }

@@ -9,7 +9,7 @@ using Pro4Soft.P4E.Common.Utilities;
 
 namespace Pro4Soft.BackgroundWorker.Workers.Upload.FromDb;
 
-public class PurchaseOrderFromDb(ScheduleSetting settings) : BaseWorker(settings)
+public class PickticketsFromDb(ScheduleSetting settings) : BaseWorker(settings)
 {
     public override async Task ExecuteAsync()
     {
@@ -22,77 +22,82 @@ public class PurchaseOrderFromDb(ScheduleSetting settings) : BaseWorker(settings
 
                 var now = DateTime.Now;
 
-                var pos = await context.PurchaseOrders
-                    .Include(c => c.Vendor)
-                    .Include(c => c.Lines).ThenInclude(c => c.Details)
+                var pickTickets = await context.PickTickets
+                    .Include(c => c.Customer)
                     .Include(c => c.Lines).ThenInclude(c => c.Product)
+                    .Include(c => c.Totes).ThenInclude(c => c.Lines).ThenInclude(c => c.Details)
                     .Where(c => c.State == DownloadState.ReadyForUpload)
                     .ToListAsync();
 
-                foreach (var po in pos)
+                foreach (var pickTicket in pickTickets)
                 {
                     try
                     {
                         dynamic delivery = new ExpandoObject();
-                        delivery.CardCode = po.Vendor.Code;
+                        delivery.CardCode = pickTicket.Customer.Code;
                         delivery.DocDate = now.Date.ToString("yyyy-MM-dd");
                         delivery.TaxDate = now.Date.ToString("yyyy-MM-dd");
                         delivery.DocDueDate = now.Date.ToString("yyyy-MM-dd");
                         delivery.DocumentLines = new List<ExpandoObject>();
 
-                        foreach (var poLine in po.Lines)
+                        foreach (var pickTicketLine in pickTicket.Lines)
                         {
                             dynamic line = new ExpandoObject();
 
-                            line.BaseEntry = po.Reference1.ParseInt();
-                            line.BaseLine = poLine.LineNumber;
-                            line.BaseType = (int)BoObjectTypes.oPurchaseOrders;
-                            line.Quantity = poLine.ReceivedQuantity / (poLine.Packsize??1);
-                            
-                            if (poLine.Product.IsSerialControlled)
+                            line.BaseEntry = pickTicket.Reference1.ParseInt();
+                            line.BaseLine = pickTicketLine.LineNumber;
+                            line.BaseType = (int)BoObjectTypes.oOrders;
+
+                            var shipped = pickTicketLine.ToteLines.Sum(c => c.ShippedQuantity);
+
+                            line.Quantity = shipped / (pickTicketLine.Packsize??1);
+
+                            var detls = pickTicketLine.ToteLines.SelectMany(c => c.Details).ToList();
+
+                            if (pickTicketLine.Product.IsSerialControlled)
                             {
-                                line.SerialNumbers = poLine.Details.Where(c => !c.SerialNumber.IsNullOrEmpty()).Select(c => new
+                                line.SerialNumbers = detls.Where(c => !c.SerialNumber.IsNullOrEmpty()).Select(c => new
                                 {
                                     InternalSerialNumber = c.SerialNumber
                                 });
                             }
 
-                            if (poLine.Product.IsLotControlled)
+                            if (pickTicketLine.Product.IsLotControlled)
                             {
-                                line.BatchNumbers = poLine.Details.Where(c => !c.LotNumber.IsNullOrEmpty())
+                                line.BatchNumbers = detls.Where(c => !c.LotNumber.IsNullOrEmpty())
                                     .GroupBy(c => c.LotNumber)
                                     .Select(lot => new
                                     {
                                         BatchNumber = lot.Key,
-                                        Quantity = lot.Sum(c => (c.PacksizeEachCount ?? 1) * c.ReceivedQuantity),
+                                        Quantity = lot.Sum(c => (c.PacksizeEachCount ?? 1) * c.ShippedQuantity),
                                     });
                             }
 
                             delivery.DocumentLines.Add(line);
                         }
 
-                        var goodsReceiptPo = await sapService.Post<BaseDocumentSap>("PurchaseDeliveryNotes", (object)delivery, LogAsync);
+                        var goodsReceiptPo = await sapService.Post<BaseDocumentSap>("DeliveryNotes", (object)delivery, LogAsync);
 
-                        po.Uploaded = true;
-                        po.State = DownloadState.Uploaded;
-                        po.ErrorMessage = null;
+                        pickTicket.Uploaded = true;
+                        pickTicket.State = DownloadState.Uploaded;
+                        pickTicket.ErrorMessage = null;
                         
                         await context.SaveChangesAsync();
 
-                        await LogAsync($"PO [{po.PurchaseOrderNumber}] written to SAP as Goods Receipt PO [{goodsReceiptPo.DocNum}]");
+                        await LogAsync($"Pickticket [{pickTicket.PickTicketNumber}] written to SAP as Delivery note [{goodsReceiptPo.DocNum}]");
 
                         //Download a backorder
-                        var sapPo = await sapService.Get<PurchaseOrderSap>("PurchaseOrders",
+                        var sapPo = await sapService.Get<SalesOrderSap>("Orders",
                             new(ConditionType.And, [
-                                new FilterRule("DocEntry", Operator.Eq, po.Reference1),
+                                new FilterRule("DocEntry", Operator.Eq, pickTicket.Reference1),
                                 new FilterRule("DocumentStatus", Operator.Eq, "'bost_Open'")
                             ]));
-                        await new PurchaseOrderToDb(Settings).DownloadPos(company, sapPo);
+                        await new PickticketsToDb(Settings).DownloadSos(company, sapPo);
                     }
                     catch (Exception e)
                     {
-                        po.State = DownloadState.UploadFailed;
-                        po.ErrorMessage = e.Message;
+                        pickTicket.State = DownloadState.UploadFailed;
+                        pickTicket.ErrorMessage = e.Message;
                         await context.SaveChangesAsync();
                     }
                 }

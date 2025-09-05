@@ -1,6 +1,6 @@
 ﻿namespace Pro4Soft.BackgroundWorker.Business.SAP;
 
-public class CustomerSap : BaseSapEntity
+public class VendorSap : BaseSapEntity
 {
     public string CardCode { get; set; }
     public string CardName { get; set; }

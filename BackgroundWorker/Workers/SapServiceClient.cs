@@ -184,8 +184,8 @@ public class SapServiceClient : IDisposable
 
     public async Task<T> Post<T>(string endpoint, object payload, Func<string, Task> printLog = null)
     {
-        var content = await this.Post(endpoint, payload, printLog);
-        return (T)Utils.DeserializeFromJson<T>(content);
+        var content = await Post(endpoint, payload, printLog);
+        return Utils.DeserializeFromJson<T>(content);
     }
 
     public async Task<string> Post(string endpoint, object payload, Func<string, Task> printLog = null)
@@ -215,8 +215,9 @@ Request: POST - {_httpClient.BaseAddress}{endpoint}
 {Utils.SerializeToStringJson(payload, Formatting.Indented)}
 Response: {response.StatusCode.ToString()} ({(int)response.StatusCode})
 {error}");
-        
-        throw new BusinessWebException(response.StatusCode, error);
+
+        var parsed = Utils.DeserializeFromJson<ErrorSap>(error, "error");
+        throw new BusinessWebException(response.StatusCode, parsed.Message);
     }
 
     //Static helpers

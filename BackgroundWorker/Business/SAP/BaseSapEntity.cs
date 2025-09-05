@@ -8,13 +8,7 @@ public class BaseSapEntity
     //public string ODataEtag { get; set; }
 }
 
-public class Root
-{
-    [JsonProperty("error")]
-    public Error Error { get; set; }
-}
-
-public class Error
+public class ErrorSap
 {
     public string Code { get; set; }
     public List<Detail> Details { get; set; }

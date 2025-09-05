@@ -1,8 +1,8 @@
 ﻿{
   "SqlConnection": "Server=localhost;Database=master;User Id=sa;Password=;TrustServerCertificate=True;",
 
-  "P4WUrl": "https://api.p4warehouse.com/",
-  //"P4WUrl": "http://localhost:3000/",
+  //"P4WUrl": "https://api.p4warehouse.com/",
+  "P4WUrl": "http://localhost:3000/",
   "P4WApiKey": "079fd2b7-1a30-4969-9706-4b55c76d1ba9_wL2UprrzI/SHeYm3QdEUgoR4a/jRsJmmDrM6LrvW5DlQV8bAXxzscEP8S7SaEmJowj4BV/vG0EaFFQFGxaxbSg==",
 
   "Companies": [
@@ -30,32 +30,50 @@
     },
 
     {
-      "Name": "ProductToDb",
+      "Name": "ProductsToDb",
       "Active": true,
       "RunOnStartup": true,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
-      "Class": "Pro4Soft.BackgroundWorker.Workers.Download.ToDb.ProductToDb",
+      "Class": "Pro4Soft.BackgroundWorker.Workers.Download.ToDb.ProductsToDb",
       "ThreadName": "Default"
     },
     {
-      "Name": "PurchaseOrderToDb",
+      "Name": "PurchaseOrdersToDb",
       "Active": true,
       "RunOnStartup": true,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
-      "Class": "Pro4Soft.BackgroundWorker.Workers.Download.ToDb.PurchaseOrderToDb",
+      "Class": "Pro4Soft.BackgroundWorker.Workers.Download.ToDb.PurchaseOrdersToDb",
+      "ThreadName": "Default"
+    },
+    {
+      "Name": "PickticketsToDb",
+      "Active": true,
+      "RunOnStartup": true,
+      "Start": "2020-01-01T00:00:00-05:00",
+      "Sleep": "00:00:10",
+      "Class": "Pro4Soft.BackgroundWorker.Workers.Download.ToDb.PickticketsToDb",
       "ThreadName": "Default"
     },
 
     {
-      "Name": "PurchaseOrderFromP4W",
+      "Name": "PurchaseOrdersFromP4W",
       "Active": true,
       "RunOnStartup": true,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
-      "Class": "Pro4Soft.BackgroundWorker.Workers.Upload.FromP4W.PurchaseOrderFromP4W",
+      "Class": "Pro4Soft.BackgroundWorker.Workers.Upload.FromP4W.PurchaseOrdersFromP4W",
       "ThreadName": "Default"
-    }
+    },
+    {
+      "Name": "PickticketsFromP4W",
+      "Active": true,
+      "RunOnStartup": true,
+      "Start": "2020-01-01T00:00:00-05:00",
+      "Sleep": "00:00:10",
+      "Class": "Pro4Soft.BackgroundWorker.Workers.Upload.FromP4W.PickticketsFromP4W",
+      "ThreadName": "Default"
+    },
   ]
 }
