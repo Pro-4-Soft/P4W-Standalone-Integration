@@ -84,35 +84,15 @@ public class Pickticket : DownloableP4WEntity
     public string Info9 { get; set; }
     public string Info10 { get; set; }
                
-    public decimal? OrderTotalValue { get; set; }
-    public string Barcode { get; set; }
-    public string PurchaseOrderFacilityCode { get; set; }
-
     public DateTime? CancelDate { get; set; }
     public DateTime? RequiredDate { get; set; }
-
     public DateTime? CloseDate { get; set; }
     public DateTime? MustArriveDate { get; set; }
 
-    //Small Parcel
-    public string ShipCode { get; set; }
-
-    public string DataQuery { get; set; }
-
-    public string FedexAuthenticationAccountNumber { get; set; }
-
     public PaymentType PaymentType { get; set; }
+
     public string Carrier { get; set; }
     public string ShippingService { get; set; }
-
-    public string ThirdPartyAccountNumber { get; set; }
-    public string ThirdPartyPostalCode { get; set; }
-    public string ThirdPartyCountry { get; set; }
-
-    public bool IsInternational { get; set; }
-
-    public bool? IsResidential { get; set; }
-    public bool? IsSignatureRequired { get; set; }
 
     public FreightType FreightType { get; set; } = FreightType.PrivateFleet;
 

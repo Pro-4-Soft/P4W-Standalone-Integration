@@ -169,7 +169,7 @@ public class PickticketsToDb(ScheduleSetting settings) : BaseWorker(settings)
                     pickTicketP4W.State = DownloadState.ReadyForDownload;
                     await context.SaveChangesAsync();
 
-                    await LogAsync($"Pick ticket [{pickTicketP4W.PickTicketNumber}] written to DB");
+                    await LogAsync($"Pickticket [{pickTicketP4W.PickTicketNumber}] written to DB");
                 }
             }
             catch (Exception e)

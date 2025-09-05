@@ -16,4 +16,7 @@ public class VendorP4 : BaseP4Entity
 
     [JsonProperty("clientId")]
     public Guid? ClientId { get; set; }
+
+    [JsonProperty("client")]
+    public ClientP4 Client { get; set; }
 }

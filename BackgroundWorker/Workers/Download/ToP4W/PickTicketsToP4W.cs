@@ -11,7 +11,7 @@ public class PickTicketsToP4W(ScheduleSetting settings) : BaseWorker(settings)
 {
     public override async Task ExecuteAsync()
     {
-        var warehouses = await P4WClient.GetInvokeAsync<List<WarehouseP4>>("/warehouses");
+        List<WarehouseP4> warehouses = null;
         foreach (var company in Config.Companies)
         {
             try
@@ -24,29 +24,36 @@ public class PickTicketsToP4W(ScheduleSetting settings) : BaseWorker(settings)
                     .Include(c => c.Customer)
                     .Include(c => c.Lines).ThenInclude(c => c.Product)
                     .ToListAsync();
+                if (sos.Count == 0)
+                    continue;
+
+                warehouses ??= await P4WClient.GetInvokeAsync<List<WarehouseP4>>("/warehouses");
 
                 foreach (var so in sos)
                 {
                     var count = 0;
+
+                    var warehouse = warehouses.SingleOrDefault(c => c.Code == so.WarehouseCode) ?? throw new BusinessWebException($"Warehouse [{so.WarehouseCode}] is not setup in P4W");
+
                     var payload = new PickTicketP4
                     {
                         //Id = po.P4WId,
                         CustomerId = so.Customer.P4WId ?? throw new BusinessWebException($"Customer [{so.Customer.Code}] has not been synced"),
-                        WarehouseId = warehouses.SingleOrDefault(c => c.Code == so.WarehouseCode)?.Id ?? throw new BusinessWebException($"Warehouse [{so.WarehouseCode}] is not setup in P4W"),
+                        WarehouseId = warehouse.Id.Value,
                         PickTicketNumber = so.PickTicketNumber,
                         Comments = so.Comments,
                         FreightType = so.FreightType.ToString(),
                         ShipFrom = new()
                         {
-                            Name = so.ShipFromName,
-                            Address1 = so.ShipFromAddress1,
-                            Address2 = so.ShipFromAddress2,
-                            Email = so.ShipFromEmail,
-                            Phone = so.ShipFromPhone,
-                            StateProvince = so.ShipFromStateProvince,
-                            City = so.ShipFromCity,
-                            ZipPostal = so.ShipFromZipPostal,
-                            Country = so.ShipFromCountry
+                            Name = warehouse.Name,
+                            Address1 = warehouse.Address1,
+                            Address2 = warehouse.Address2,
+                            Email = warehouse.Email,
+                            Phone = warehouse.Phone,
+                            StateProvince = warehouse.StateProvince,
+                            City = warehouse.City,
+                            ZipPostal = warehouse.ZipPostalCode,
+                            Country = warehouse.Country
                         },
                         ShipTo = new()
                         {

@@ -93,7 +93,7 @@ public class SapServiceClient : IDisposable
             };
 
             var json = Utils.SerializeToStringJson(loginData);
-            await _log($"Login payload: {json}");
+            //await _log($"Login payload: {json}");
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PostAsync("Login", content);

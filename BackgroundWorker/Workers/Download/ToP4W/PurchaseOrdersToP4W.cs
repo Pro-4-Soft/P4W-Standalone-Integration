@@ -11,7 +11,7 @@ public class PurchaseOrdersToP4W(ScheduleSetting settings) : BaseWorker(settings
 {
     public override async Task ExecuteAsync()
     {
-        var warehouses = await P4WClient.GetInvokeAsync<List<WarehouseP4>>("/warehouses");
+        List<WarehouseP4> warehouses = null;
         foreach (var company in Config.Companies)
         {
             try
@@ -24,6 +24,10 @@ public class PurchaseOrdersToP4W(ScheduleSetting settings) : BaseWorker(settings
                     .Include(c => c.Vendor)
                     .Include(c => c.Lines).ThenInclude(c => c.Product)
                     .ToListAsync();
+                if (pos.Count == 0)
+                    continue;
+
+                warehouses ??= await P4WClient.GetInvokeAsync<List<WarehouseP4>>("/warehouses");
 
                 foreach (var po in pos)
                 {

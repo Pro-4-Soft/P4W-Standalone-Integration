@@ -1,8 +1,8 @@
 ﻿{
   "SqlConnection": "Server=localhost;Database=master;User Id=sa;Password=;TrustServerCertificate=True;",
 
-  //"P4WUrl": "https://api.p4warehouse.com/",
-  "P4WUrl": "http://localhost:3000/",
+  "P4WUrl": "https://api.p4warehouse.com/",
+  //"P4WUrl": "http://localhost:3000/",
   "P4WApiKey": "079fd2b7-1a30-4969-9706-4b55c76d1ba9_wL2UprrzI/SHeYm3QdEUgoR4a/jRsJmmDrM6LrvW5DlQV8bAXxzscEP8S7SaEmJowj4BV/vG0EaFFQFGxaxbSg==",
 
   "Companies": [

@@ -55,6 +55,9 @@ public sealed class PickTicketP4 : BaseP4Entity
     [JsonProperty("customerId")]
     public Guid CustomerId { get; set; }
 
+    [JsonProperty("customer")]
+    public CustomerP4 Customer { get; set; }
+
     [JsonProperty("pickTicketNumber")]
     public string PickTicketNumber { get; set; }
 
