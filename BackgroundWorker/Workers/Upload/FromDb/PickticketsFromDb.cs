@@ -18,8 +18,6 @@ public class PickticketsFromDb(ScheduleSetting settings) : BaseWorker(settings)
             try
             {
                 var context = await company.CreateContext(Config.SqlConnection);
-                var sapService = SapServiceClient.GetInstance(company.SapUrl, company.SapCompanyDb, company.SapUsername, company.SapPassword, LogAsync, LogErrorAsync);
-
                 var now = DateTime.Now;
 
                 var pickTickets = await context.PickTickets
@@ -75,6 +73,8 @@ public class PickticketsFromDb(ScheduleSetting settings) : BaseWorker(settings)
 
                             delivery.DocumentLines.Add(line);
                         }
+
+                        var sapService = SapServiceClient.GetInstance(company.SapUrl, company.SapCompanyDb, company.SapUsername, company.SapPassword, LogAsync, LogErrorAsync);
 
                         var goodsReceiptPo = await sapService.Post<BaseDocumentSap>("DeliveryNotes", (object)delivery, LogAsync);
 

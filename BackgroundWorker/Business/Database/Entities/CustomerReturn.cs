@@ -7,7 +7,7 @@ using Pro4Soft.BackgroundWorker.Business.Database.Entities.Base;
 namespace Pro4Soft.BackgroundWorker.Business.Database.Entities;
 
 [Index(nameof(CustomerReturnNumber), IsUnique = true)]
-public class CustomerReturn : DownloableP4WEntity
+public class CustomerReturn : P4WStateEntity
 {
     public Guid? CustomerId { get; set; }
     public virtual Customer Customer { get; set; }

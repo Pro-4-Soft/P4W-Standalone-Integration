@@ -31,7 +31,8 @@ public class PurchaseOrdersFromP4W(ScheduleSetting settings) : BaseWorker(settin
                 po = await context.PurchaseOrders
                     .Include(c => c.Lines).ThenInclude(c => c.Product)
                     .Include(c => c.Lines).ThenInclude(c => c.Details)
-                    .SingleOrDefaultAsync(c => c.P4WId == p4WPo.Id) ?? throw new BusinessWebException($"PO [{p4WPo.PurchaseOrderNumber}] does not exist in Database");
+                    .SingleOrDefaultAsync(c => c.P4WId == p4WPo.Id) 
+                     ?? throw new BusinessWebException($"PO [{p4WPo.PurchaseOrderNumber}] with P4WId [{p4WPo.Id}] does not exist in Database");
 
                 foreach (var line in p4WPo.Lines)
                 {

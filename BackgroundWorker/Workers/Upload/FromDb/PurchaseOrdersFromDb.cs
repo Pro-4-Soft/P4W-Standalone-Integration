@@ -18,8 +18,6 @@ public class PurchaseOrdersFromDb(ScheduleSetting settings) : BaseWorker(setting
             try
             {
                 var context = await company.CreateContext(Config.SqlConnection);
-                var sapService = SapServiceClient.GetInstance(company.SapUrl, company.SapCompanyDb, company.SapUsername, company.SapPassword, LogAsync, LogErrorAsync);
-
                 var now = DateTime.Now;
 
                 var pos = await context.PurchaseOrders
@@ -71,6 +69,7 @@ public class PurchaseOrdersFromDb(ScheduleSetting settings) : BaseWorker(setting
                             delivery.DocumentLines.Add(line);
                         }
 
+                        var sapService = SapServiceClient.GetInstance(company.SapUrl, company.SapCompanyDb, company.SapUsername, company.SapPassword, LogAsync, LogErrorAsync);
                         var goodsReceiptPo = await sapService.Post<BaseDocumentSap>("PurchaseDeliveryNotes", (object)delivery, LogAsync);
 
                         po.Uploaded = true;

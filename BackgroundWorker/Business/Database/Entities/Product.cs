@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Pro4Soft.BackgroundWorker.Business.Database.Entities;
 
 [Index(nameof(Sku), IsUnique = true)]
-public class Product : DownloableP4WEntity
+public class Product : P4WStateEntity
 {
     public Guid ClientId { get; set; }
 
@@ -48,6 +48,12 @@ public class Product : DownloableP4WEntity
     //Small Parcel
     public string HtsNumber { get; set; }
     public string CountryOfOrigin { get; set; }
+
+    [ForeignKey(nameof(Adjustment.ProductId))]
+    public virtual ICollection<Adjustment> Adjustments { get; set; } = new List<Adjustment>();
+
+    [ForeignKey(nameof(ProductInventory.ProductId))]
+    public virtual ICollection<ProductInventory> Inventory { get; set; } = new List<ProductInventory>();
 
     [ForeignKey(nameof(Packsize.ProductId))]
     public virtual ICollection<Packsize> Packsizes { get; set; } = new List<Packsize>();

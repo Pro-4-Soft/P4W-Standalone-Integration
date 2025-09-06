@@ -45,6 +45,10 @@ public class DatabaseContext(DbContextOptions options) : DbContext(options)
     public DbSet<CustomerReturn> CustomerReturns { get; set; }
     public DbSet<CustomerReturnLine> CustomerReturnLines { get; set; }
 
+    public DbSet<Adjustment> Adjustments { get; set; }
+    public DbSet<ProductInventory> ProductInventory { get; set; }
+    public DbSet<ProductInventoryDetail> ProductInventoryDetails { get; set; }
+
     //Overrides
     public override int SaveChanges()
     {

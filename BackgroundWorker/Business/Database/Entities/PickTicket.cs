@@ -7,7 +7,7 @@ using Pro4Soft.BackgroundWorker.Business.Database.Entities.Base;
 namespace Pro4Soft.BackgroundWorker.Business.Database.Entities;
 
 [Index(nameof(PickTicketNumber), IsUnique = true)]
-public class Pickticket : DownloableP4WEntity
+public class Pickticket : P4WStateEntity
 {
     public Guid CustomerId { get; set; }
     public virtual Customer Customer { get; set; }

@@ -4,7 +4,7 @@ using Pro4Soft.BackgroundWorker.Business.Database.Entities.Base;
 
 namespace Pro4Soft.BackgroundWorker.Business.Database.Entities;
 
-public class Vendor : DownloableP4WEntity
+public class Vendor : P4WStateEntity
 {
     public Guid ClientId { get; set; }
 

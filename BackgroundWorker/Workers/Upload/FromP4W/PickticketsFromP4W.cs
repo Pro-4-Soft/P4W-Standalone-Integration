@@ -31,7 +31,8 @@ public class PickticketsFromP4W(ScheduleSetting settings) : BaseWorker(settings)
                 pickTicketDb = await context.PickTickets
                     .Include(c => c.Lines).ThenInclude(c => c.Product)
                     .Include(c => c.Totes).ThenInclude(c => c.Lines).ThenInclude(c => c.Details)
-                    .SingleOrDefaultAsync(c => c.P4WId == pickTicketP4W.Id) ?? throw new BusinessWebException($"Pickticket [{pickTicketP4W.PickTicketNumber}] does not exist in Database");
+                    .SingleOrDefaultAsync(c => c.P4WId == pickTicketP4W.Id) 
+                               ?? throw new BusinessWebException($"Pickticket [{pickTicketP4W.PickTicketNumber}] with P4WId [{pickTicketP4W.Id}] does not exist in Database");
 
                 foreach (var toteP4W in pickTicketP4W.Totes)
                 {

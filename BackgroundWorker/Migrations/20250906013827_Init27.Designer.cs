@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Pro4Soft.BackgroundWorker.Business.Database;
 
@@ -11,9 +12,11 @@ using Pro4Soft.BackgroundWorker.Business.Database;
 namespace Pro4Soft.BackgroundWorker.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250906013827_Init27")]
+    partial class Init27
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1130,103 +1133,6 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.ProductInventory", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("DateCreated")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset>("DateModified")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("ErrorMessage")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("P4WId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("Quantity")
-                        .HasPrecision(15, 6)
-                        .HasColumnType("decimal(15,6)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<string>("State")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
-                    b.Property<string>("WarehouseCode")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("P4WId");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("State");
-
-                    b.ToTable("ProductInventory");
-                });
-
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.ProductInventoryDetail", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("DateCreated")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset>("DateModified")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTime?>("ExpiryDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LotNumber")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<int?>("PacksizeEachCount")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("ProductInventoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("Quantity")
-                        .HasPrecision(15, 6)
-                        .HasColumnType("decimal(15,6)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<string>("SerialNumber")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductInventoryId");
-
-                    b.ToTable("ProductInventoryDetails");
-                });
-
             modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.PurchaseOrder", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1860,28 +1766,6 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.ProductInventory", b =>
-                {
-                    b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.Product", "Product")
-                        .WithMany("Inventory")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.ProductInventoryDetail", b =>
-                {
-                    b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.ProductInventory", "ProductInventory")
-                        .WithMany("Details")
-                        .HasForeignKey("ProductInventoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ProductInventory");
-                });
-
             modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.PurchaseOrder", b =>
                 {
                     b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.Vendor", "Vendor")
@@ -1992,18 +1876,11 @@ namespace Pro4Soft.BackgroundWorker.Migrations
 
                     b.Navigation("CustomerReturnLines");
 
-                    b.Navigation("Inventory");
-
                     b.Navigation("Packsizes");
 
                     b.Navigation("PickTicketLines");
 
                     b.Navigation("PurchaseOrderLines");
-                });
-
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.ProductInventory", b =>
-                {
-                    b.Navigation("Details");
                 });
 
             modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.PurchaseOrder", b =>

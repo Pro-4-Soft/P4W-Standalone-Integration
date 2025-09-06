@@ -8,7 +8,7 @@ using Pro4Soft.BackgroundWorker.Business.Database.Entities.Base;
 namespace Pro4Soft.BackgroundWorker.Business.Database.Entities;
 
 [Index(nameof(PurchaseOrderNumber), IsUnique = true)]
-public class PurchaseOrder : DownloableP4WEntity
+public class PurchaseOrder : P4WStateEntity
 {
     public Guid VendorId { get; set; }
     public virtual Vendor Vendor { get; set; }

@@ -1,64 +1,21 @@
 ﻿{
-  "id": "9665cfb2-80a7-467f-92d4-f54240bb2782",
-  "vendor": {
-    "id": "0f648695-d8c8-48d4-9fbf-31000c502eac",
-    "client": {
-      "id": "aab27d33-163d-4ca9-b376-3f0f88026663",
-      "name": "Default",
-      "description": null,
-      "ssccCompanyId": "0512931"
-    },
-    "vendorCode": "SUP012",
-    "companyName": "Zebra Technologies",
-    "email": null,
-    "phone": null,
-    "contactPerson": null,
-    "description": null
-  },
-  "warehouse": {
-    "id": "be70b910-11d1-4578-9da5-bdfe329bbc51",
-    "warehouseCode": "101"
-  },
-  "purchaseOrderNumber": "6000008",
-  "lines": [
+  "DocDate": "2025-09-05",
+  "TaxDate": "2025-09-05",
+  "DocumentLines": [
     {
-      "id": "5d8cff0e-4dab-4b4f-86f7-d31b1150a0fb",
-      "lineNumber": 0,
-      "product": {
-        "id": "89b3d2fe-372b-4005-a843-87ffbeae5774",
-        "client": null,
-        "sku": "7950206",
-        "description": "BSS BAG NGP 500ML - LAM",
-        "upc": "300651795615",
-        "barcodeType": null,
-        "barcodeValue": null,
-        "referenceNumber": null
-      },
-      "orderedQuantity": 2,
-      "referenceNumber": null,
-      "reference1": "3aec6487-e963-4388-b8a5-412024ebe2ac",
-      "reference2": null,
-      "reference3": null,
-      "receivedQuantity": 2,
-      "details": [
+      "ItemCode": "MAD023",
+      "WarehouseCode": "101",
+      "Quantity": 50,
+      "BatchNumbers": [
         {
-          "receivedQuantity": 2,
-          "lotNumber": "6000008",
-          "serialNumber": null,
-          "expiryDate": null,
-          "packsizeEachCount": 1
+          "BatchNumber": "MAD023-001",
+          "Quantity": 25
+        },
+        {
+          "BatchNumber": "MAD023-002",
+          "Quantity": 25
         }
       ]
     }
-  ],
-  "comments": null,
-  "referenceNumber": null,
-  "reference1": null,
-  "reference2": null,
-  "reference3": null,
-  "appointmentNumber": null,
-  "appointmentDate": null,
-  "requiredDate": null,
-  "dateCreated": "2025-09-04T00:03:40.3945249+00:00",
-  "closeDate": "2025-09-03T20:04:37.2125052+00:00"
+  ]
 }
