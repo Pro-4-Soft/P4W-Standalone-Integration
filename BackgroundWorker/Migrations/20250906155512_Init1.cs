@@ -12,21 +12,22 @@ namespace Pro4Soft.BackgroundWorker.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Clients",
+                name: "ConfigEntries",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    SsccCompanyId = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    StringValue = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IntValue = table.Column<int>(type: "int", nullable: true),
+                    DoubleValue = table.Column<double>(type: "float", nullable: true),
+                    BoolValue = table.Column<bool>(type: "bit", nullable: true),
                     DateCreated = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     DateModified = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
-                    P4WId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Clients", x => x.Id);
+                    table.PrimaryKey("PK_ConfigEntries", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -36,7 +37,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Code = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    CompanyName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     ContactPerson = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Phone = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -56,17 +57,11 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
                     P4WId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     State = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
-                    DownloadError = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true)
+                    ErrorMessage = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Customers", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Customers_Clients_ClientId",
-                        column: x => x.ClientId,
-                        principalTable: "Clients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -76,44 +71,42 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Sku = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
-                    Division = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Category = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Upc = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Nmfc = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     CommodityDescription = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     FreightClass = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    PackType = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     Weight = table.Column<decimal>(type: "decimal(15,6)", precision: 15, scale: 6, nullable: true),
                     Height = table.Column<decimal>(type: "decimal(15,6)", precision: 15, scale: 6, nullable: true),
                     Width = table.Column<decimal>(type: "decimal(15,6)", precision: 15, scale: 6, nullable: true),
                     Length = table.Column<decimal>(type: "decimal(15,6)", precision: 15, scale: 6, nullable: true),
-                    Season = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    ColorCode = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    ColorDescription = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Customer = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    IsInventoryItem = table.Column<bool>(type: "bit", nullable: false),
+                    IsExpiryControlled = table.Column<bool>(type: "bit", nullable: false),
+                    IsPacksizeControlled = table.Column<bool>(type: "bit", nullable: false),
+                    IsSerialControlled = table.Column<bool>(type: "bit", nullable: false),
+                    IsLotControlled = table.Column<bool>(type: "bit", nullable: false),
+                    Info1 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Info2 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Info3 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Info4 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Info6 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Info7 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Info8 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Info9 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Info10 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    HtsTariffNumber = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    HtsNumber = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     CountryOfOrigin = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     DateCreated = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     DateModified = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
                     P4WId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     State = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
-                    DownloadError = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true)
+                    ErrorMessage = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Products", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Products_Clients_ClientId",
-                        column: x => x.ClientId,
-                        principalTable: "Clients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -123,8 +116,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Code = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Division = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    CompanyName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Info2 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Info3 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Info4 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -139,17 +131,11 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
                     P4WId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     State = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
-                    DownloadError = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true)
+                    ErrorMessage = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Vendors", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Vendors_Clients_ClientId",
-                        column: x => x.ClientId,
-                        principalTable: "Clients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -158,9 +144,8 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CustomerReturnNumber = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
                     WarehouseCode = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Division = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    CustomerReturnNumber = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
                     DocumentDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ReferenceNumber = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Source = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -191,7 +176,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
                     P4WId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     State = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
-                    DownloadError = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true)
+                    ErrorMessage = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -209,9 +194,8 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    WarehouseCode = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     PickTicketNumber = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
-                    WarehouseCode = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    Division = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     PoNumber = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     RouteNumber = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     ReferenceNumber = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -219,6 +203,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     Comments = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     ShipFromName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     ShipFromPhone = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    ShipFromEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     ShipFromAddress1 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     ShipFromAddress2 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     ShipFromCity = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -227,6 +212,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     ShipFromCountry = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     BillToName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     BillToPhone = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    BillToEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     BillToAddress1 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     BillToAddress2 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     BillToCity = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -255,6 +241,9 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     StoreNumber = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     CustomerReferenceNumber = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     OrderTotal = table.Column<decimal>(type: "decimal(15,6)", precision: 15, scale: 6, nullable: true),
+                    Reference1 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Reference2 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Reference3 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Info2 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Info3 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Info4 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -264,32 +253,21 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     Info8 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Info9 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Info10 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    OrderTotalValue = table.Column<decimal>(type: "decimal(15,6)", precision: 15, scale: 6, nullable: true),
-                    Barcode = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    PurchaseOrderFacilityCode = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     CancelDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     RequiredDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CloseDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     MustArriveDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ShipCode = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    DataQuery = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    FedexAuthenticationAccountNumber = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    PaymentType = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    PaymentType = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     Carrier = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     ShippingService = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    ThirdPartyAccountNumber = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    ThirdPartyPostalCode = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    ThirdPartyCountry = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    IsInternational = table.Column<bool>(type: "bit", nullable: false),
-                    IsResidential = table.Column<bool>(type: "bit", nullable: true),
-                    IsSignatureRequired = table.Column<bool>(type: "bit", nullable: true),
-                    FreightType = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    FreightType = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    Uploaded = table.Column<bool>(type: "bit", nullable: false),
                     DateCreated = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     DateModified = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
                     P4WId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     State = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
-                    DownloadError = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true)
+                    ErrorMessage = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -298,6 +276,45 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                         name: "FK_PickTickets_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Adjustments",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Timestamp = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Client = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    SubType = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Type = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    FromWarehouse = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    ToWarehouse = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Sku = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    EachCount = table.Column<int>(type: "int", nullable: true),
+                    NumberOfPacks = table.Column<int>(type: "int", nullable: true),
+                    LotNumber = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    ExpiryDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    SerialNumber = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Quantity = table.Column<decimal>(type: "decimal(15,6)", precision: 15, scale: 6, nullable: false),
+                    Reason = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    DateCreated = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    DateModified = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
+                    P4WId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    State = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    ErrorMessage = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Adjustments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Adjustments_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -313,7 +330,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     Width = table.Column<decimal>(type: "decimal(15,6)", precision: 15, scale: 6, nullable: true),
                     Length = table.Column<decimal>(type: "decimal(15,6)", precision: 15, scale: 6, nullable: true),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Eaches = table.Column<int>(type: "int", nullable: false),
+                    EachCount = table.Column<int>(type: "int", nullable: false),
                     DateCreated = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     DateModified = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
@@ -330,17 +347,43 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ProductInventory",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    WarehouseCode = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Quantity = table.Column<decimal>(type: "decimal(15,6)", precision: 15, scale: 6, nullable: false),
+                    DateCreated = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    DateModified = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
+                    P4WId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    State = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    ErrorMessage = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductInventory", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProductInventory_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PurchaseOrders",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     VendorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    WarehouseCode = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     PurchaseOrderNumber = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
-                    WarehouseCode = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    Division = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     RequiredDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CancelDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ReferenceNumber = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Reference1 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Container = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Carrier = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Comments = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -354,12 +397,13 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     Info8 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Info9 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Info10 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Uploaded = table.Column<bool>(type: "bit", nullable: false),
                     DateCreated = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     DateModified = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
                     P4WId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     State = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
-                    DownloadError = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true)
+                    ErrorMessage = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -426,11 +470,10 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     PickTicketId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     LineNumber = table.Column<int>(type: "int", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    Packsize = table.Column<int>(type: "int", nullable: true),
+                    NumberOfPacks = table.Column<int>(type: "int", nullable: true),
+                    Quantity = table.Column<decimal>(type: "decimal(15,6)", precision: 15, scale: 6, nullable: false),
                     SalesPrice = table.Column<decimal>(type: "decimal(15,6)", precision: 15, scale: 6, nullable: true),
-                    ProductSize = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    ProductColor = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    CustomerProductDescription = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Info1 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Info2 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Info3 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -467,6 +510,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    P4WId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PickTicketId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Sscc18Code = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     PalletSscc18Code = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -482,7 +526,6 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     ProNumber = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     BolNumber = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     MasterBolNumber = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    CartonName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Weight = table.Column<decimal>(type: "decimal(15,6)", precision: 15, scale: 6, nullable: true),
                     Length = table.Column<decimal>(type: "decimal(15,6)", precision: 15, scale: 6, nullable: true),
                     Height = table.Column<decimal>(type: "decimal(15,6)", precision: 15, scale: 6, nullable: true),
@@ -506,12 +549,40 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ProductInventoryDetails",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProductInventoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Quantity = table.Column<decimal>(type: "decimal(15,6)", precision: 15, scale: 6, nullable: false),
+                    LotNumber = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    SerialNumber = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    PacksizeEachCount = table.Column<int>(type: "int", nullable: true),
+                    DateCreated = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    DateModified = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductInventoryDetails", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProductInventoryDetails_ProductInventory_ProductInventoryId",
+                        column: x => x.ProductInventoryId,
+                        principalTable: "ProductInventory",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PurchaseOrderLines",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PurchaseOrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    LineNumber = table.Column<int>(type: "int", nullable: false),
                     Info1 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Info2 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Info3 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -522,8 +593,10 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     Info8 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Info9 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Info10 = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
-                    ReceivedQuantity = table.Column<int>(type: "int", nullable: true),
+                    Packsize = table.Column<int>(type: "int", nullable: true),
+                    NumberOfPacks = table.Column<int>(type: "int", nullable: true),
+                    Quantity = table.Column<decimal>(type: "decimal(15,6)", precision: 15, scale: 6, nullable: false),
+                    ReceivedQuantity = table.Column<decimal>(type: "decimal(15,6)", precision: 15, scale: 6, nullable: true),
                     DateCreated = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     DateModified = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
@@ -549,8 +622,9 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    P4WId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ToteId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ShippedQuantity = table.Column<int>(type: "int", nullable: false),
+                    ShippedQuantity = table.Column<decimal>(type: "decimal(15,6)", precision: 15, scale: 6, nullable: false),
                     PickTicketLineId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     DateCreated = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     DateModified = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
@@ -573,10 +647,73 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "PurchaseOrderLineDetails",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PurchaseOrderLineId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ReceivedQuantity = table.Column<decimal>(type: "decimal(15,6)", precision: 15, scale: 6, nullable: false),
+                    LotNumber = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    SerialNumber = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    PacksizeEachCount = table.Column<int>(type: "int", nullable: true),
+                    DateCreated = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    DateModified = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PurchaseOrderLineDetails", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PurchaseOrderLineDetails_PurchaseOrderLines_PurchaseOrderLineId",
+                        column: x => x.PurchaseOrderLineId,
+                        principalTable: "PurchaseOrderLines",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ToteLineDetails",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    P4WId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ToteLineId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ShippedQuantity = table.Column<decimal>(type: "decimal(15,6)", precision: 15, scale: 6, nullable: false),
+                    LotNumber = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    SerialNumber = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    PacksizeEachCount = table.Column<int>(type: "int", nullable: true),
+                    DateCreated = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    DateModified = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ToteLineDetails", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ToteLineDetails_ToteLines_ToteLineId",
+                        column: x => x.ToteLineId,
+                        principalTable: "ToteLines",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
-                name: "IX_Clients_P4WId",
-                table: "Clients",
+                name: "IX_Adjustments_P4WId",
+                table: "Adjustments",
                 column: "P4WId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Adjustments_ProductId",
+                table: "Adjustments",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Adjustments_State",
+                table: "Adjustments",
+                column: "State");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CustomerReturnLines_CustomerReturnId",
@@ -608,11 +745,6 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                 name: "IX_CustomerReturns_State",
                 table: "CustomerReturns",
                 column: "State");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Customers_ClientId",
-                table: "Customers",
-                column: "ClientId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Customers_P4WId",
@@ -661,9 +793,24 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                 column: "State");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Products_ClientId",
-                table: "Products",
-                column: "ClientId");
+                name: "IX_ProductInventory_P4WId",
+                table: "ProductInventory",
+                column: "P4WId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductInventory_ProductId",
+                table: "ProductInventory",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductInventory_State",
+                table: "ProductInventory",
+                column: "State");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductInventoryDetails_ProductInventoryId",
+                table: "ProductInventoryDetails",
+                column: "ProductInventoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_P4WId",
@@ -680,6 +827,11 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                 name: "IX_Products_State",
                 table: "Products",
                 column: "State");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PurchaseOrderLineDetails_PurchaseOrderLineId",
+                table: "PurchaseOrderLineDetails",
+                column: "PurchaseOrderLineId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PurchaseOrderLines_ProductId",
@@ -713,6 +865,11 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                 column: "VendorId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ToteLineDetails_ToteLineId",
+                table: "ToteLineDetails",
+                column: "ToteLineId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ToteLines_PickTicketLineId",
                 table: "ToteLines",
                 column: "PickTicketLineId");
@@ -726,11 +883,6 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                 name: "IX_Totes_PickTicketId",
                 table: "Totes",
                 column: "PickTicketId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Vendors_ClientId",
-                table: "Vendors",
-                column: "ClientId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Vendors_P4WId",
@@ -747,19 +899,37 @@ namespace Pro4Soft.BackgroundWorker.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Adjustments");
+
+            migrationBuilder.DropTable(
+                name: "ConfigEntries");
+
+            migrationBuilder.DropTable(
                 name: "CustomerReturnLines");
 
             migrationBuilder.DropTable(
                 name: "Packsizes");
 
             migrationBuilder.DropTable(
+                name: "ProductInventoryDetails");
+
+            migrationBuilder.DropTable(
+                name: "PurchaseOrderLineDetails");
+
+            migrationBuilder.DropTable(
+                name: "ToteLineDetails");
+
+            migrationBuilder.DropTable(
+                name: "CustomerReturns");
+
+            migrationBuilder.DropTable(
+                name: "ProductInventory");
+
+            migrationBuilder.DropTable(
                 name: "PurchaseOrderLines");
 
             migrationBuilder.DropTable(
                 name: "ToteLines");
-
-            migrationBuilder.DropTable(
-                name: "CustomerReturns");
 
             migrationBuilder.DropTable(
                 name: "PurchaseOrders");
@@ -781,9 +951,6 @@ namespace Pro4Soft.BackgroundWorker.Migrations
 
             migrationBuilder.DropTable(
                 name: "Customers");
-
-            migrationBuilder.DropTable(
-                name: "Clients");
         }
     }
 }

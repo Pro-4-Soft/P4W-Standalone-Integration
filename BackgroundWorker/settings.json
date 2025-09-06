@@ -3,7 +3,7 @@
 
   "P4WUrl": "https://api.p4warehouse.com/",
   //"P4WUrl": "http://localhost:3000/",
-  "P4WApiKey": "079fd2b7-1a30-4969-9706-4b55c76d1ba9_wL2UprrzI/SHeYm3QdEUgoR4a/jRsJmmDrM6LrvW5DlQV8bAXxzscEP8S7SaEmJowj4BV/vG0EaFFQFGxaxbSg==",
+  "P4WApiKey": "079fd2b7-1a30-4969-9706-4b55c76d1ba9_W6p4t6lEq7LV+vjX1rs1+vSiX68pA9mc5gxLQMaMaZzwknOmFnoV1tCGLzkyiTtRCy6zJWsgz4v6PXz3/PTGwQ==",
 
   "Companies": [
     {
@@ -92,6 +92,6 @@
       "Sleep": "00:00:10",
       "Class": "Pro4Soft.BackgroundWorker.Workers.Upload.FromP4W.InventoryFromP4W",
       "ThreadName": "Default"
-    },
+    }
   ]
 }

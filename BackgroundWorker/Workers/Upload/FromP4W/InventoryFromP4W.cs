@@ -44,6 +44,7 @@ public class InventoryFromP4W(ScheduleSetting settings) : BaseWorker(settings)
                             {
                                 ProductId = product.Id,
                                 WarehouseCode = wh.Code,
+                                Quantity = invItem.Quantity
                             };
                             await context.ProductInventory.AddAsync(existingInv);
                             added++;

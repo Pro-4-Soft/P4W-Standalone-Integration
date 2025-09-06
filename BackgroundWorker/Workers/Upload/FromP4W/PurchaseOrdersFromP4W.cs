@@ -37,7 +37,7 @@ public class PurchaseOrdersFromP4W(ScheduleSetting settings) : BaseWorker(settin
                 foreach (var line in p4WPo.Lines)
                 {
                     var dbLine = po.Lines.SingleOrDefault(c => c.Id == line.Reference1.ParseGuid()) ??
-                                 throw new BusinessWebException($"Line [{line.LineNumber}] with Sku [{line.Product.Sku}] could does not existing on original PO. Line Id [{line.Reference1}] not found");
+                                 throw new BusinessWebException($"Line [{line.LineNumber}] with Sku [{line.Product.Sku}] does not existing on original PO. Line Id [{line.Reference1}] not found");
 
                     dbLine.ReceivedQuantity = line.ReceivedQuantity;
 
