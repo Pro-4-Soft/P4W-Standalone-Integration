@@ -4,6 +4,7 @@ using Pro4Soft.BackgroundWorker.Business.P4W.Entities;
 using Pro4Soft.BackgroundWorker.Execution;
 using Pro4Soft.BackgroundWorker.Execution.Common;
 using Pro4Soft.BackgroundWorker.Execution.SettingsFramework;
+using Pro4Soft.BackgroundWorker.Workers.Upload.FromDb;
 
 namespace Pro4Soft.BackgroundWorker.Workers.Upload.FromP4W;
 
@@ -106,6 +107,6 @@ public class InventoryFromP4W(ScheduleSetting settings) : BaseWorker(settings)
         if (added > 0 || changed > 0 || removed > 0)
             await LogAsync($"Added [{added}], Changed [{changed}], Removed [{removed}] inventory records");
 
-        //await new AdjustmentsFromDb(Settings).ExecuteAsync();
+        await new InventoryFromDb(Settings).ExecuteAsync();
     }
 }
