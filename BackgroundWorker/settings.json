@@ -84,14 +84,14 @@
       "Class": "Pro4Soft.BackgroundWorker.Workers.Upload.FromP4W.PickticketsFromP4W",
       "ThreadName": "Default"
     },
-    {
-      "Name": "InventoryFromP4W",
-      "Active": true,
-      "RunOnStartup": true,
-      "Start": "2020-01-01T00:00:00-05:00",
-      "Sleep": "00:00:10",
-      "Class": "Pro4Soft.BackgroundWorker.Workers.Upload.FromP4W.InventoryFromP4W",
-      "ThreadName": "Default"
-    }
+    //{
+    //  "Name": "InventoryFromP4W",
+    //  "Active": true,
+    //  "RunOnStartup": true,
+    //  "Start": "2020-01-01T00:00:00-05:00",
+    //  "Sleep": "00:00:10",
+    //  "Class": "Pro4Soft.BackgroundWorker.Workers.Upload.FromP4W.InventoryFromP4W",
+    //  "ThreadName": "Default"
+    //}
   ]
 }

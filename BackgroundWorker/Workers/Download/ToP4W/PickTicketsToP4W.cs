@@ -31,10 +31,21 @@ public class PickTicketsToP4W(ScheduleSetting settings) : BaseWorker(settings)
 
                 foreach (var so in sos)
                 {
+                    if (so.IsCancelled)
+                    {
+                        if (so.P4WId != null)
+                        {
+                            await P4WClient.WebInvokeAsync($"/pick-tickets/{so.P4WId}", HttpMethod.Delete);
+                            await LogAsync($"Pickticket [{so.PickTicketNumber}] delete from P4W");
+                        }
+
+                        so.State = DownloadState.Downloaded;
+                        await context.SaveChangesAsync();
+                        continue;
+                    }
+
                     var count = 0;
-
                     var warehouse = warehouses.SingleOrDefault(c => c.Code == so.WarehouseCode) ?? throw new BusinessWebException($"Warehouse [{so.WarehouseCode}] is not setup in P4W");
-
                     var payload = new PickTicketP4
                     {
                         //Id = po.P4WId,

@@ -9,6 +9,8 @@ public class PurchaseOrderSap : BaseDocumentSap
     public string Comments { get; set; }
 
     public string Confirmed { get; set; }
+    public string Cancelled { get; set; }
+    
     public string DocumentStatus { get; set; }
 
     public DateTime? UpdateDate { get; set; }

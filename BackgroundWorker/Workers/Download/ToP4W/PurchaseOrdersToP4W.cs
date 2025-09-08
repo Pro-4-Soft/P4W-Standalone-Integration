@@ -31,6 +31,19 @@ public class PurchaseOrdersToP4W(ScheduleSetting settings) : BaseWorker(settings
 
                 foreach (var po in pos)
                 {
+                    if (po.IsCancelled)
+                    {
+                        if (po.P4WId != null)
+                        {
+                            await P4WClient.WebInvokeAsync($"/purchase-orders/{po.P4WId}", HttpMethod.Delete);
+                            await LogAsync($"PO [{po.PurchaseOrderNumber}] delete from P4W");
+                        }
+
+                        po.State = DownloadState.Downloaded;
+                        await context.SaveChangesAsync();
+                        continue;
+                    }
+
                     var count = 0;
                     var payload = new PurchaseOrderP4
                     {

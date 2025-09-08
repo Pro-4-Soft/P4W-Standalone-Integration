@@ -49,6 +49,8 @@ public class CustomerReturn : P4WStateEntity
     public string Info9 { get; set; }
     public string Info10 { get; set; }
 
+    public bool IsCancelled { get; set; }
+
     [ForeignKey(nameof(CustomerReturnLine.CustomerReturnId))]
     public virtual ICollection<CustomerReturnLine> Lines { get; set; } = new List<CustomerReturnLine>();
 }

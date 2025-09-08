@@ -11,7 +11,9 @@ public class SalesOrderSap : BaseDocumentSap
 
     public string Confirmed { get; set; }
     public string DocumentStatus { get; set; }
-    
+
+    public string Cancelled { get; set; }
+
     public string DocObjectCode { get; set; }
 
     public DateTime? RequriedDate { get; set; }

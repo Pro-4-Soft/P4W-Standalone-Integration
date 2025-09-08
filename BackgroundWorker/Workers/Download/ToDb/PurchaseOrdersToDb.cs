@@ -22,12 +22,7 @@ public class PurchaseOrdersToDb(ScheduleSetting settings) : BaseWorker(settings)
 
             var sapService = SapServiceClient.GetInstance(company.SapUrl, company.SapCompanyDb, company.SapUsername, company.SapPassword, LogAsync, LogErrorAsync);
             var lastRead = await masterContext.GetStringAsync(ConfigConstants.Download_PurchaseOrder_LastSync);
-            var pos = await sapService.Get<PurchaseOrderSap>("PurchaseOrders",
-                new(ConditionType.And, [
-                    new FilterRule("DocumentStatus", Operator.Eq, "'bost_Open'"),
-                    SapServiceClient.GetLastUpdatedRule(lastRead?.ParseDateTimeNullable())
-                ]));
-
+            var pos = await sapService.Get<PurchaseOrderSap>("PurchaseOrders", SapServiceClient.GetLastUpdatedRule(lastRead?.ParseDateTimeNullable()));
             if (pos.Count == 0)
                 continue;
 
@@ -53,6 +48,29 @@ public class PurchaseOrdersToDb(ScheduleSetting settings) : BaseWorker(settings)
             try
             {
                 var context = await company.CreateContext(Config.SqlConnection);
+                if (po.DocumentStatus != "bost_Open")//Close/Cancel scenario
+                {
+                    if (po.Cancelled?.ToLower() == "tyes")
+                    {
+                        var existing = await context.PurchaseOrders.OrderByDescending(c => c.DateCreated).FirstOrDefaultAsync(c => c.Reference1 == po.DocEntry);
+                        if (existing?.P4WId != null)
+                        {
+                            try
+                            {
+                                await LogAsync($"PO [{existing.PurchaseOrderNumber}] cancelled in SAP");
+                                existing.State = DownloadState.ReadyForDownload;
+                                existing.IsCancelled = true;
+                                await context.SaveChangesAsync();
+                            }
+                            catch (Exception e)
+                            {
+                                await LogErrorAsync(e);
+                            }
+                        }
+                    }
+                    continue;
+                }
+
                 var vendor = await context.Vendors
                     .Where(c => c.Code == po.CardCode && c.ClientId == clientId)
                     .SingleOrDefaultAsync();

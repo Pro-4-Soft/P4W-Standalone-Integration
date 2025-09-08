@@ -23,11 +23,7 @@ public class PickticketsToDb(ScheduleSetting settings) : BaseWorker(settings)
 
             var sapService = SapServiceClient.GetInstance(company.SapUrl, company.SapCompanyDb, company.SapUsername, company.SapPassword, LogAsync, LogErrorAsync);
             var lastRead = await masterContext.GetStringAsync(ConfigConstants.Download_SalesOrder_LastSync);
-            var sos = await sapService.Get<SalesOrderSap>("Orders",
-                new(ConditionType.And, [
-                    new FilterRule("DocumentStatus", Operator.Eq, "'bost_Open'"),
-                    SapServiceClient.GetLastUpdatedRule(lastRead?.ParseDateTimeNullable())
-                ]));
+            var sos = await sapService.Get<SalesOrderSap>("Orders", SapServiceClient.GetLastUpdatedRule(lastRead?.ParseDateTimeNullable()));
 
             if (sos.Count == 0)
                 continue;
@@ -41,19 +37,42 @@ public class PickticketsToDb(ScheduleSetting settings) : BaseWorker(settings)
         await new PickTicketsToP4W(Settings).ExecuteAsync();
     }
 
-    public async Task DownloadSos(CompanySettings company, List<SalesOrderSap> pos)
+    public async Task DownloadSos(CompanySettings company, List<SalesOrderSap> sos)
     {
-        if (pos.Count == 0)
+        if (sos.Count == 0)
             return;
 
         var sapService = SapServiceClient.GetInstance(company.SapUrl, company.SapCompanyDb, company.SapUsername, company.SapPassword, LogAsync, LogErrorAsync);
         var clientId = await GetClientId(company) ?? throw new BusinessWebException($"Client id does not exist");
 
-        foreach (var so in pos)
+        foreach (var so in sos)
         {
             try
             {
                 var context = await company.CreateContext(Config.SqlConnection);
+                if (so.DocumentStatus != "bost_Open")//Close/Cancel scenario
+                {
+                    if (so.Cancelled?.ToLower() == "tyes")
+                    {
+                        var existing = await context.PickTickets.OrderByDescending(c => c.DateCreated).FirstOrDefaultAsync(c => c.Reference1 == so.DocEntry);
+                        if (existing?.P4WId != null)
+                        {
+                            try
+                            {
+                                await LogAsync($"Pickticket [{existing.PickTicketNumber}] cancelled in SAP and delete from P4W");
+                                existing.State = DownloadState.ReadyForDownload;
+                                existing.IsCancelled = true;
+                                await context.SaveChangesAsync();
+                            }
+                            catch (Exception e)
+                            {
+                                await LogErrorAsync(e);
+                            }
+                        }
+                    }
+                    continue;
+                }
+
                 var customer = await context.Customers
                     .Where(c => c.Code == so.CardCode && c.ClientId == clientId)
                     .SingleOrDefaultAsync();
