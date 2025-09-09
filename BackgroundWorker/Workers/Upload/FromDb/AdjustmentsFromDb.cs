@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Pro4Soft.BackgroundWorker.Business.Database.Entities.Base;
-using Pro4Soft.BackgroundWorker.Business.P4W.Entities;
-using Pro4Soft.BackgroundWorker.Business.SAP;
 using Pro4Soft.BackgroundWorker.Execution;
 using Pro4Soft.BackgroundWorker.Execution.SettingsFramework;
 using System.Dynamic;
+using Pro4Soft.BackgroundWorker.Dto.Database.Entities.Base;
+using Pro4Soft.BackgroundWorker.Dto.P4W.Entities;
+using Pro4Soft.BackgroundWorker.Dto.SAP;
 
 namespace Pro4Soft.BackgroundWorker.Workers.Upload.FromDb;
 

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Pro4Soft.BackgroundWorker.Business.Database;
+using Pro4Soft.BackgroundWorker.Dto.Database;
 
 #nullable disable
 

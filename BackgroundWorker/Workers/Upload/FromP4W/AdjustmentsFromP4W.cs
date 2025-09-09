@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Pro4Soft.BackgroundWorker.Business.Database.Entities.Base;
-using Pro4Soft.BackgroundWorker.Business.P4W.Entities;
+using Pro4Soft.BackgroundWorker.Dto.Database.Entities.Base;
+using Pro4Soft.BackgroundWorker.Dto.P4W.Entities;
 using Pro4Soft.BackgroundWorker.Execution;
 using Pro4Soft.BackgroundWorker.Execution.Common;
 using Pro4Soft.BackgroundWorker.Execution.SettingsFramework;
 using Pro4Soft.BackgroundWorker.Workers.Upload.FromDb;
-using ConditionType = Pro4Soft.BackgroundWorker.Business.P4W.Entities.ConditionType;
-using Operator = Pro4Soft.BackgroundWorker.Business.P4W.Entities.Operator;
+using ConditionType = Pro4Soft.BackgroundWorker.Dto.P4W.Entities.ConditionType;
+using Operator = Pro4Soft.BackgroundWorker.Dto.P4W.Entities.Operator;
 
 namespace Pro4Soft.BackgroundWorker.Workers.Upload.FromP4W;
 

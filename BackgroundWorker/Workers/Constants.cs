@@ -1,6 +1,4 @@
-using System.Globalization;
-
-namespace Pro4Soft.BackgroundWorker.Business;
+namespace Pro4Soft.BackgroundWorker.Workers;
 
 public static class Constants
 {

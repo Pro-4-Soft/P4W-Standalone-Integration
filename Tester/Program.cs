@@ -1,4 +1,4 @@
-﻿using Pro4Soft.BackgroundWorker.Business.P4W.Entities;
+﻿using Pro4Soft.BackgroundWorker.Dto.P4W.Entities;
 using Pro4Soft.BackgroundWorker.Execution.Common;
 
 namespace Tester;

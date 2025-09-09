@@ -1,5 +1,5 @@
 ﻿using System.Collections.Concurrent;
-using Pro4Soft.BackgroundWorker.Business.P4W.Entities;
+using Pro4Soft.BackgroundWorker.Dto.P4W.Entities;
 using Pro4Soft.BackgroundWorker.Execution.Common;
 using Pro4Soft.BackgroundWorker.Execution.SettingsFramework;
 using Pro4Soft.BackgroundWorker.Workers;

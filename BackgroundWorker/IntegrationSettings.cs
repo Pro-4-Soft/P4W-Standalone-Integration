@@ -2,9 +2,9 @@
 using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Pro4Soft.BackgroundWorker.Business;
-using Pro4Soft.BackgroundWorker.Business.Database;
+using Pro4Soft.BackgroundWorker.Dto.Database;
 using Pro4Soft.BackgroundWorker.Execution.SettingsFramework;
+using Pro4Soft.BackgroundWorker.Workers;
 
 namespace Pro4Soft.BackgroundWorker;
 

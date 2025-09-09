@@ -1,9 +1,8 @@
 ﻿using System.Collections.Concurrent;
 using System.Dynamic;
 using System.Text.RegularExpressions;
-using Pro4Soft.BackgroundWorker.Execution.Common;
 
-namespace Pro4Soft.P4E.Common.Utilities;
+namespace Pro4Soft.BackgroundWorker.Execution.Common;
 
 public static class Extensions
 {

@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Text;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
-using Pro4Soft.BackgroundWorker.Business.SAP;
+using Pro4Soft.BackgroundWorker.Dto.SAP;
 using Pro4Soft.BackgroundWorker.Execution;
 using Pro4Soft.BackgroundWorker.Execution.Common;
 
