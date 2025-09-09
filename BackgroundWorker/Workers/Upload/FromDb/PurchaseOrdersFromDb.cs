@@ -70,7 +70,7 @@ public class PurchaseOrdersFromDb(ScheduleSetting settings) : BaseWorker(setting
                         }
 
                         var sapService = SapServiceClient.GetInstance(company.SapUrl, company.SapCompanyDb, company.SapUsername, company.SapPassword, LogAsync, LogErrorAsync);
-                        var goodsReceiptPo = await sapService.Post<BaseDocumentSap>("PurchaseDeliveryNotes", (object)delivery, LogAsync);
+                        var goodsReceiptPo = await sapService.Post<BaseDocumentSap>("PurchaseDeliveryNotes", delivery);
 
                         po.Uploaded = true;
                         po.State = DownloadState.Uploaded;

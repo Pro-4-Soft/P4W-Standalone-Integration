@@ -76,7 +76,7 @@ public class PickticketsFromDb(ScheduleSetting settings) : BaseWorker(settings)
 
                         var sapService = SapServiceClient.GetInstance(company.SapUrl, company.SapCompanyDb, company.SapUsername, company.SapPassword, LogAsync, LogErrorAsync);
 
-                        var goodsReceiptPo = await sapService.Post<BaseDocumentSap>("DeliveryNotes", (object)delivery, LogAsync);
+                        var goodsReceiptPo = await sapService.Post<BaseDocumentSap>("DeliveryNotes", delivery);
 
                         pickTicket.Uploaded = true;
                         pickTicket.State = DownloadState.Uploaded;

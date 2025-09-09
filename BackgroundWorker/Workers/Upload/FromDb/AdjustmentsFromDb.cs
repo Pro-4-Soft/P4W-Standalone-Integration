@@ -80,7 +80,7 @@ public class AdjustmentsFromDb(ScheduleSetting settings) : BaseWorker(settings)
             }
 
             await SapServiceClient.GetInstance(company.SapUrl, company.SapCompanyDb, company.SapUsername, company.SapPassword, LogAsync, LogErrorAsync)
-                .Post<BaseDocumentSap>(endpoint, (object)adjDoc, LogAsync);
+                .Post<BaseDocumentSap>(endpoint, (object)adjDoc);
 
             await LogAsync($"{(type == AuditType.ProductAdd?"Positive":"Negative")} adjustment with [{adjusts.Count}] lines written to SAP");
         }

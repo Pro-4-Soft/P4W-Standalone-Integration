@@ -35,8 +35,17 @@ public class PickTicketsToP4W(ScheduleSetting settings) : BaseWorker(settings)
                     {
                         if (so.P4WId != null)
                         {
-                            await P4WClient.WebInvokeAsync($"/pick-tickets/{so.P4WId}", HttpMethod.Delete);
-                            await LogAsync($"Pickticket [{so.PickTicketNumber}] delete from P4W");
+                            try
+                            {
+                                await P4WClient.WebInvokeAsync($"/pick-tickets/{so.P4WId}", HttpMethod.Delete);
+                                await LogAsync($"Pickticket [{so.PickTicketNumber}] delete from P4W");
+                            }
+                            catch (Exception e)
+                            {
+                                await LogAsync($"Cannot delete pickticket [{so.PickTicketNumber}] - [{e.Message}]");
+                                await P4WClient.WebInvokeAsync($"/pick-tickets/suspend/{so.P4WId}", HttpMethod.Post);
+                                await LogAsync($"Pickticket [{so.PickTicketNumber}] suspended");
+                            }
                         }
 
                         so.State = DownloadState.Downloaded;

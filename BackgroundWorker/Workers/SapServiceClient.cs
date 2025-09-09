@@ -182,13 +182,13 @@ public class SapServiceClient : IDisposable
         throw new BusinessWebException(response.StatusCode, error);
     }
 
-    public async Task<T> Post<T>(string endpoint, object payload, Func<string, Task> printLog = null)
+    public async Task<T> Post<T>(string endpoint, object payload)
     {
-        var content = await Post(endpoint, payload, printLog);
+        var content = await Post(endpoint, payload);
         return Utils.DeserializeFromJson<T>(content);
     }
 
-    public async Task<string> Post(string endpoint, object payload, Func<string, Task> printLog = null)
+    public async Task<string> Post(string endpoint, object payload)
     {
         await EnsureAuthenticatedAsync();
 
@@ -209,8 +209,8 @@ public class SapServiceClient : IDisposable
 
         var error = await response.Content.ReadAsStringAsync();
 
-        if (printLog != null)
-            await printLog($@"
+        if (_logError != null)
+            await _logError($@"
 Request: POST - {_httpClient.BaseAddress}{endpoint}
 {Utils.SerializeToStringJson(payload, Formatting.Indented)}
 Response: {response.StatusCode.ToString()} ({(int)response.StatusCode})

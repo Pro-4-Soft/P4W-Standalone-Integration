@@ -126,7 +126,7 @@ public class WebClient
         foreach(var key in Headers.Keys)
             request.Headers.Add(key, Headers[key]);
 
-        if (method == HttpMethod.Post || method == HttpMethod.Put || method == HttpMethod.Patch)
+        if (payload != null && (method == HttpMethod.Post || method == HttpMethod.Put || method == HttpMethod.Patch))
         {
             var serializedData = Utils.SerializeToStringJson(payload);
             request.Content = new StringContent(serializedData, Encoding.UTF8, "application/json");
