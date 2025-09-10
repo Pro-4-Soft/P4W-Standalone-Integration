@@ -28,7 +28,6 @@ public class ProductsToDb(ScheduleSetting settings) : BaseWorker(settings)
 
             var itemGroupsCodes = await sapService.Get<ItemGroupCodeSap>("ItemGroups");
             var packsizeGroups = await sapService.Get<UnitOfMeasurementGroup>("UnitOfMeasurementGroups");
-            var uoms = await sapService.Get<UnitOfMeasureSap>("UnitOfMeasurements");
 
             var clients = await P4WClient.GetInvokeAsync<List<ClientP4>>($"clients?clientName={company.P4WClientName}");
             if (clients.Count == 0)
