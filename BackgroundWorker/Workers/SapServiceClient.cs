@@ -2,7 +2,6 @@ using System.Collections.Concurrent;
 using System.Net;
 using System.Reflection;
 using System.Text;
-using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Pro4Soft.BackgroundWorker.Dto.SAP;
 using Pro4Soft.BackgroundWorker.Execution;

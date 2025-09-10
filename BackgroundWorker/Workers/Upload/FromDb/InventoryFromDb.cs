@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Pro4Soft.BackgroundWorker.Dto.SAP;
 using Pro4Soft.BackgroundWorker.Execution;
 using Pro4Soft.BackgroundWorker.Execution.SettingsFramework;
 using System.Dynamic;
-using Pro4Soft.BackgroundWorker.Dto.Database.Entities.Base;
 
 namespace Pro4Soft.BackgroundWorker.Workers.Upload.FromDb;
 
@@ -15,44 +15,72 @@ public class InventoryFromDb(ScheduleSetting settings) : BaseWorker(settings)
         {
             try
             {
+                var sapService = SapServiceClient.GetInstance(company.SapUrl, company.SapCompanyDb, company.SapUsername, company.SapPassword, LogAsync, LogErrorAsync);
+
+                var packsizeGroups = await sapService.Get<UnitOfMeasurementGroup>("UnitOfMeasurementGroups");
+                var uoms = await sapService.Get<UnitOfMeasureSap>("UnitOfMeasurements");
+
                 var context = await company.CreateContext(Config.SqlConnection);
-                var inventory = await context.ProductInventory.Include(c => c.Details).Include(c => c.Product).ToListAsync();
+                var products = await context.Products.Where(c => c.IsInventoryItem).Include(c => c.Inventory).ThenInclude(c => c.Details).ToListAsync();
 
-                dynamic countDoc = new ExpandoObject();
-                countDoc.CountDate = now.Date.ToString("yyyy-MM-dd");
-                countDoc.Remarks = "P4W Inventory sync";
-                countDoc.InventoryCountingLines = new List<ExpandoObject>();
-
-                foreach (var inv in inventory)
+                foreach (var wh in company.SyncWarehouses)
                 {
-                    dynamic line = new ExpandoObject();
-                    countDoc.InventoryCountingLines.Add(line);
+                    dynamic countDoc = new ExpandoObject();
+                    countDoc.CountDate = now.Date.ToString("yyyy-MM-dd");
+                    countDoc.Remarks = $"P4W Inventory sync [{wh}]";
+                    countDoc.InventoryCountingLines = new List<ExpandoObject>();
+                    foreach (var product in products)
+                    {
+                        var prodInv = product.Inventory.SingleOrDefault(c => c.WarehouseCode == wh);
+                        
+                        if (prodInv == null)
+                        {
+                            dynamic line = new ExpandoObject();
+                            countDoc.InventoryCountingLines.Add(line);
 
-                    line.ItemCode = inv.Product.Sku;
-                    line.WarehouseCode = inv.WarehouseCode;
-                    line.CountedQuantity = inv.Quantity;
+                            line.ItemCode = product.Sku;
+                            line.WarehouseCode = wh;
+                            line.CountedQuantity = 0;
+                        }
+                        else
+                        {
+                            dynamic line = new ExpandoObject();
+                            countDoc.InventoryCountingLines.Add(line);
 
-                    if (inv.Product.IsLotControlled)
-                        line.BatchNumbers = inv.Details.Select(detl =>
-                            new
+                            line.ItemCode = prodInv.Product.Sku;
+                            line.Counted = "tYES";
+                            line.WarehouseCode = prodInv.WarehouseCode;
+                            line.CountedQuantity = prodInv.Quantity;
+
+                            if (product.IsPacksizeControlled)
                             {
-                                BatchNumber = detl.LotNumber,
-                                inv.Quantity,
-                            });
+                                var group = packsizeGroups.SingleOrDefault(c => c.Code == product.Reference1);
+                                var altUom = group.UoMGroupDefinitionCollection.Single(c => c.BaseQuantity == 1);
+                                var uom = uoms.SingleOrDefault(c => c.AbsEntry == altUom.AlternateUoM);
+                                line.UoMCode = uom.Code;
+                                //line.CountedQuantity = prodInv.Details.Sum(c => c.Quantity * (c.PacksizeEachCount ?? 1));
+                            }
 
+                            if (prodInv.Product.IsLotControlled)
+                                line.InventoryCountingBatchNumbers = prodInv.Details.GroupBy(c => c.LotNumber).Select(detl =>
+                                    new
+                                    {
+                                        BatchNumber = detl.Key,
+                                        Quantity = detl.Sum(c=>c.Quantity * (c.PacksizeEachCount??1)),
+                                    });
 
-                    if (inv.Product.IsSerialControlled)
-                        line.SerialNumbers = inv.Details.Select(detl =>
-                            new
-                            {
-                                InternalSerialNumber = detl.SerialNumber
-                            });
-                    
-                    inv.State = DownloadState.Uploaded;
+                            if (prodInv.Product.IsSerialControlled)
+                                line.InventoryCountingSerialNumbers = prodInv.Details.Select(detl =>
+                                    new
+                                    {
+                                        InternalSerialNumber = detl.SerialNumber
+                                    });
+                        }
+                    }
+
+                    var resp = await sapService.Post<DocumentCountingSap>("InventoryCountings", (object)countDoc);
+                    await LogAsync($"Inventory count document [{resp.DocumentNumber}] created");
                 }
-
-                var sapPo = await SapServiceClient.GetInstance(company.SapUrl, company.SapCompanyDb, company.SapUsername, company.SapPassword, LogAsync, LogErrorAsync)
-                    .Post("InventoryCountings", countDoc);
             }
             catch (Exception e)
             {

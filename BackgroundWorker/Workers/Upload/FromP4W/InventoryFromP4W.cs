@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Dapper;
+using Microsoft.EntityFrameworkCore;
 using Pro4Soft.BackgroundWorker.Dto.Database.Entities;
 using Pro4Soft.BackgroundWorker.Dto.P4W.Entities;
 using Pro4Soft.BackgroundWorker.Execution;
@@ -18,6 +19,9 @@ public class InventoryFromP4W(ScheduleSetting settings) : BaseWorker(settings)
         var warehouses = await P4WClient.GetInvokeAsync<List<WarehouseP4>>("/warehouses");
         foreach (var company in Config.Companies)
         {
+            var masterContext = await company.CreateContext(Config.SqlConnection);
+            await masterContext.Database.GetDbConnection().ExecuteAsync("delete from ProductInventory");
+
             var clientId = await GetClientId(company) ?? throw new BusinessWebException($"Client id does not exist");
 
             foreach (var wh in company.Warehouses.Select(c => warehouses.SingleOrDefault(c1 => c1.Code == c)).Where(c => c != null))
@@ -34,6 +38,7 @@ public class InventoryFromP4W(ScheduleSetting settings) : BaseWorker(settings)
                             .Include(c => c.Product)
                             .Include(c => c.Details)
                             .Where(c => c.Product.P4WId == invItem.ProductId)
+                            .Where(c => c.Product.IsInventoryItem)
                             .Where(c => c.WarehouseCode == wh.Code)
                             .SingleOrDefaultAsync();
                         Product product = null;

@@ -49,26 +49,27 @@ public class PickticketsToDb(ScheduleSetting settings) : BaseWorker(settings)
             try
             {
                 var context = await company.CreateContext(Config.SqlConnection);
-                if (so.DocumentStatus != "bost_Open")//Close/Cancel scenario
+                if (so.DocumentStatus != "bost_Open") //Close/Cancel scenario
                 {
-                    if (so.Cancelled?.ToLower() == "tyes")
+                    var existingOrders = await context.PickTickets
+                        .Where(c => !c.Uploaded)
+                        .Where(c => c.P4WId != null)
+                        .Where(c => c.Reference1 == so.DocEntry).ToListAsync();
+                    foreach (var existing in existingOrders)
                     {
-                        var existing = await context.PickTickets.OrderByDescending(c => c.DateCreated).FirstOrDefaultAsync(c => c.Reference1 == so.DocEntry);
-                        if (existing?.P4WId != null)
+                        try
                         {
-                            try
-                            {
-                                await LogAsync($"Pickticket [{existing.PickTicketNumber}] cancelled in SAP and delete from P4W");
-                                existing.State = DownloadState.ReadyForDownload;
-                                existing.IsCancelled = true;
-                                await context.SaveChangesAsync();
-                            }
-                            catch (Exception e)
-                            {
-                                await LogErrorAsync(e);
-                            }
+                            await LogAsync($"Pickticket [{existing.PickTicketNumber}] cancelled in SAP and delete from P4W");
+                            existing.State = DownloadState.ReadyForDownload;
+                            existing.IsCancelled = true;
+                            await context.SaveChangesAsync();
+                        }
+                        catch (Exception e)
+                        {
+                            await LogErrorAsync(e);
                         }
                     }
+                    
                     continue;
                 }
 

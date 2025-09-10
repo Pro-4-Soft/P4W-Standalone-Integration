@@ -49,22 +49,22 @@ public class PurchaseOrdersToDb(ScheduleSetting settings) : BaseWorker(settings)
                 var context = await company.CreateContext(Config.SqlConnection);
                 if (po.DocumentStatus != "bost_Open")//Close/Cancel scenario
                 {
-                    if (po.Cancelled?.ToLower() == "tyes")
+                    var existingOrders = await context.PurchaseOrders
+                        .Where(c => !c.Uploaded)
+                        .Where(c => c.P4WId != null)
+                        .Where(c => c.Reference1 == po.DocEntry).ToListAsync();
+                    foreach (var existing in existingOrders)
                     {
-                        var existing = await context.PurchaseOrders.OrderByDescending(c => c.DateCreated).FirstOrDefaultAsync(c => c.Reference1 == po.DocEntry);
-                        if (existing?.P4WId != null)
+                        try
                         {
-                            try
-                            {
-                                await LogAsync($"PO [{existing.PurchaseOrderNumber}] cancelled in SAP");
-                                existing.State = DownloadState.ReadyForDownload;
-                                existing.IsCancelled = true;
-                                await context.SaveChangesAsync();
-                            }
-                            catch (Exception e)
-                            {
-                                await LogErrorAsync(e);
-                            }
+                            await LogAsync($"PO [{existing.PurchaseOrderNumber}] cancelled in SAP");
+                            existing.State = DownloadState.ReadyForDownload;
+                            existing.IsmanualCancelledClosed = true;
+                            await context.SaveChangesAsync();
+                        }
+                        catch (Exception e)
+                        {
+                            await LogErrorAsync(e);
                         }
                     }
                     continue;

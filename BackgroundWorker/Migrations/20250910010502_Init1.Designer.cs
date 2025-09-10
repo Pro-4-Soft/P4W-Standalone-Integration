@@ -12,7 +12,7 @@ using Pro4Soft.BackgroundWorker.Dto.Database;
 namespace Pro4Soft.BackgroundWorker.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20250906155512_Init1")]
+    [Migration("20250910010502_Init1")]
     partial class Init1
     {
         /// <inheritdoc />
@@ -25,7 +25,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.Adjustment", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Adjustment", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -123,7 +123,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.ToTable("Adjustments");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.Base.ConfigEntry", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Base.ConfigEntry", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -162,7 +162,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.ToTable("ConfigEntries");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.Customer", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Customer", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -268,7 +268,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.CustomerReturn", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.CustomerReturn", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -374,6 +374,9 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<bool>("IsCancelled")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LoopHash")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -422,7 +425,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.ToTable("CustomerReturns");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.CustomerReturnLine", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.CustomerReturnLine", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -528,7 +531,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.ToTable("CustomerReturnLines");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.Packsize", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Packsize", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -579,7 +582,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.ToTable("Packsizes");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.PickTicketLine", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.PickTicketLine", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -669,7 +672,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.ToTable("PickTicketLines");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.Pickticket", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Pickticket", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -797,6 +800,9 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.Property<string>("Info9")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("IsCancelled")
+                        .HasColumnType("bit");
 
                     b.Property<string>("MarkForStoreName")
                         .HasMaxLength(256)
@@ -985,7 +991,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.ToTable("PickTickets");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.Product", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Product", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1093,6 +1099,18 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.Property<Guid?>("P4WId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Reference1")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Reference2")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Reference3")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
                         .IsRequired()
@@ -1133,7 +1151,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.ProductInventory", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.ProductInventory", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1184,7 +1202,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.ToTable("ProductInventory");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.ProductInventoryDetail", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.ProductInventoryDetail", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1230,7 +1248,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.ToTable("ProductInventoryDetails");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.PurchaseOrder", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.PurchaseOrder", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1300,6 +1318,9 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<bool>("IsmanualCancelledClosed")
+                        .HasColumnType("bit");
+
                     b.Property<Guid?>("P4WId")
                         .HasColumnType("uniqueidentifier");
 
@@ -1354,7 +1375,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.ToTable("PurchaseOrders");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.PurchaseOrderLine", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.PurchaseOrderLine", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1448,7 +1469,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.ToTable("PurchaseOrderLines");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.PurchaseOrderLineDetail", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.PurchaseOrderLineDetail", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1494,7 +1515,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.ToTable("PurchaseOrderLineDetails");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.Tote", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Tote", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1608,7 +1629,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.ToTable("Totes");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.ToteLine", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.ToteLine", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1648,7 +1669,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.ToTable("ToteLines");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.ToteLineDetail", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.ToteLineDetail", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1697,7 +1718,7 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.ToTable("ToteLineDetails");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.Vendor", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Vendor", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1783,9 +1804,9 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.ToTable("Vendors");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.Adjustment", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Adjustment", b =>
                 {
-                    b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.Product", "Product")
+                    b.HasOne("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Product", "Product")
                         .WithMany("Adjustments")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1794,24 +1815,24 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.CustomerReturn", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.CustomerReturn", b =>
                 {
-                    b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.Customer", "Customer")
+                    b.HasOne("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Customer", "Customer")
                         .WithMany()
                         .HasForeignKey("CustomerId");
 
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.CustomerReturnLine", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.CustomerReturnLine", b =>
                 {
-                    b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.CustomerReturn", "CustomerReturn")
+                    b.HasOne("Pro4Soft.BackgroundWorker.Dto.Database.Entities.CustomerReturn", "CustomerReturn")
                         .WithMany("Lines")
                         .HasForeignKey("CustomerReturnId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.Product", "Product")
+                    b.HasOne("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Product", "Product")
                         .WithMany("CustomerReturnLines")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -1822,9 +1843,9 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.Packsize", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Packsize", b =>
                 {
-                    b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.Product", "Product")
+                    b.HasOne("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Product", "Product")
                         .WithMany("Packsizes")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1833,15 +1854,15 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.PickTicketLine", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.PickTicketLine", b =>
                 {
-                    b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.Pickticket", "Pickticket")
+                    b.HasOne("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Pickticket", "Pickticket")
                         .WithMany("Lines")
                         .HasForeignKey("PickTicketId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.Product", "Product")
+                    b.HasOne("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Product", "Product")
                         .WithMany("PickTicketLines")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1852,9 +1873,9 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.Pickticket", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Pickticket", b =>
                 {
-                    b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.Customer", "Customer")
+                    b.HasOne("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Customer", "Customer")
                         .WithMany("PickTickets")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1863,9 +1884,9 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.ProductInventory", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.ProductInventory", b =>
                 {
-                    b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.Product", "Product")
+                    b.HasOne("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Product", "Product")
                         .WithMany("Inventory")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1874,9 +1895,9 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.ProductInventoryDetail", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.ProductInventoryDetail", b =>
                 {
-                    b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.ProductInventory", "ProductInventory")
+                    b.HasOne("Pro4Soft.BackgroundWorker.Dto.Database.Entities.ProductInventory", "ProductInventory")
                         .WithMany("Details")
                         .HasForeignKey("ProductInventoryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1885,9 +1906,9 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.Navigation("ProductInventory");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.PurchaseOrder", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.PurchaseOrder", b =>
                 {
-                    b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.Vendor", "Vendor")
+                    b.HasOne("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Vendor", "Vendor")
                         .WithMany("PurchaseOrders")
                         .HasForeignKey("VendorId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1896,15 +1917,15 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.Navigation("Vendor");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.PurchaseOrderLine", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.PurchaseOrderLine", b =>
                 {
-                    b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.Product", "Product")
+                    b.HasOne("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Product", "Product")
                         .WithMany("PurchaseOrderLines")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.PurchaseOrder", "PurchaseOrder")
+                    b.HasOne("Pro4Soft.BackgroundWorker.Dto.Database.Entities.PurchaseOrder", "PurchaseOrder")
                         .WithMany("Lines")
                         .HasForeignKey("PurchaseOrderId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1915,9 +1936,9 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.Navigation("PurchaseOrder");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.PurchaseOrderLineDetail", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.PurchaseOrderLineDetail", b =>
                 {
-                    b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.PurchaseOrderLine", "PurchaseOrderLine")
+                    b.HasOne("Pro4Soft.BackgroundWorker.Dto.Database.Entities.PurchaseOrderLine", "PurchaseOrderLine")
                         .WithMany("Details")
                         .HasForeignKey("PurchaseOrderLineId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1926,9 +1947,9 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.Navigation("PurchaseOrderLine");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.Tote", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Tote", b =>
                 {
-                    b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.Pickticket", "Pickticket")
+                    b.HasOne("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Pickticket", "Pickticket")
                         .WithMany("Totes")
                         .HasForeignKey("PickTicketId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1937,15 +1958,15 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.Navigation("Pickticket");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.ToteLine", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.ToteLine", b =>
                 {
-                    b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.PickTicketLine", "PickTicketLine")
+                    b.HasOne("Pro4Soft.BackgroundWorker.Dto.Database.Entities.PickTicketLine", "PickTicketLine")
                         .WithMany("ToteLines")
                         .HasForeignKey("PickTicketLineId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.Tote", "Tote")
+                    b.HasOne("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Tote", "Tote")
                         .WithMany("Lines")
                         .HasForeignKey("ToteId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1956,9 +1977,9 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.Navigation("Tote");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.ToteLineDetail", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.ToteLineDetail", b =>
                 {
-                    b.HasOne("Pro4Soft.BackgroundWorker.Business.Database.Entities.ToteLine", "ToteLine")
+                    b.HasOne("Pro4Soft.BackgroundWorker.Dto.Database.Entities.ToteLine", "ToteLine")
                         .WithMany("Details")
                         .HasForeignKey("ToteLineId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1967,29 +1988,29 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.Navigation("ToteLine");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.Customer", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Customer", b =>
                 {
                     b.Navigation("PickTickets");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.CustomerReturn", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.CustomerReturn", b =>
                 {
                     b.Navigation("Lines");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.PickTicketLine", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.PickTicketLine", b =>
                 {
                     b.Navigation("ToteLines");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.Pickticket", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Pickticket", b =>
                 {
                     b.Navigation("Lines");
 
                     b.Navigation("Totes");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.Product", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Product", b =>
                 {
                     b.Navigation("Adjustments");
 
@@ -2004,32 +2025,32 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.Navigation("PurchaseOrderLines");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.ProductInventory", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.ProductInventory", b =>
                 {
                     b.Navigation("Details");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.PurchaseOrder", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.PurchaseOrder", b =>
                 {
                     b.Navigation("Lines");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.PurchaseOrderLine", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.PurchaseOrderLine", b =>
                 {
                     b.Navigation("Details");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.Tote", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Tote", b =>
                 {
                     b.Navigation("Lines");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.ToteLine", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.ToteLine", b =>
                 {
                     b.Navigation("Details");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Business.Database.Entities.Vendor", b =>
+            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Vendor", b =>
                 {
                     b.Navigation("PurchaseOrders");
                 });

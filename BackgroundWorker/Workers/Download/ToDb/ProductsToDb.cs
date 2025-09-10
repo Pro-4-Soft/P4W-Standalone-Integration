@@ -28,6 +28,7 @@ public class ProductsToDb(ScheduleSetting settings) : BaseWorker(settings)
 
             var itemGroupsCodes = await sapService.Get<ItemGroupCodeSap>("ItemGroups");
             var packsizeGroups = await sapService.Get<UnitOfMeasurementGroup>("UnitOfMeasurementGroups");
+            var uoms = await sapService.Get<UnitOfMeasureSap>("UnitOfMeasurements");
 
             var clients = await P4WClient.GetInvokeAsync<List<ClientP4>>($"clients?clientName={company.P4WClientName}");
             if (clients.Count == 0)
@@ -75,9 +76,11 @@ public class ProductsToDb(ScheduleSetting settings) : BaseWorker(settings)
 
                     if (existing.IsPacksizeControlled)
                     {
-                        var packsizeGroup = packsizeGroups.FirstOrDefault(c => c.AbsEntry == prod.UoMGroupEntry);
+                        var packsizeGroup = packsizeGroups.First(c => c.AbsEntry == prod.UoMGroupEntry);
 
-                        foreach (var pack in packsizeGroup.UoMGroupDefinitionCollection.Where(c=>c.BaseQuantity != 1))
+                        existing.Reference1 = packsizeGroup.Code;
+
+                        foreach (var pack in packsizeGroup.UoMGroupDefinitionCollection.Where(c => c.BaseQuantity != 1))
                         {
                             var existingPack = existing.Packsizes.SingleOrDefault(c => c.EachCount == pack.BaseQuantity);
                             if (existingPack == null)

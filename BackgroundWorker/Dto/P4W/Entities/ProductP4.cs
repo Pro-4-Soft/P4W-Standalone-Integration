@@ -17,6 +17,12 @@ public class ProductP4: BaseP4Entity
     [JsonProperty("upc")]
     public string Upc { get; set; }
 
+    [JsonProperty("reference1")]
+    public string Reference1 { get; set; }
+    [JsonProperty("reference2")]
+    public string Reference2 { get; set; }
+    [JsonProperty("reference3")]
+    public string Reference3 { get; set; }
 
     [JsonProperty("length")]
     public decimal? Length { get; set; }

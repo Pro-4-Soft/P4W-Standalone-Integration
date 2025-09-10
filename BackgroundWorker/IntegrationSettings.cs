@@ -15,7 +15,7 @@ public class IntegrationSettings : Settings
     public string P4WUrl { get; set; }
     public string P4WApiKey { get; set; }
 
-    public List<CompanySettings> Companies = [];
+    public readonly List<CompanySettings> Companies = [];
 
     public string TempFolder { get; set; }
 }
@@ -28,6 +28,7 @@ public class CompanySettings
     public string SapPassword { get; set; }
     public string P4WClientName { get; set; }
     public List<string> Warehouses { get; set; } = [];
+    public List<string> SyncWarehouses { get; set; } = [];
 
     public async Task<DatabaseContext> CreateContext(string masterConnectionString, bool forceCreateMigrate = false)
     {

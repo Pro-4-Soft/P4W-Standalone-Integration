@@ -35,6 +35,10 @@ public class Product : P4WStateEntity
     public bool IsSerialControlled { get; set; }
     public bool IsLotControlled { get; set; }
 
+    public string Reference1 { get; set; }
+    public string Reference2 { get; set; }
+    public string Reference3 { get; set; }
+
     public string Info1 { get; set; }
     public string Info2 { get; set; }
     public string Info3 { get; set; }
