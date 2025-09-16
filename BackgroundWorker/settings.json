@@ -1,18 +1,19 @@
 ﻿{
-  "SqlConnection": "Server=localhost;Database=master;User Id=sa;Password=;TrustServerCertificate=True;",
+  "SqlConnection": "Server=p4sql.westus3.cloudapp.azure.com;Database=master;User Id=p4portal-server-admin;Password=YUSj$ui1UueoIGGM;TrustServerCertificate=True;",
+
+
 
   "P4WUrl": "https://api.p4warehouse.com/",
-  //"P4WUrl": "http://localhost:3000/",
-  "P4WApiKey": "079fd2b7-1a30-4969-9706-4b55c76d1ba9_W6p4t6lEq7LV+vjX1rs1+vSiX68pA9mc5gxLQMaMaZzwknOmFnoV1tCGLzkyiTtRCy6zJWsgz4v6PXz3/PTGwQ==",
+  "P4WApiKey": "9cb8880e-375e-423b-9a0f-a986fb8c6f23_T4+xOu1qeCC6cYXA24t6uDjkIbnxlek2nl8+/dfr5ZmkapM0fmZoFCnn2mUZlQbbDV/zMpiKHw88w7sOgjttZg==",
 
   "Companies": [
     {
-      "SapUrl": "https://SapB1v10.barrdega.com:50000/b1s/v2",
-      "SapCompanyDb": "casamedico",
-      "SapUsername": "manager",
-      "SapPassword": "2025@Sap",
-      "P4WClientName": "Default",
-      "Warehouses": [ "101", "999" ],
+      "SapUrl": "https://rp.boyala.com/su11/b1s/v2",
+      "SapCompanyDb": "DEMO_MAPIEX_AVIATION",
+      "SapUsername": "mpx188",
+      "SapPassword": "Panama123@@",
+      "P4WClientName": "Mapiex",
+      "Warehouses": [ "101", "106" ],
       "SyncWarehouses": [ "101" ]
     }
   ],
@@ -87,8 +88,8 @@
     },
     {
       "Name": "InventoryFromP4W",
-      "Active": true,
-      "RunOnStartup": true,
+      "Active": false,
+      "RunOnStartup": false,
       "Start": null,
       "Sleep": null,
       "Class": "Pro4Soft.BackgroundWorker.Workers.Upload.FromP4W.InventoryFromP4W",
