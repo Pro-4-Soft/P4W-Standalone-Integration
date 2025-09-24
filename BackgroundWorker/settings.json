@@ -1,11 +1,7 @@
 ﻿{
   "SqlConnection": "Server=p4sql.westus3.cloudapp.azure.com;Database=master;User Id=p4portal-server-admin;Password=YUSj$ui1UueoIGGM;TrustServerCertificate=True;",
-
-
-
   "P4WUrl": "https://api.p4warehouse.com/",
   "P4WApiKey": "9cb8880e-375e-423b-9a0f-a986fb8c6f23_T4+xOu1qeCC6cYXA24t6uDjkIbnxlek2nl8+/dfr5ZmkapM0fmZoFCnn2mUZlQbbDV/zMpiKHw88w7sOgjttZg==",
-
   "Companies": [
     {
       "SapUrl": "https://rp.boyala.com/su11/b1s/v2",
@@ -13,13 +9,15 @@
       "SapUsername": "mpx188",
       "SapPassword": "Panama123@@",
       "P4WClientName": "Mapiex",
-      "Warehouses": [ "101", "106" ],
-      "SyncWarehouses": [ "101" ]
+      "Warehouses": [
+        "101",
+        "106"
+      ],
+      "SyncWarehouses": [
+        "101"
+      ]
     }
   ],
-
-  "TempFolder": "C:\\Temp",
-
   "Schedules": [
     {
       "Name": "Install",
@@ -30,7 +28,6 @@
       "Class": "Pro4Soft.BackgroundWorker.Workers.Setup.Install",
       "ThreadName": "Default"
     },
-
     {
       "Name": "ProductsToDb",
       "Active": true,
@@ -50,6 +47,15 @@
       "ThreadName": "Default"
     },
     {
+      "Name": "CustomerReturnsToDb",
+      "Active": true,
+      "RunOnStartup": true,
+      "Start": "2020-01-01T00:00:00-05:00",
+      "Sleep": "00:00:10",
+      "Class": "Pro4Soft.BackgroundWorker.Workers.Download.ToDb.CustomerReturnsToDb",
+      "ThreadName": "Default"
+    },
+    {
       "Name": "PickticketsToDb",
       "Active": true,
       "RunOnStartup": true,
@@ -58,7 +64,6 @@
       "Class": "Pro4Soft.BackgroundWorker.Workers.Download.ToDb.PickticketsToDb",
       "ThreadName": "Default"
     },
-
     {
       "Name": "AdjustmentsFromP4W",
       "Active": true,
@@ -75,6 +80,15 @@
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
       "Class": "Pro4Soft.BackgroundWorker.Workers.Upload.FromP4W.PurchaseOrdersFromP4W",
+      "ThreadName": "Default"
+    },
+    {
+      "Name": "CustomerReturnsFromP4W",
+      "Active": true,
+      "RunOnStartup": true,
+      "Start": "2020-01-01T00:00:00-05:00",
+      "Sleep": "00:00:10",
+      "Class": "Pro4Soft.BackgroundWorker.Workers.Upload.FromP4W.CustomerReturnsFromP4W",
       "ThreadName": "Default"
     },
     {

@@ -49,8 +49,11 @@ public class CustomerReturn : P4WStateEntity
     public string Info9 { get; set; }
     public string Info10 { get; set; }
 
+    public string Reference1 { get; set; }
+    public bool Uploaded { get; set; }
     public bool IsCancelled { get; set; }
-
+    public bool IsmanualCancelledClosed { get; set; }
+    
     [ForeignKey(nameof(CustomerReturnLine.CustomerReturnId))]
     public virtual ICollection<CustomerReturnLine> Lines { get; set; } = new List<CustomerReturnLine>();
 }
@@ -59,7 +62,8 @@ public class CustomerReturnLine : EntityBase
 {
     public Guid CustomerReturnId { get; set; }
     public virtual CustomerReturn CustomerReturn { get; set; }
-
+    
+    public int LineNumber { get; set; }
     public Guid ProductId { get; set; }
     public virtual Product Product { get; set; }
 
@@ -79,16 +83,33 @@ public class CustomerReturnLine : EntityBase
     public string Reference1 { get; set; }
     public string Reference2 { get; set; }
     public string Reference3 { get; set; }
+    
+    public int? Packsize { get; set; }
+    public int? NumberOfPacks { get; set; }
+    public decimal Quantity { get; set; }
 
-    public int Quantity { get; set; }
+    public decimal? ReceivedQuantity { get; set; }
+    public decimal? DamagedQuantity { get; set; }
 
-    public int? ReceivedQuantity { get; set; }
-    public int? DamagedQuantity { get; set; }
-
-    public int? TotalReceived => ReceivedQuantity + DamagedQuantity;
+    public decimal? TotalReceived => ReceivedQuantity + DamagedQuantity;
 
     public string PickticketNumber { get; set; }
     public string PoNumber { get; set; }
+    
+    [ForeignKey(nameof(CustomerReturnLineDetail.CustomerReturnLineId))]
+    public virtual ICollection<CustomerReturnLineDetail> Details { get; set; } = new List<CustomerReturnLineDetail>();
+}
+
+public class CustomerReturnLineDetail : EntityBase
+{
+    public Guid CustomerReturnLineId { get; set; }
+    public virtual CustomerReturnLine CustomerReturnLine { get; set; }
+
+    public decimal ReceivedQuantity { get; set; }
+    public string LotNumber { get; set; }
+    public string SerialNumber { get; set; }
+    public DateTime? ExpiryDate { get; set; }
+    public int? PacksizeEachCount { get; set; }
 }
 
 public class CustomerReturnLineMap : EntityBaseMap<CustomerReturnLine>

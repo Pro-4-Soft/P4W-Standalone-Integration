@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Pro4Soft.BackgroundWorker.Dto.Database;
 
@@ -11,9 +12,11 @@ using Pro4Soft.BackgroundWorker.Dto.Database;
 namespace Pro4Soft.BackgroundWorker.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250924202445_AddCustomerReturnLineQuantityFields")]
+    partial class AddCustomerReturnLineQuantityFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -414,6 +417,9 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.Property<bool>("Uploaded")
                         .HasColumnType("bit");
 
+                    b.Property<Guid>("VendorId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("WarehouseCode")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -428,6 +434,8 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.HasIndex("P4WId");
 
                     b.HasIndex("State");
+
+                    b.HasIndex("VendorId");
 
                     b.ToTable("CustomerReturns");
                 });
@@ -1886,7 +1894,15 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                         .WithMany()
                         .HasForeignKey("CustomerId");
 
+                    b.HasOne("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Vendor", "Vendor")
+                        .WithMany()
+                        .HasForeignKey("VendorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Customer");
+
+                    b.Navigation("Vendor");
                 });
 
             modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.CustomerReturnLine", b =>
