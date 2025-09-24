@@ -1,228 +1,37 @@
 ﻿{
-  "CountDate": "2025-09-06",
-  "Remarks": "P4W Inventory sync",
-  "InventoryCountingLines": [
+  "CustomerId": "3f235ed8-db1a-4bef-a4c3-4e1dba55f5e0",
+  "CustomerReturnNumber": "1",
+  "TrackingNumber": null,
+  "WarehouseId": "6597ae2a-06ff-4e1e-a811-33d1b7d87e87",
+  "Comments": "Based On Sales Orders 47278. Based On Deliveries 1397. Based On A/R Invoices 113608.",
+  "Carrier": null,
+  "ReferenceNumber": null,
+  "Lines": [
     {
-      "ItemCode": "8065753109",
-      "WarehouseCode": "999",
-      "CountedQuantity": 1.000000
-    },
-    {
-      "ItemCode": "18080",
-      "WarehouseCode": "101",
-      "CountedQuantity": 25.000000,
-      "SerialNumbers": [
-        { "InternalSerialNumber": "6000035" },
-        { "InternalSerialNumber": "6000019-1" },
-        { "InternalSerialNumber": "822383269915" },
-        { "InternalSerialNumber": "822383269916" },
-        { "InternalSerialNumber": "456856" },
-        { "InternalSerialNumber": "6000032" },
-        { "InternalSerialNumber": "822383269923" },
-        { "InternalSerialNumber": "822383269911" },
-        { "InternalSerialNumber": "6000029-101" },
-        { "InternalSerialNumber": "822383269914" },
-        { "InternalSerialNumber": "822383269920" },
-        { "InternalSerialNumber": "6000021" },
-        { "InternalSerialNumber": "822383269921" },
-        { "InternalSerialNumber": "822383269912" },
-        { "InternalSerialNumber": "6000016" },
-        { "InternalSerialNumber": "822383269918" },
-        { "InternalSerialNumber": "822383269924" },
-        { "InternalSerialNumber": "822383269913" },
-        { "InternalSerialNumber": "5646546546" },
-        { "InternalSerialNumber": "456855" },
-        { "InternalSerialNumber": "6000013" },
-        { "InternalSerialNumber": "456854" },
-        { "InternalSerialNumber": "822383269919" },
-        { "InternalSerialNumber": "822383269922" },
-        { "InternalSerialNumber": "822383269917" }
-      ]
-    },
-    {
-      "ItemCode": "603BK",
-      "WarehouseCode": "999",
-      "CountedQuantity": 1.000000
-    },
-    {
-      "ItemCode": "MAD023",
-      "WarehouseCode": "101",
-      "CountedQuantity": 8370.000000,
-      "BatchNumbers": [
-        {
-          "BatchNumber": "6000010",
-          "Quantity": 8370.000000
-        },
-        {
-          "BatchNumber": "L5677777",
-          "Quantity": 8370.000000
-        },
-        {
-          "BatchNumber": "L453356",
-          "Quantity": 8370.000000
-        },
-        {
-          "BatchNumber": "6000010",
-          "Quantity": 8370.000000
-        },
-        {
-          "BatchNumber": "t6678",
-          "Quantity": 8370.000000
-        },
-        {
-          "BatchNumber": "6000004",
-          "Quantity": 8370.000000
-        },
-        {
-          "BatchNumber": "6000023-101",
-          "Quantity": 8370.000000
-        },
-        {
-          "BatchNumber": "6000031",
-          "Quantity": 8370.000000
-        },
-        {
-          "BatchNumber": "6000001",
-          "Quantity": 8370.000000
-        },
-        {
-          "BatchNumber": "L74743",
-          "Quantity": 8370.000000
-        }
-      ]
-    },
-    {
-      "ItemCode": "7950206",
-      "WarehouseCode": "999",
-      "CountedQuantity": 6.000000,
-      "BatchNumbers": [
-        {
-          "BatchNumber": "L445-655",
-          "Quantity": 6.000000
-        }
-      ]
-    },
-    {
-      "ItemCode": "306026",
-      "WarehouseCode": "999",
-      "CountedQuantity": 30.000000,
-      "BatchNumbers": [
-        {
-          "BatchNumber": "L4335790",
-          "Quantity": 30.000000
-        }
-      ]
-    },
-    {
-      "ItemCode": "MAD062",
-      "WarehouseCode": "101",
-      "CountedQuantity": 22300.000000
-    },
-    {
-      "ItemCode": "603BK",
-      "WarehouseCode": "101",
-      "CountedQuantity": 532.000000
-    },
-    {
-      "ItemCode": "095-002775-00",
-      "WarehouseCode": "999",
-      "CountedQuantity": 1.000000
-    },
-    {
-      "ItemCode": "18080",
-      "WarehouseCode": "999",
-      "CountedQuantity": 3.000000,
-      "SerialNumbers": [
-        { "InternalSerialNumber": "6000023-101" },
-        { "InternalSerialNumber": "S54246457" },
-        { "InternalSerialNumber": "6000023-999" }
-      ]
-    },
-    {
-      "ItemCode": "306026",
-      "WarehouseCode": "101",
-      "CountedQuantity": 19990.000000,
-      "BatchNumbers": [
-        {
-          "BatchNumber": "L45333",
-          "Quantity": 19990.000000
-        },
-        {
-          "BatchNumber": "6000001",
-          "Quantity": 19990.000000
-        },
-        {
-          "BatchNumber": "764009041496",
-          "Quantity": 19990.000000
-        },
-        {
-          "BatchNumber": "306026",
-          "Quantity": 19990.000000
-        },
-        {
-          "BatchNumber": "764009041495",
-          "Quantity": 19990.000000
-        },
-        {
-          "BatchNumber": "L656544",
-          "Quantity": 19990.000000
-        },
-        {
-          "BatchNumber": "764009041494",
-          "Quantity": 19990.000000
-        },
-        {
-          "BatchNumber": "764009041497",
-          "Quantity": 19990.000000
-        },
-        {
-          "BatchNumber": "6000005-101",
-          "Quantity": 19990.000000
-        }
-      ]
-    },
-    {
-      "ItemCode": "SD-0001",
-      "WarehouseCode": "101",
-      "CountedQuantity": 198.000000
-    },
-    {
-      "ItemCode": "095-002775-00",
-      "WarehouseCode": "101",
-      "CountedQuantity": 504.000000
-    },
-    {
-      "ItemCode": "7950206",
-      "WarehouseCode": "101",
-      "CountedQuantity": 92.000000,
-      "BatchNumbers": [
-        {
-          "BatchNumber": "6000001",
-          "Quantity": 92.000000
-        },
-        {
-          "BatchNumber": "6000010",
-          "Quantity": 92.000000
-        },
-        {
-          "BatchNumber": "6000008",
-          "Quantity": 92.000000
-        },
-        {
-          "BatchNumber": "6000005-101",
-          "Quantity": 92.000000
-        }
-      ]
-    },
-    {
-      "ItemCode": "011418272385",
-      "WarehouseCode": "999",
-      "CountedQuantity": 6.000000
-    },
-    {
-      "ItemCode": "011418272385",
-      "WarehouseCode": "101",
-      "CountedQuantity": 3018.000000
+      "ProductId": "2c64af5f-f5d6-4b3f-bc32-98ac7d61e598",
+      "ReferenceNumber": null,
+      "Quantity": null,
+      "LineNumber": 1,
+      "Packsize": null,
+      "NumberOfPacks": null,
+      "Reference1": "c18ca462-9132-48f9-8f5a-8bf52730314b",
+      "Reference2": null,
+      "Reference3": null,
+      "Instructions": null
     }
-  ]
+  ],
+  "Reference1": null,
+  "Reference2": null,
+  "Reference3": null,
+  "From": {
+    "Name": null,
+    "Phone": null,
+    "Email": null,
+    "Address1": null,
+    "Address2": null,
+    "City": null,
+    "StateProvince": null,
+    "ZipPostal": null,
+    "Country": null
+  }
 }

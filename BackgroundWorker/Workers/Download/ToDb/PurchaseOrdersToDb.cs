@@ -59,7 +59,7 @@ public class PurchaseOrdersToDb(ScheduleSetting settings) : BaseWorker(settings)
                         {
                             await LogAsync($"PO [{existing.PurchaseOrderNumber}] cancelled in SAP");
                             existing.State = DownloadState.ReadyForDownload;
-                            existing.IsmanualCancelledClosed = true;
+                            existing.IsManualCancelledClosed = true;
                             await context.SaveChangesAsync();
                         }
                         catch (Exception e)
@@ -74,20 +74,24 @@ public class PurchaseOrdersToDb(ScheduleSetting settings) : BaseWorker(settings)
                     .Where(c => c.Code == po.CardCode && c.ClientId == clientId)
                     .SingleOrDefaultAsync();
 
-                if (vendor == null)
+                if (vendor?.P4WId == null)
                 {
                     var sapVendor = await sapService.GetFirst<VendorSap>("BusinessPartners", new(ConditionType.And, [
                         new(nameof(VendorSap.CardCode), Operator.Eq, $"'{po.CardCode}'"),
                         new(nameof(VendorSap.CardType), Operator.Eq, "'cSupplier'"),
                     ]));
-                    vendor = new()
+
+                    if (vendor == null)
                     {
-                        ClientId = clientId,
-                        Code = sapVendor.CardCode,
-                        CompanyName = sapVendor.CardName,
-                    };
-                    await context.Vendors.AddAsync(vendor);
-                    await context.SaveChangesAsync();
+                        vendor = new()
+                        {
+                            ClientId = clientId,
+                            Code = sapVendor.CardCode,
+                            CompanyName = sapVendor.CardName,
+                        };
+                        await context.Vendors.AddAsync(vendor);
+                        await context.SaveChangesAsync();
+                    }
 
                     //Push to P4W
                     await new VendorsToP4W(Settings).ExecuteAsync();

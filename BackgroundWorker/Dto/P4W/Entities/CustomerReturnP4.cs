@@ -53,8 +53,8 @@ public class CustomerReturnLineP4
     [JsonProperty("packsize")]
     public int? Packsize { get; set; }
 
-    [JsonProperty("orderedQuantity")]
-    public decimal OrderedQuantity { get; set; }
+    [JsonProperty("quantity")]
+    public decimal Quantity { get; set; }
 
     [JsonProperty("receivedQuantity")]
     public decimal? ReceivedQuantity { get; set; }

@@ -31,7 +31,7 @@ public class PurchaseOrdersToP4W(ScheduleSetting settings) : BaseWorker(settings
 
                 foreach (var po in pos)
                 {
-                    if (po.IsmanualCancelledClosed)
+                    if (po.IsManualCancelledClosed)
                     {
                         if (po.P4WId != null)
                         {

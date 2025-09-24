@@ -21,7 +21,7 @@ public class PurchaseOrder : P4WStateEntity
     public DateTime? RequiredDate { get; set; }
     public DateTime? CancelDate { get; set; }
 
-    public bool IsmanualCancelledClosed { get; set; }
+    public bool IsManualCancelledClosed { get; set; }
 
     public string ReferenceNumber { get; set; }
 

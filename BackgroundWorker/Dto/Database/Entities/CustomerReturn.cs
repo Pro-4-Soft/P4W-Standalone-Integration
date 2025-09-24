@@ -23,8 +23,7 @@ public class CustomerReturn : P4WStateEntity
     public string ReferenceNumber { get; set; }
 
     public string Source { get; set; }
-    public string LoopHash { get; set; }
-
+    
     public string TrackingNumber { get; set; }
     public string Carrier { get; set; }
     public string Comments { get; set; }
@@ -52,7 +51,7 @@ public class CustomerReturn : P4WStateEntity
     public string Reference1 { get; set; }
     public bool Uploaded { get; set; }
     public bool IsCancelled { get; set; }
-    public bool IsmanualCancelledClosed { get; set; }
+    public bool IsManualCancelledClosed { get; set; }
     
     [ForeignKey(nameof(CustomerReturnLine.CustomerReturnId))]
     public virtual ICollection<CustomerReturnLine> Lines { get; set; } = new List<CustomerReturnLine>();

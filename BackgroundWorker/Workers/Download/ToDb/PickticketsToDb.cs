@@ -77,21 +77,25 @@ public class PickticketsToDb(ScheduleSetting settings) : BaseWorker(settings)
                     .Where(c => c.Code == so.CardCode && c.ClientId == clientId)
                     .SingleOrDefaultAsync();
 
-                if (customer == null)
+                if (customer?.P4WId == null)
                 {
                     var sapCustomer = await sapService.GetFirst<VendorSap>("BusinessPartners", new(ConditionType.And, [
                         new(nameof(VendorSap.CardCode), Operator.Eq, $"'{so.CardCode}'"),
                         new(nameof(VendorSap.CardType), Operator.Eq, "'cCustomer'"),
                     ]));
-                    customer = new()
-                    {
-                        ClientId = clientId,
-                        Code = sapCustomer.CardCode,
-                        CompanyName = sapCustomer.CardName,
-                    };
-                    await context.Customers.AddAsync(customer);
-                    await context.SaveChangesAsync();
 
+                    if (customer == null)
+                    {
+                        customer = new()
+                        {
+                            ClientId = clientId,
+                            Code = sapCustomer.CardCode,
+                            CompanyName = sapCustomer.CardName,
+                        };
+                        await context.Customers.AddAsync(customer);
+                        await context.SaveChangesAsync();
+                    }
+                    
                     //Push to P4W
                     await new CustomersToP4W(Settings).ExecuteAsync();
                     await context.Entry(customer).ReloadAsync();

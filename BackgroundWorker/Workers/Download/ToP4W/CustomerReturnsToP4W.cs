@@ -18,27 +18,28 @@ public class CustomerReturnsToP4W(ScheduleSetting settings) : BaseWorker(setting
             {
                 await using var context = await company.CreateContext(Config.SqlConnection);
 
-                var pos = await context.CustomerReturns
+                var rmas = await context.CustomerReturns
                     .Where(c => c.Lines.Count > 0)
                     .Where(c => c.State == DownloadState.ReadyForDownload)
+                    .Include(c => c.Customer)
                     .Include(c => c.Lines).ThenInclude(c => c.Product)
                     .ToListAsync();
-                if (pos.Count == 0)
+                if (rmas.Count == 0)
                     continue;
 
                 warehouses ??= await P4WClient.GetInvokeAsync<List<WarehouseP4>>("/warehouses");
 
-                foreach (var po in pos)
+                foreach (var rma in rmas)
                 {
-                    if (po.IsmanualCancelledClosed)
+                    if (rma.IsManualCancelledClosed)
                     {
-                        if (po.P4WId != null)
+                        if (rma.P4WId != null)
                         {
-                            await P4WClient.WebInvokeAsync($"/customer-returns/{po.P4WId}", HttpMethod.Delete);
-                            await LogAsync($"CustomerReturnNumber [{po.CustomerReturnNumber}] delete from P4W");
+                            await P4WClient.WebInvokeAsync($"/customer-returns/{rma.P4WId}", HttpMethod.Delete);
+                            await LogAsync($"Customer return [{rma.CustomerReturnNumber}] deleted from P4W");
                         }
 
-                        po.State = DownloadState.Downloaded;
+                        rma.State = DownloadState.Downloaded;
                         await context.SaveChangesAsync();
                         continue;
                     }
@@ -47,18 +48,18 @@ public class CustomerReturnsToP4W(ScheduleSetting settings) : BaseWorker(setting
                     var payload = new CustomerReturnP4()
                     {
                         // Id = po.P4WId,
-                        CustomerId = po.CustomerId,
-                        WarehouseId = warehouses.SingleOrDefault(c => c.Code == po.WarehouseCode)?.Id ?? throw new BusinessWebException($"Warehouse [{po.WarehouseCode}] is not setup in P4W"),
-                        CustomerReturnNumber = po.CustomerReturnNumber,
-                        Comments = po.Comments,
-                        Lines = po.Lines
+                        CustomerId = rma.Customer.P4WId ?? throw new BusinessWebException($"Customer [{rma.Customer.Code}] has not been synced"),
+                        WarehouseId = warehouses.SingleOrDefault(c => c.Code == rma.WarehouseCode)?.Id ?? throw new BusinessWebException($"Warehouse [{rma.WarehouseCode}] is not setup in P4W"),
+                        CustomerReturnNumber = rma.CustomerReturnNumber,
+                        Comments = rma.Comments,
+                        Lines = rma.Lines
                             .Where(c => (c.Packsize * c.Packsize ?? c.Quantity) > 0)
                             .Where(c => c.Product.IsInventoryItem)
                             .OrderBy(c => c.LineNumber).Select(c => new CustomerReturnLineP4()
                             {
                                 LineNumber = ++count,
                                 ProductId = c.Product.P4WId ?? throw new BusinessWebException($"Product [{c.Product.Sku}] has not been synced"),
-                                OrderedQuantity = c.NumberOfPacks * c.Packsize ?? c.Quantity,
+                                Quantity = c.NumberOfPacks * c.Packsize ?? c.Quantity,
                                 NumberOfPacks = c.NumberOfPacks,
                                 Packsize = c.Packsize,
                                 Reference1 = c.Id.ToString()
@@ -67,9 +68,9 @@ public class CustomerReturnsToP4W(ScheduleSetting settings) : BaseWorker(setting
 
                     if (payload.Lines.Count == 0)
                     {
-                        po.State = DownloadState.External;
+                        rma.State = DownloadState.External;
                         await context.SaveChangesAsync();
-                        await LogAsync($"PO [{po.CustomerReturnNumber}] not downloaded. No lines on an order");
+                        await LogAsync($"PO [{rma.CustomerReturnNumber}] not downloaded. No lines on an order");
                         continue;
                     }
 
@@ -85,17 +86,17 @@ public class CustomerReturnsToP4W(ScheduleSetting settings) : BaseWorker(setting
                         else
                             p4Po = await P4WClient.PostInvokeAsync<CustomerReturnP4>("/customer-returns", payload);
 
-                        po.P4WId = p4Po.Id;
-                        po.State = DownloadState.Downloaded;
+                        rma.P4WId = p4Po.Id;
+                        rma.State = DownloadState.Downloaded;
 
-                        await LogAsync($"PO [{po.CustomerReturnNumber}] sent to P4W");
+                        await LogAsync($"PO [{rma.CustomerReturnNumber}] sent to P4W");
                     }
                     catch (Exception e)
                     {
-                        po.ErrorMessage = e.ToString();
-                        po.State = DownloadState.DownloadFailed;
+                        rma.ErrorMessage = e.ToString();
+                        rma.State = DownloadState.DownloadFailed;
 
-                        await LogAsync($"PO [{po.CustomerReturnNumber}] failed to be sent to P4W\n{e}");
+                        await LogAsync($"PO [{rma.CustomerReturnNumber}] failed to be sent to P4W\n{e}");
                     }
 
                     await context.SaveChangesAsync();
