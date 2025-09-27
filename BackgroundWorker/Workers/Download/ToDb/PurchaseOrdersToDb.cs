@@ -34,25 +34,25 @@ public class PurchaseOrdersToDb(ScheduleSetting settings) : BaseWorker(settings)
         await new PurchaseOrdersToP4W(Settings).ExecuteAsync();
     }
 
-    public async Task DownloadPos(CompanySettings company, List<PurchaseOrderSap> pos)
+    public async Task DownloadPos(CompanySettings company, List<PurchaseOrderSap> purchaseOrderSaps)
     {
-        if (pos.Count == 0)
+        if (purchaseOrderSaps.Count == 0)
             return;
 
         var sapService = SapServiceClient.GetInstance(company.SapUrl, company.SapCompanyDb, company.SapUsername, company.SapPassword, LogAsync, LogErrorAsync);
         var clientId = await GetClientId(company) ?? throw new BusinessWebException($"Client id does not exist");
 
-        foreach (var po in pos)
+        foreach (var order in purchaseOrderSaps)
         {
             try
             {
                 var context = await company.CreateContext(Config.SqlConnection);
-                if (po.DocumentStatus != "bost_Open")//Close/Cancel scenario
+                if (order.DocumentStatus != "bost_Open")//Close/Cancel scenario
                 {
                     var existingOrders = await context.PurchaseOrders
                         .Where(c => !c.Uploaded)
                         .Where(c => c.P4WId != null)
-                        .Where(c => c.Reference1 == po.DocEntry).ToListAsync();
+                        .Where(c => c.Reference1 == order.DocEntry).ToListAsync();
                     foreach (var existing in existingOrders)
                     {
                         try
@@ -71,13 +71,13 @@ public class PurchaseOrdersToDb(ScheduleSetting settings) : BaseWorker(settings)
                 }
 
                 var vendor = await context.Vendors
-                    .Where(c => c.Code == po.CardCode && c.ClientId == clientId)
+                    .Where(vendor => vendor.Code == order.CardCode && vendor.ClientId == clientId)
                     .SingleOrDefaultAsync();
 
                 if (vendor?.P4WId == null)
                 {
                     var sapVendor = await sapService.GetFirst<VendorSap>("BusinessPartners", new(ConditionType.And, [
-                        new(nameof(VendorSap.CardCode), Operator.Eq, $"'{po.CardCode}'"),
+                        new(nameof(VendorSap.CardCode), Operator.Eq, $"'{order.CardCode}'"),
                         new(nameof(VendorSap.CardType), Operator.Eq, "'cSupplier'"),
                     ]));
 
@@ -98,15 +98,15 @@ public class PurchaseOrdersToDb(ScheduleSetting settings) : BaseWorker(settings)
                     await context.Entry(vendor).ReloadAsync();
                 }
 
-                var whGroups = po.DocumentLines.GroupBy(c => c.WarehouseCode).Where(c => company.Warehouses.Contains(c.Key)).ToList();
+                var whGroups = order.DocumentLines.GroupBy(c => c.WarehouseCode).Where(c => company.Warehouses.Contains(c.Key)).ToList();
                 foreach (var whGroup in whGroups)
                 {
                     if (whGroup.All(c => c.RemainingOpenQuantity == 0))
                         continue;
 
-                    var poNum = $"{po.DocNum}{(whGroups.Count == 1 ? "" : $"-{whGroup.Key}")}";
+                    var poNum = $"{order.DocNum}{(whGroups.Count == 1 ? "" : $"-{whGroup.Key}")}";
 
-                    var bo = await context.PurchaseOrders.CountAsync(c => c.Reference1 == po.DocEntry && c.WarehouseCode == whGroup.Key && c.Uploaded == true);
+                    var bo = await context.PurchaseOrders.CountAsync(c => c.Reference1 == order.DocEntry && c.WarehouseCode == whGroup.Key && c.Uploaded == true);
                     if (bo > 0)
                         poNum = $"{poNum}-{bo}";
 
@@ -127,16 +127,17 @@ public class PurchaseOrdersToDb(ScheduleSetting settings) : BaseWorker(settings)
                         await context.Entry(poP4W).ReloadAsync();
                     }
 
-                    poP4W.Reference1 = po.DocEntry;
+                    poP4W.Reference1 = order.DocEntry;
                     poP4W.WarehouseCode = whGroup.Key;
-                    poP4W.Comments = po.Comments;
+                    poP4W.Comments = order.Comments;
+                    poP4W.ReferenceNumber = order.NumAtCard;
 
                     foreach (var line in whGroup.Where(c => c.RemainingOpenQuantity > 0).OrderBy(c => c.LineNum))
                     {
                         var product = await context.Products
                             .Include(c => c.Packsizes)
                             .Where(c => c.Sku == line.ItemCode && c.ClientId == clientId)
-                            .SingleOrDefaultAsync() ?? throw new BusinessWebException($"Product [{line.ItemCode}], line [{line.LineNum}] on PO [{po.DocNum}] does not exist");
+                            .SingleOrDefaultAsync() ?? throw new BusinessWebException($"Product [{line.ItemCode}], line [{line.LineNum}] on PO [{order.DocNum}] does not exist");
 
                         if (product.IsPacksizeControlled)
                         {
