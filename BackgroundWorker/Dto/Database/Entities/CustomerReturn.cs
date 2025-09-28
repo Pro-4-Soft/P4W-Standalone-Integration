@@ -20,6 +20,8 @@ public class CustomerReturn : P4WStateEntity
 
     public DateTime? DocumentDate { get; set; }
 
+    public bool IsManualCancelledClosed { get; set; }
+
     public string ReferenceNumber { get; set; }
 
     public string Source { get; set; }
@@ -50,8 +52,7 @@ public class CustomerReturn : P4WStateEntity
 
     public string Reference1 { get; set; }
     public bool Uploaded { get; set; }
-    public bool IsCancelled { get; set; }
-    public bool IsManualCancelledClosed { get; set; }
+    
     
     [ForeignKey(nameof(CustomerReturnLine.CustomerReturnId))]
     public virtual ICollection<CustomerReturnLine> Lines { get; set; } = new List<CustomerReturnLine>();

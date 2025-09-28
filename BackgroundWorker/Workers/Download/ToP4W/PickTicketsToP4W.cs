@@ -31,7 +31,7 @@ public class PickTicketsToP4W(ScheduleSetting settings) : BaseWorker(settings)
 
                 foreach (var so in sos)
                 {
-                    if (so.IsCancelled)
+                    if (so.IsManualCancelledClosed)
                     {
                         if (so.P4WId != null)
                         {

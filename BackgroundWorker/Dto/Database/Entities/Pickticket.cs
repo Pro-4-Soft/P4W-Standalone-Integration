@@ -89,7 +89,7 @@ public class Pickticket : P4WStateEntity
     public DateTime? CloseDate { get; set; }
     public DateTime? MustArriveDate { get; set; }
 
-    public bool IsCancelled { get; set; }
+    public bool IsManualCancelledClosed { get; set; }
 
     public PaymentType PaymentType { get; set; }
 

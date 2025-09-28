@@ -49,19 +49,19 @@ public class CustomerReturnsToDb(ScheduleSetting settings) : BaseWorker(settings
                 var context = await company.CreateContext(Config.SqlConnection);
                 if (rma.DocumentStatus != "bost_Open")//Close/Cancel scenario
                 {
-                    var existingOrders = await context.CustomerReturns
+                    var existingRmas = await context.CustomerReturns
                         .Where(c => !c.Uploaded)
                         .Where(c => c.P4WId != null)
                         .Where(c => c.Reference1 == rma.DocEntry)
                         .ToListAsync();
 
-                    foreach (var existing in existingOrders)
+                    foreach (var existing in existingRmas)
                     {
                         try
                         {
-                            await LogAsync($"PO [{existing.CustomerReturnNumber}] cancelled in SAP");
+                            await LogAsync($"RMA [{existing.CustomerReturnNumber}] cancelled in SAP");
                             existing.State = DownloadState.ReadyForDownload;
-                            existing.IsCancelled = true;
+                            existing.IsManualCancelledClosed = true;
                             await context.SaveChangesAsync();
                         }
                         catch (Exception e)

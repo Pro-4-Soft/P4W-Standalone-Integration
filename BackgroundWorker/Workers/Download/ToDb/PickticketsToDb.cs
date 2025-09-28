@@ -61,7 +61,7 @@ public class PickticketsToDb(ScheduleSetting settings) : BaseWorker(settings)
                         {
                             await LogAsync($"Pickticket [{existing.PickTicketNumber}] cancelled in SAP and delete from P4W");
                             existing.State = DownloadState.ReadyForDownload;
-                            existing.IsCancelled = true;
+                            existing.IsManualCancelledClosed = true;
                             await context.SaveChangesAsync();
                         }
                         catch (Exception e)
