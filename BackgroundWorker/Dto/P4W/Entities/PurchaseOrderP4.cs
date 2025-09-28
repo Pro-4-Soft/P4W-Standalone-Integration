@@ -23,6 +23,9 @@ public class PurchaseOrderP4 : BaseP4Entity
     [JsonProperty("comments")]
     public string Comments { get; set; }
 
+    [JsonProperty("referenceNumber")]
+    public string ReferenceNumber { get; set; }
+
     [JsonProperty("reference1")]
     public string Reference1 { get; set; }
     

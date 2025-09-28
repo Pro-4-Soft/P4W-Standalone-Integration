@@ -130,6 +130,7 @@ public class PurchaseOrdersToDb(ScheduleSetting settings) : BaseWorker(settings)
                     poP4W.Reference1 = po.DocEntry;
                     poP4W.WarehouseCode = whGroup.Key;
                     poP4W.Comments = po.Comments;
+                    poP4W.ReferenceNumber = po.NumAtCard;
 
                     foreach (var line in whGroup.Where(c => c.RemainingOpenQuantity > 0).OrderBy(c => c.LineNum))
                     {

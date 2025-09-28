@@ -52,6 +52,7 @@ public class PurchaseOrdersToP4W(ScheduleSetting settings) : BaseWorker(settings
                         WarehouseId = warehouses.SingleOrDefault(c => c.Code == po.WarehouseCode)?.Id ?? throw new BusinessWebException($"Warehouse [{po.WarehouseCode}] is not setup in P4W"),
                         PurchaseOrderNumber = po.PurchaseOrderNumber,
                         Comments = po.Comments,
+                        ReferenceNumber = po.ReferenceNumber,
                         Lines = po.Lines
                             .Where(c => (c.NumberOfPacks * c.Packsize ?? c.Quantity) > 0)
                             .Where(c => c.Product.IsInventoryItem)

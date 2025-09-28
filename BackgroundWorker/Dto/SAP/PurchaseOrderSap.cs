@@ -5,6 +5,7 @@ public class PurchaseOrderSap : BaseDocumentSap
     public string CardCode { get; set; }
     public string CardName { get; set; }
     public string Comments { get; set; }
+    public string NumAtCard { get; set; }
 
     public string Confirmed { get; set; }
     public string Cancelled { get; set; }
