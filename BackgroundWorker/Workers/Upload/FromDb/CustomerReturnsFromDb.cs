@@ -20,44 +20,49 @@ public class CustomerReturnsFromDb(ScheduleSetting settings) : BaseWorker(settin
                 var context = await company.CreateContext(Config.SqlConnection);
                 var now = DateTime.Now;
 
-                var pos = await context.CustomerReturns
+                var rmas = await context.CustomerReturns
+                    .Include(c => c.Customer)
                     .Include(c => c.Lines)
                     .ThenInclude(c => c.Details)
                     .Include(c => c.Lines).ThenInclude(c => c.Product)
                     .Where(c => c.State == DownloadState.ReadyForUpload)
                     .ToListAsync();
 
-                foreach (var po in pos)
+                foreach (var rma in rmas)
                 {
                     try
                     {
-                        dynamic delivery = new ExpandoObject();
-                        delivery.CardCode = po.Customer.Code;
-                        delivery.DocDate = now.Date.ToString("yyyy-MM-dd");
-                        delivery.TaxDate = now.Date.ToString("yyyy-MM-dd");
-                        delivery.DocDueDate = now.Date.ToString("yyyy-MM-dd");
-                        delivery.DocumentLines = new List<ExpandoObject>();
+                        dynamic returnDoc = new ExpandoObject();
+                        returnDoc.CardCode = rma.Customer.Code;
+                        returnDoc.DocDate = now.Date.ToString("yyyy-MM-dd");
+                        returnDoc.TaxDate = now.Date.ToString("yyyy-MM-dd");
+                        returnDoc.DocDueDate = now.Date.ToString("yyyy-MM-dd");
+                        returnDoc.DocumentLines = new List<ExpandoObject>();
 
-                        foreach (var poLine in po.Lines)
+                        foreach (var rmaLine in rma.Lines)
                         {
                             dynamic line = new ExpandoObject();
 
-                            line.BaseEntry = po.Reference1.ParseInt();
-                            line.BaseLine = poLine.LineNumber;
-                            line.BaseType = (int)BoObjectTypes.oPurchaseOrders;
-                            line.Quantity = poLine.ReceivedQuantity / (poLine.Packsize??1);
+                            //TODO: Figure out how to properly link it to base document
+
+                            //line.BaseEntry = rma.Reference1.ParseInt();
+                            //line.BaseLine = rmaLine.LineNumber;
+                            //line.BaseType = (int)BoObjectTypes.oReturnRequest;
+
+                            line.ItemCode = rmaLine.Product.Sku;
+                            line.Quantity = rmaLine.ReceivedQuantity / (rmaLine.Packsize??1);
                             
-                            if (poLine.Product.IsSerialControlled)
+                            if (rmaLine.Product.IsSerialControlled)
                             {
-                                line.SerialNumbers = poLine.Details.Where(c => !c.SerialNumber.IsNullOrEmpty()).Select(c => new
+                                line.SerialNumbers = rmaLine.Details.Where(c => !c.SerialNumber.IsNullOrEmpty()).Select(c => new
                                 {
                                     InternalSerialNumber = c.SerialNumber
                                 });
                             }
 
-                            if (poLine.Product.IsLotControlled)
+                            if (rmaLine.Product.IsLotControlled)
                             {
-                                line.BatchNumbers = poLine.Details.Where(c => !c.LotNumber.IsNullOrEmpty())
+                                line.BatchNumbers = rmaLine.Details.Where(c => !c.LotNumber.IsNullOrEmpty())
                                     .GroupBy(c => c.LotNumber)
                                     .Select(lot => new
                                     {
@@ -66,32 +71,32 @@ public class CustomerReturnsFromDb(ScheduleSetting settings) : BaseWorker(settin
                                     });
                             }
 
-                            delivery.DocumentLines.Add(line);
+                            returnDoc.DocumentLines.Add(line);
                         }
 
                         var sapService = SapServiceClient.GetInstance(company.SapUrl, company.SapCompanyDb, company.SapUsername, company.SapPassword, LogAsync, LogErrorAsync);
-                        var goodsReceiptPo = await sapService.Post<BaseDocumentSap>("ReturnsService", delivery);
+                        var ret = await sapService.Post<BaseDocumentSap>("Returns", returnDoc);
 
-                        po.Uploaded = true;
-                        po.State = DownloadState.Uploaded;
-                        po.ErrorMessage = null;
+                        rma.Uploaded = true;
+                        rma.State = DownloadState.Uploaded;
+                        rma.ErrorMessage = null;
                         
                         await context.SaveChangesAsync();
 
-                        await LogAsync($"PO [{po.CustomerReturnNumber}] written to SAP as Goods Receipt PO [{goodsReceiptPo.DocNum}]");
+                        await LogAsync($"RMA [{rma.CustomerReturnNumber}] written to SAP as Return [{ret.DocNum}]");
 
-                        //Download a backorder
-                        var sapPo = await sapService.Get<CustomerReturnSap>("ReturnRequest",
-                            new(ConditionType.And, [
-                                new FilterRule("DocEntry", Operator.Eq, po.Reference1),
-                                new FilterRule("DocumentStatus", Operator.Eq, "'bost_Open'")
-                            ]));
-                        await new CustomerReturnsToDb(Settings).Download(company, sapPo);
+                        //TODO: Download a backorder - enable only when RMA created has a proper base document
+                        //var sapRma = await sapService.Get<CustomerReturnSap>("ReturnRequest",
+                        //    new(ConditionType.And, [
+                        //        new FilterRule("DocEntry", Operator.Eq, rma.Reference1),
+                        //        new FilterRule("DocumentStatus", Operator.Eq, "'bost_Open'")
+                        //    ]));
+                        //await new CustomerReturnsToDb(Settings).Download(company, sapRma);
                     }
                     catch (Exception e)
                     {
-                        po.State = DownloadState.UploadFailed;
-                        po.ErrorMessage = e.Message;
+                        rma.State = DownloadState.UploadFailed;
+                        rma.ErrorMessage = e.Message;
                         await context.SaveChangesAsync();
                     }
                 }

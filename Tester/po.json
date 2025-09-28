@@ -1,37 +1,20 @@
 ﻿{
-  "CustomerId": "3f235ed8-db1a-4bef-a4c3-4e1dba55f5e0",
-  "CustomerReturnNumber": "1",
-  "TrackingNumber": null,
-  "WarehouseId": "6597ae2a-06ff-4e1e-a811-33d1b7d87e87",
-  "Comments": "Based On Sales Orders 47278. Based On Deliveries 1397. Based On A/R Invoices 113608.",
-  "Carrier": null,
-  "ReferenceNumber": null,
-  "Lines": [
+  "CardCode": "C-00074",
+  "DocDate": "2025-09-28",
+  "TaxDate": "2025-09-28",
+  "DocDueDate": "2025-09-28",
+  "DocumentLines": [
     {
-      "ProductId": "2c64af5f-f5d6-4b3f-bc32-98ac7d61e598",
-      "ReferenceNumber": null,
-      "Quantity": null,
-      "LineNumber": 1,
-      "Packsize": null,
-      "NumberOfPacks": null,
-      "Reference1": "c18ca462-9132-48f9-8f5a-8bf52730314b",
-      "Reference2": null,
-      "Reference3": null,
-      "Instructions": null
+      "BaseEntry": 8,
+      "BaseLine": 0,
+      "BaseType": 234000032,
+      "Quantity": 1.000000
+    },
+    {
+      "BaseEntry": 8,
+      "BaseLine": 1,
+      "BaseType": 234000032,
+      "Quantity": 1.000000
     }
-  ],
-  "Reference1": null,
-  "Reference2": null,
-  "Reference3": null,
-  "From": {
-    "Name": null,
-    "Phone": null,
-    "Email": null,
-    "Address1": null,
-    "Address2": null,
-    "City": null,
-    "StateProvince": null,
-    "ZipPostal": null,
-    "Country": null
-  }
+  ]
 }

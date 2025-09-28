@@ -14,29 +14,29 @@ public class CustomerReturnsFromP4W(ScheduleSetting settings) : BaseWorker(setti
 {
     public override async Task ExecuteAsync()
     {
-        var posForUpload = await P4WClient.GetInvokeAsync<List<CustomerReturnP4>>("customer-returns");
-        foreach (var poHeader in posForUpload)
+        var rmasForUpload = await P4WClient.GetInvokeAsync<List<CustomerReturnP4>>("customer-returns");
+        foreach (var rmaHeader in rmasForUpload)
         {
-            var company = Config.Companies.SingleOrDefault(c => c.P4WClientName == poHeader.Customer.Client.Name);
+            var company = Config.Companies.SingleOrDefault(c => c.P4WClientName == rmaHeader.Customer.Client.Name);
             if (company == null)
                 continue;//Ignore orders for clients that we don't know about
 
-            var p4WPo = await P4WClient.GetInvokeAsync<CustomerReturnP4>($"customer-returns/{poHeader.Id}");
+            var p4WRma = await P4WClient.GetInvokeAsync<CustomerReturnP4>($"customer-returns/{rmaHeader.Id}");
 
-            PurchaseOrder po = null;
+            CustomerReturn rma = null;
             var context = await company.CreateContext(Config.SqlConnection);
             try
             {
-                po = await context.PurchaseOrders
+                rma = await context.CustomerReturns
                     .Include(c => c.Lines).ThenInclude(c => c.Product)
                     .Include(c => c.Lines).ThenInclude(c => c.Details)
-                    .SingleOrDefaultAsync(c => c.P4WId == p4WPo.Id) 
-                     ?? throw new BusinessWebException($"PO [{p4WPo.CustomerReturnNumber}] with P4WId [{p4WPo.Id}] does not exist in Database");
+                    .SingleOrDefaultAsync(c => c.P4WId == p4WRma.Id) 
+                     ?? throw new BusinessWebException($"RMA [{p4WRma.CustomerReturnNumber}] with P4WId [{p4WRma.Id}] does not exist in Database");
 
-                foreach (var line in p4WPo.Lines)
+                foreach (var line in p4WRma.Lines)
                 {
-                    var dbLine = po.Lines.SingleOrDefault(c => c.Id == line.Reference1.ParseGuid()) ??
-                                 throw new BusinessWebException($"Line [{line.LineNumber}] with Sku [{line.Product.Sku}] does not existing on original PO. Line Id [{line.Reference1}] not found");
+                    var dbLine = rma.Lines.SingleOrDefault(c => c.Id == line.Reference1.ParseGuid()) ??
+                                 throw new BusinessWebException($"Line [{line.LineNumber}] with Sku [{line.Product.Sku}] does not existing on original RMA. Line Id [{line.Reference1}] not found");
 
                     dbLine.ReceivedQuantity = line.ReceivedQuantity;
 
@@ -53,14 +53,14 @@ public class CustomerReturnsFromP4W(ScheduleSetting settings) : BaseWorker(setti
                             {
                                 existing = new()
                                 {
-                                    PurchaseOrderLineId = dbLine.Id,
+                                    CustomerReturnLineId = dbLine.Id,
                                     ExpiryDate = detl.ExpiryDate,
                                     SerialNumber = detl.SerialNumber,
                                     LotNumber = detl.LotNumber,
                                     PacksizeEachCount = detl.PacksizeEachCount,
                                     ReceivedQuantity = detl.ReceivedQuantity,
                                 };
-                                context.PurchaseOrderLineDetails.Add(existing);
+                                context.CustomerReturnLineDetails.Add(existing);
                             }
 
                             existing.ReceivedQuantity = detl.ReceivedQuantity;
@@ -68,30 +68,30 @@ public class CustomerReturnsFromP4W(ScheduleSetting settings) : BaseWorker(setti
                     }
                 }
 
-                if (po.Lines.Any(c => c.ReceivedQuantity > 0))
-                    po.State = DownloadState.ReadyForUpload;
+                if (rma.Lines.Any(c => c.ReceivedQuantity > 0))
+                    rma.State = DownloadState.ReadyForUpload;
 
                 await context.SaveChangesAsync();
                 await P4WClient.PostInvokeAsync("/customer-returns/upload", new UploadConfirmationP4
                 {
-                    Ids = [poHeader.Id.Value],
+                    Ids = [rmaHeader.Id.Value],
                     UploadSucceeded = true,
                 });
 
-                await LogAsync($"PO [{po.PurchaseOrderNumber}] uploaded from P4W");
+                await LogAsync($"RMA [{rma.CustomerReturnNumber}] uploaded from P4W");
             }
             catch (Exception e)
             {
-                if (po != null)
+                if (rma != null)
                 {
-                    po.State = DownloadState.UploadFailed;
-                    po.ErrorMessage = e.ToString();
+                    rma.State = DownloadState.UploadFailed;
+                    rma.ErrorMessage = e.ToString();
                     await context.SaveChangesAsync();
                 }
 
                 await P4WClient.PostInvokeAsync("/customer-returns/upload", new UploadConfirmationP4
                 {
-                    Ids = [poHeader.Id.Value],
+                    Ids = [rmaHeader.Id.Value],
                     UploadSucceeded = false,
                     UploadMessage = e.Message,
                     ResetUploadCount = false

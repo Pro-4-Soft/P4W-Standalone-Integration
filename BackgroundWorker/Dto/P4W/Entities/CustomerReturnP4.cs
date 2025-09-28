@@ -14,7 +14,7 @@ public class CustomerReturnP4 : BaseP4Entity
     [JsonProperty("customerId")]
     public Guid? CustomerId { get; set; }
 
-    [JsonProperty("vendor")]
+    [JsonProperty("customer")]
     public CustomerP4 Customer { get; set; }
 
     [JsonProperty("warehouse")]
