@@ -70,7 +70,7 @@ public class CustomerReturnsToP4W(ScheduleSetting settings) : BaseWorker(setting
                     {
                         rma.State = DownloadState.External;
                         await context.SaveChangesAsync();
-                        await LogAsync($"PO [{rma.CustomerReturnNumber}] not downloaded. No lines on an order");
+                        await LogAsync($"RMA [{rma.CustomerReturnNumber}] not downloaded. No lines on an order");
                         continue;
                     }
 
@@ -80,23 +80,23 @@ public class CustomerReturnsToP4W(ScheduleSetting settings) : BaseWorker(setting
                         if (existing.Count > 0)
                             payload.Id = existing.First().Id;
 
-                        CustomerReturnP4 p4Po;
+                        CustomerReturnP4 p4Rma;
                         if (payload.Id != null)
-                            p4Po = await P4WClient.PutInvokeAsync<CustomerReturnP4>("/customer-returns", payload);
+                            p4Rma = await P4WClient.PutInvokeAsync<CustomerReturnP4>("/customer-returns", payload);
                         else
-                            p4Po = await P4WClient.PostInvokeAsync<CustomerReturnP4>("/customer-returns", payload);
+                            p4Rma = await P4WClient.PostInvokeAsync<CustomerReturnP4>("/customer-returns", payload);
 
-                        rma.P4WId = p4Po.Id;
+                        rma.P4WId = p4Rma.Id;
                         rma.State = DownloadState.Downloaded;
 
-                        await LogAsync($"PO [{rma.CustomerReturnNumber}] sent to P4W");
+                        await LogAsync($"RMA [{rma.CustomerReturnNumber}] sent to P4W");
                     }
                     catch (Exception e)
                     {
                         rma.ErrorMessage = e.ToString();
                         rma.State = DownloadState.DownloadFailed;
 
-                        await LogAsync($"PO [{rma.CustomerReturnNumber}] failed to be sent to P4W\n{e}");
+                        await LogAsync($"RMA [{rma.CustomerReturnNumber}] failed to be sent to P4W\n{e}");
                     }
 
                     await context.SaveChangesAsync();

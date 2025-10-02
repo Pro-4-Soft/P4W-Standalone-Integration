@@ -43,13 +43,10 @@ public class CustomerReturnsFromDb(ScheduleSetting settings) : BaseWorker(settin
                         {
                             dynamic line = new ExpandoObject();
 
-                            //TODO: Figure out how to properly link it to base document
-
-                            //line.BaseEntry = rma.Reference1.ParseInt();
-                            //line.BaseLine = rmaLine.LineNumber;
-                            //line.BaseType = (int)BoObjectTypes.oReturnRequest;
-
-                            line.ItemCode = rmaLine.Product.Sku;
+                            line.BaseEntry = rma.Reference1.ParseInt();
+                            line.BaseLine = rmaLine.LineNumber;
+                            line.BaseType = (int)BoObjectTypes.oReturnRequest;
+                            
                             line.Quantity = rmaLine.ReceivedQuantity / (rmaLine.Packsize??1);
                             
                             if (rmaLine.Product.IsSerialControlled)
@@ -85,13 +82,12 @@ public class CustomerReturnsFromDb(ScheduleSetting settings) : BaseWorker(settin
 
                         await LogAsync($"RMA [{rma.CustomerReturnNumber}] written to SAP as Return [{ret.DocNum}]");
 
-                        //TODO: Download a backorder - enable only when RMA created has a proper base document
-                        //var sapRma = await sapService.Get<CustomerReturnSap>("ReturnRequest",
-                        //    new(ConditionType.And, [
-                        //        new FilterRule("DocEntry", Operator.Eq, rma.Reference1),
-                        //        new FilterRule("DocumentStatus", Operator.Eq, "'bost_Open'")
-                        //    ]));
-                        //await new CustomerReturnsToDb(Settings).Download(company, sapRma);
+                        var sapRma = await sapService.Get<CustomerReturnSap>("ReturnRequest",
+                            new(ConditionType.And, [
+                                new FilterRule("DocEntry", Operator.Eq, rma.Reference1),
+                                new FilterRule("DocumentStatus", Operator.Eq, "'bost_Open'")
+                            ]));
+                        await new CustomerReturnsToDb(Settings).Download(company, sapRma);
                     }
                     catch (Exception e)
                     {
