@@ -8,6 +8,7 @@ public class SalesOrderSap : BaseDocumentSap
     public string Address { get; set; }
 
     public string Comments { get; set; }
+    public string NumAtCard { get; set; }
 
     public string Confirmed { get; set; }
     public string DocumentStatus { get; set; }
@@ -23,6 +24,7 @@ public class SalesOrderSap : BaseDocumentSap
 
     public AddressSap AddressExtension { get; set; }
     public List<SalesOrderLineSap> DocumentLines { get; set; } = [];
+   
 }
 
 public class SalesOrderLineSap

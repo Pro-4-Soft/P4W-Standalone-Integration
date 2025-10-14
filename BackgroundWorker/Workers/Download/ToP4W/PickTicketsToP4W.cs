@@ -62,6 +62,7 @@ public class PickTicketsToP4W(ScheduleSetting settings) : BaseWorker(settings)
                         WarehouseId = warehouse.Id.Value,
                         PickTicketNumber = so.PickTicketNumber,
                         Comments = so.Comments,
+                        ReferenceNumber = so.referenceNumber,
                         FreightType = so.FreightType.ToString(),
                         ShipFrom = new()
                         {

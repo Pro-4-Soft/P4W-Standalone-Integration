@@ -133,6 +133,7 @@ public class PickticketsToDb(ScheduleSetting settings) : BaseWorker(settings)
                     pickTicketP4W.Reference1 = so.DocEntry;
                     pickTicketP4W.WarehouseCode = whGroup.Key;
                     pickTicketP4W.Comments = so.Comments;
+                    pickTicketP4W.referenceNumber = so.NumAtCard;
 
                     pickTicketP4W.FreightType = FreightType.PrivateFleet;
                     pickTicketP4W.PaymentType = PaymentType.PrePay;

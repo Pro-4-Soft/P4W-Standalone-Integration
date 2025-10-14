@@ -22,7 +22,7 @@ public class Pickticket : P4WStateEntity
 
     public string RouteNumber { get; set; }
 
-    public string ReferenceNumber { get; set; }
+    public string referenceNumber { get; set; }
     public string PickingInstructions { get; set; }
     public string Comments { get; set; }
 
