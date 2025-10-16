@@ -34,7 +34,7 @@ public class PurchaseOrdersToDb(ScheduleSetting settings) : BaseWorker(settings)
         await new PurchaseOrdersToP4W(Settings).ExecuteAsync();
     }
 
-    public async Task DownloadPos(CompanySettings company, List<PurchaseOrderSap> pos)
+    public async Task DownloadPos(CompanySettings company, List<PurchaseOrderSap> pos)  
     {
         if (pos.Count == 0)
             return;
