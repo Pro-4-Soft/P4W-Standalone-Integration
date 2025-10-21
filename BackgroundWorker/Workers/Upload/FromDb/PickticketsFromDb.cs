@@ -48,7 +48,9 @@ public class PickticketsFromDb(ScheduleSetting settings) : BaseWorker(settings)
 
                             var shipped = pickTicketLine.ToteLines.Sum(c => c.ShippedQuantity);
 
-                            line.Quantity = shipped / (pickTicketLine.Packsize??1);
+                            var qty = shipped / (pickTicketLine.Packsize ?? 1);
+
+                            line.Quantity = qty;
 
                             var detls = pickTicketLine.ToteLines.SelectMany(c => c.Details).ToList();
 
@@ -71,7 +73,8 @@ public class PickticketsFromDb(ScheduleSetting settings) : BaseWorker(settings)
                                     });
                             }
 
-                            delivery.DocumentLines.Add(line);
+                            if (qty > 0)
+                                delivery.DocumentLines.Add(line);
                         }
 
                         var sapService = SapServiceClient.GetInstance(company.SapUrl, company.SapCompanyDb, company.SapUsername, company.SapPassword, LogAsync, LogErrorAsync);
