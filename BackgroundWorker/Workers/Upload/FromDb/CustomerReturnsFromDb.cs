@@ -1,5 +1,6 @@
 ﻿using System.Dynamic;
 using Microsoft.EntityFrameworkCore;
+using Pro4Soft.BackgroundWorker.Dto.Database.Entities;
 using Pro4Soft.BackgroundWorker.Dto.Database.Entities.Base;
 using Pro4Soft.BackgroundWorker.Dto.SAP;
 using Pro4Soft.BackgroundWorker.Execution;
@@ -46,9 +47,11 @@ public class CustomerReturnsFromDb(ScheduleSetting settings) : BaseWorker(settin
                             line.BaseEntry = rma.Reference1.ParseInt();
                             line.BaseLine = rmaLine.LineNumber;
                             line.BaseType = (int)BoObjectTypes.oReturnRequest;
-                            
-                            line.Quantity = rmaLine.ReceivedQuantity / (rmaLine.Packsize??1);
-                            
+
+                            var qty = rmaLine.ReceivedQuantity / (rmaLine.Packsize ?? 1);
+
+                            line.Quantity = qty;
+
                             if (rmaLine.Product.IsSerialControlled)
                             {
                                 line.SerialNumbers = rmaLine.Details.Where(c => !c.SerialNumber.IsNullOrEmpty()).Select(c => new
@@ -68,7 +71,8 @@ public class CustomerReturnsFromDb(ScheduleSetting settings) : BaseWorker(settin
                                     });
                             }
 
-                            returnDoc.DocumentLines.Add(line);
+                            if ((qty ?? 0) > 0)
+                                returnDoc.DocumentLines.Add(line);
                         }
 
                         var sapService = SapServiceClient.GetInstance(company.SapUrl, company.SapCompanyDb, company.SapUsername, company.SapPassword, LogAsync, LogErrorAsync);

@@ -40,13 +40,15 @@ public class PurchaseOrdersFromDb(ScheduleSetting settings) : BaseWorker(setting
 
                         foreach (var poLine in po.Lines)
                         {
+                            var qty = poLine.ReceivedQuantity / (poLine.Packsize ?? 1);
+
                             dynamic line = new ExpandoObject();
 
                             line.BaseEntry = po.Reference1.ParseInt();
                             line.BaseLine = poLine.LineNumber;
                             line.BaseType = (int)BoObjectTypes.oPurchaseOrders;
-                            line.Quantity = poLine.ReceivedQuantity / (poLine.Packsize??1);
-                            
+                            line.Quantity = qty;
+
                             if (poLine.Product.IsSerialControlled)
                             {
                                 line.SerialNumbers = poLine.Details.Where(c => !c.SerialNumber.IsNullOrEmpty()).Select(c => new
@@ -66,7 +68,8 @@ public class PurchaseOrdersFromDb(ScheduleSetting settings) : BaseWorker(setting
                                     });
                             }
 
-                            delivery.DocumentLines.Add(line);
+                            if ((qty ?? 0) > 0)
+                                delivery.DocumentLines.Add(line);
                         }
 
                         var sapService = SapServiceClient.GetInstance(company.SapUrl, company.SapCompanyDb, company.SapUsername, company.SapPassword, LogAsync, LogErrorAsync);
