@@ -39,7 +39,7 @@ public class PurchaseOrdersToP4W(ScheduleSetting settings) : BaseWorker(settings
                             await LogAsync($"PO [{po.PurchaseOrderNumber}] delete from P4W");
                         }
 
-                        po.State = DownloadState.Downloaded;
+                        context.PurchaseOrders.Remove(po);
                         await context.SaveChangesAsync();
                         continue;
                     }

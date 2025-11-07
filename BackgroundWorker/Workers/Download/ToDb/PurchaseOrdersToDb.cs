@@ -99,6 +99,7 @@ public class PurchaseOrdersToDb(ScheduleSetting settings) : BaseWorker(settings)
                 }
 
                 var whGroups = po.DocumentLines.GroupBy(c => c.WarehouseCode).Where(c => company.Warehouses.Contains(c.Key)).ToList();
+                var posToDelete = await context.PurchaseOrders.Where(c => c.Reference1 == po.DocEntry).ToListAsync();
                 foreach (var whGroup in whGroups)
                 {
                     if (whGroup.All(c => c.RemainingOpenQuantity == 0))
@@ -126,6 +127,10 @@ public class PurchaseOrdersToDb(ScheduleSetting settings) : BaseWorker(settings)
                         await context.SaveChangesAsync();
                         await context.Entry(poP4W).ReloadAsync();
                     }
+
+                    var existing = posToDelete.SingleOrDefault(c => c.Id == poP4W.Id);
+                    if (existing != null)
+                        posToDelete.Remove(existing);
 
                     poP4W.Reference1 = po.DocEntry;
                     poP4W.WarehouseCode = whGroup.Key;
@@ -168,6 +173,16 @@ public class PurchaseOrdersToDb(ScheduleSetting settings) : BaseWorker(settings)
                     await context.SaveChangesAsync();
 
                     await LogAsync($"PO [{poP4W.PurchaseOrderNumber}] written to DB");
+                }
+
+                if (posToDelete.Count > 0)
+                {
+                    foreach (var ord in posToDelete)
+                    {
+                        ord.State = DownloadState.ReadyForDownload;
+                        ord.IsManualCancelledClosed = true;
+                    }
+                    await context.SaveChangesAsync();
                 }
             }
             catch (Exception e)

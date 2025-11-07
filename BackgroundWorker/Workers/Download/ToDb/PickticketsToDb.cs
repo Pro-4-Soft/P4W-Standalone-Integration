@@ -102,6 +102,7 @@ public class PickticketsToDb(ScheduleSetting settings) : BaseWorker(settings)
                 }
 
                 var whGroups = so.DocumentLines.GroupBy(c => c.WarehouseCode).Where(c => company.Warehouses.Contains(c.Key)).ToList();
+                var sosToDelete = await context.PickTickets.Where(c => c.Reference1 == so.DocEntry).ToListAsync();
                 foreach (var whGroup in whGroups)
                 {
                     if (whGroup.All(c => c.RemainingOpenQuantity == 0))
@@ -129,6 +130,10 @@ public class PickticketsToDb(ScheduleSetting settings) : BaseWorker(settings)
                         await context.SaveChangesAsync();
                         await context.Entry(pickTicketP4W).ReloadAsync();
                     }
+
+                    var existing = sosToDelete.SingleOrDefault(c => c.Id == pickTicketP4W.Id);
+                    if (existing != null)
+                        sosToDelete.Remove(existing);
 
                     pickTicketP4W.Reference1 = so.DocEntry;
                     pickTicketP4W.WarehouseCode = whGroup.Key;
@@ -194,6 +199,16 @@ public class PickticketsToDb(ScheduleSetting settings) : BaseWorker(settings)
                     await context.SaveChangesAsync();
 
                     await LogAsync($"Pickticket [{pickTicketP4W.PickTicketNumber}] written to DB");
+                }
+
+                if (sosToDelete.Count > 0)
+                {
+                    foreach (var ord in sosToDelete)
+                    {
+                        ord.State = DownloadState.ReadyForDownload;
+                        ord.IsManualCancelledClosed = true;
+                    }
+                    await context.SaveChangesAsync();
                 }
             }
             catch (Exception e)

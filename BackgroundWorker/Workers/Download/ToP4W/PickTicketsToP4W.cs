@@ -48,7 +48,7 @@ public class PickTicketsToP4W(ScheduleSetting settings) : BaseWorker(settings)
                             }
                         }
 
-                        so.State = DownloadState.Downloaded;
+                        context.PickTickets.Remove(so);
                         await context.SaveChangesAsync();
                         continue;
                     }
