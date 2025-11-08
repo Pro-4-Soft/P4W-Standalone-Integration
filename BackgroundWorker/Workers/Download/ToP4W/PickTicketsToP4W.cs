@@ -136,6 +136,10 @@ public class PickTicketsToP4W(ScheduleSetting settings) : BaseWorker(settings)
 
                         so.P4WId = p4Pickticket.Id;
                         so.State = DownloadState.Downloaded;
+                        if (!so.FileDownloadPath.IsNullOrEmpty())
+                        {
+                            File.Move(so.FileDownloadPath, company.SoDownloadPathCompleted); 
+                        }
 
                         await LogAsync($"Pickticket [{so.PickTicketNumber}] sent to P4W");
                     }

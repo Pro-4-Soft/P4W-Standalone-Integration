@@ -5,6 +5,7 @@ using Pro4Soft.BackgroundWorker.Dto.SAP;
 using Pro4Soft.BackgroundWorker.Execution;
 using Pro4Soft.BackgroundWorker.Execution.Common;
 using Pro4Soft.BackgroundWorker.Execution.SettingsFramework;
+using Pro4Soft.BackgroundWorker.Readers.Edi940;
 using Pro4Soft.BackgroundWorker.Workers.Download.ToP4W;
 
 namespace Pro4Soft.BackgroundWorker.Workers.Download.ToDb;
@@ -16,26 +17,141 @@ public class PickticketsToDb(ScheduleSetting settings) : BaseWorker(settings)
         foreach (var company in Config.Companies)
         {
             var masterContext = await company.CreateContext(Config.SqlConnection);
+            
+            var soDownloadPath = company.SoDownloadPath;
+            if (!soDownloadPath.IsNullOrEmpty())
+            {
+                var dir = new DirectoryInfo(soDownloadPath);
+                var reader = new Edi940Reader();
+                foreach (var file in dir.GetFiles().Where(c => c.Name.ToLower().StartsWith("940")))
+                {
+                    var edi940Document = reader.ReadFile(file.FullName);
+                    await PrepareSalesOrders(company, edi940Document, file.FullName);
+                }
+            }
+            else
+            {
+                var sapService = SapServiceClient.GetInstance(company.SapUrl, company.SapCompanyDb, company.SapUsername, company.SapPassword, LogAsync, LogErrorAsync);
+                var lastRead = await masterContext.GetStringAsync(ConfigConstants.Download_SalesOrder_LastSync);
+                var sos = await sapService.Get<SalesOrderSap>("Orders", SapServiceClient.GetLastUpdatedRule(lastRead?.ParseDateTimeNullable()));
 
-            //reset config
-            //await masterContext.SetStringConfig(ConfigConstants.Download_SalesOrder_LastSync, null);
+                if (sos.Count == 0)
+                    continue;
 
-            var sapService = SapServiceClient.GetInstance(company.SapUrl, company.SapCompanyDb, company.SapUsername, company.SapPassword, LogAsync, LogErrorAsync);
-            var lastRead = await masterContext.GetStringAsync(ConfigConstants.Download_SalesOrder_LastSync);
-            var sos = await sapService.Get<SalesOrderSap>("Orders", SapServiceClient.GetLastUpdatedRule(lastRead?.ParseDateTimeNullable()));
+                await DownloadSos(company, sos);
+                var maxUpdated = sos.Max(c => c.ActualUpdated);
+                await masterContext.SetStringConfig(ConfigConstants.Download_SalesOrder_LastSync, maxUpdated?.ToString("yyyy-MM-dd'T'HH:mm:ss"));
+            }
 
-            if (sos.Count == 0)
-                continue;
-
-            await DownloadSos(company, sos);
-
-            var maxUpdated = sos.Max(c => c.ActualUpdated);
-            await masterContext.SetStringConfig(ConfigConstants.Download_SalesOrder_LastSync, maxUpdated?.ToString("yyyy-MM-dd'T'HH:mm:ss"));
         }
 
         await new PickTicketsToP4W(Settings).ExecuteAsync();
     }
 
+    public async Task PrepareSalesOrders(CompanySettings company, Edi940Document edi940Document, String filePath)
+    {
+        var lines = edi940Document.LineItems
+            .Where(c => c.Quantity > 0)
+            .Where(c => !string.IsNullOrWhiteSpace(c.ProductCode))
+            .ToList();
+        
+           try
+            {
+                var context = await company.CreateContext(Config.SqlConnection);
+
+                var customer = await context.Customers
+                    .Where(c => c.Code == "FRIGOSER")
+                    .SingleOrDefaultAsync();
+
+                if (customer?.P4WId == null)
+                {
+
+                    if (customer == null)
+                    {
+                        customer = new()
+                        {
+                            ClientId = Guid.Parse(company.ClientId),
+                            Code = company.CustomerCode,
+                            CompanyName = company.CompanyName,
+                        };
+                        await context.Customers.AddAsync(customer);
+                        await context.SaveChangesAsync();
+                    }
+                    
+                    //Push to P4W
+                    await new CustomersToP4W(Settings).ExecuteAsync();
+                    await context.Entry(customer).ReloadAsync();
+                }
+
+                
+                    var pickTicketP4W = await context.PickTickets
+                        .Include(c => c.Lines)
+                        .SingleOrDefaultAsync(c => c.PickTicketNumber == edi940Document.Header.OrderNumber && c.Uploaded == false);
+                    
+                    if (pickTicketP4W == null)
+                    {
+                        pickTicketP4W = new()
+                        {
+                            CustomerId = customer.Id,
+                            PickTicketNumber = edi940Document.Header.OrderNumber,
+                        };
+                        await context.PickTickets.AddAsync(pickTicketP4W);
+                    }
+                    else
+                    {
+                        context.PickTicketLines.RemoveRange(pickTicketP4W.Lines);
+                        await context.SaveChangesAsync();
+                        await context.Entry(pickTicketP4W).ReloadAsync();
+                    }
+
+
+                    pickTicketP4W.FileDownloadPath = filePath;
+                    pickTicketP4W.Reference1 = edi940Document.Header.OrderNumber;
+                    pickTicketP4W.WarehouseCode = company.Warehouses[0];
+                    pickTicketP4W.FreightType = FreightType.PrivateFleet;
+                    pickTicketP4W.PaymentType = PaymentType.PrePay;
+                    pickTicketP4W.RouteNumber = edi940Document.Header.RouteName;
+
+                    pickTicketP4W.ShipToName = edi940Document.Header.ShipFromLocation;
+                    
+                    foreach (var line in lines)
+                    {
+                        var product = await context.Products
+                            .Include(c => c.Packsizes)
+                            .Where(c => c.Sku == line.ProductCode && c.ClientId == Guid.Parse(company.ClientId))
+                            .SingleOrDefaultAsync() ?? throw new BusinessWebException($"Product [{line.ProductCode}], on SO [{edi940Document.Header.OrderNumber}] does not exist");
+
+                        if (product.IsPacksizeControlled)
+                        {
+                            await context.PickTicketLines.AddAsync(new()
+                            {
+                                ProductId = product.Id,
+                                NumberOfPacks = (int)line.Quantity,
+                                PickTicketId = pickTicketP4W.Id,
+                            });
+                        }
+                        else
+                        {
+                            await context.PickTicketLines.AddAsync(new()
+                            {
+                                ProductId = product.Id,
+                                Quantity = line.Quantity,
+                                PickTicketId = pickTicketP4W.Id,
+                            });
+                        }
+                    }
+
+                    pickTicketP4W.State = DownloadState.ReadyForDownload;
+                    await context.SaveChangesAsync();
+
+                    await LogAsync($"Pickticket [{pickTicketP4W.PickTicketNumber}] written to DB");
+            }
+            catch (Exception e)
+            {
+                await LogErrorAsync(e);
+            }
+    }
+    
     public async Task DownloadSos(CompanySettings company, List<SalesOrderSap> sos)
     {
         if (sos.Count == 0)

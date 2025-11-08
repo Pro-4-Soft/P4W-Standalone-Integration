@@ -27,6 +27,14 @@ public class CompanySettings
     public string SapUsername { get; set; }
     public string SapPassword { get; set; }
     public string P4WClientName { get; set; }
+    
+    public string SoDownloadPath { get; set; }
+    public string SoDownloadPathCompleted { get; set; }
+    
+    public string ClientId { get; set; }
+    public string CustomerCode { get; set; }
+    public string CompanyName { get; set; }
+    
     public List<string> Warehouses { get; set; } = [];
     public List<string> SyncWarehouses { get; set; } = [];
 

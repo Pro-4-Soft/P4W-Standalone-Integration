@@ -1,22 +1,26 @@
 ﻿{
   "SqlConnection": "Server=p4sql.westus3.cloudapp.azure.com;Database=master;User Id=p4portal-server-admin;Password=YUSj$ui1UueoIGGM;TrustServerCertificate=True;",
   "P4WUrl": "https://api.p4warehouse.com/",
-  "P4WApiKey": "e55600ea-8768-4dbe-a315-814b20cb9dc8_hiRBhClAYjFFFQFNVOJhy0LPyhhWa6Vy2QgvL1W6kqfkxZDgBtftP5qkqEzs+bOqn5M050UAbETHtbRoiHd6Qg==",
+  "P4WApiKey": "8fdf819c-20ba-4633-ba68-4d12328b1181_g1C6lQmon6FFpcsBpo7brTJfzw9mRacNzWCk80fG5AYuUr++YESZe12p0fPTl30M4QyttD9rB1bggIVaIf73Vw==",
   "Companies": [
     {
-      "SapUrl": "https://SapB1v10.barrdega.com:50000/b1s/v2",
-      "SapCompanyDb": "casamedico",
+      "SapUrl": "https://sap.nervcorp.co:50000/b1s/v2/",
+      "SapCompanyDb": "BDFRIGOSERVICE",
       "SapUsername": "manager",
-      "SapPassword": "2025@Sap",
-      "P4WClientName": "Default",
+      "SapPassword": "friinc123",
+      "P4WClientName": "FRIGSERV",
+      "SoDownloadPath": "/Users/sidon/Developer/projects/barrdega/P4W-Standalone-Integration/sample/SoDownload",
+      "SoDownloadPathCompleted": "/Users/sidon/Developer/projects/barrdega/P4W-Standalone-Integration/sample/Finished",
+      "ClientId": "2fab49f7-5c6c-4010-8669-6aa9d9fc006e",
+      "CustomerCode": "FRIGOSER",
+      "CompanyName": "Frigo Services Inc.",
       "Warehouses": [
-        "101",
-        "999"
+        "01"
       ]
     }
   ],
   "SyncWarehouses": [
-    "101"
+    "01"
   ],
   "Schedules": [
     {
