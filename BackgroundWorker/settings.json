@@ -4,13 +4,13 @@
   "P4WApiKey": "8fdf819c-20ba-4633-ba68-4d12328b1181_g1C6lQmon6FFpcsBpo7brTJfzw9mRacNzWCk80fG5AYuUr++YESZe12p0fPTl30M4QyttD9rB1bggIVaIf73Vw==",
   "Companies": [
     {
-      "SapUrl": "https://sap.nervcorp.co:50000/b1s/v2/",
+      "SapUrl": "https://SapB1v10.barrdega.com:50000/b1s/v2",
       "SapCompanyDb": "BDFRIGOSERVICE",
       "SapUsername": "manager",
       "SapPassword": "friinc123",
       "P4WClientName": "FRIGSERV",
-      "SoDownloadPath": "/Users/sidon/Developer/projects/barrdega/P4W-Standalone-Integration/sample/SoDownload",
-      "SoDownloadPathCompleted": "/Users/sidon/Developer/projects/barrdega/P4W-Standalone-Integration/sample/Finished",
+      "SoDownloadPath": "C:\\Testing",
+      "SoDownloadPathCompleted": "C:\\Testing\\Finished",
       "ClientId": "2fab49f7-5c6c-4010-8669-6aa9d9fc006e",
       "CustomerCode": "FRIGOSER",
       "CompanyName": "Frigo Services Inc.",
@@ -25,7 +25,7 @@
   "Schedules": [
     {
       "Name": "Install",
-      "Active": false,
+      "Active": true,
       "RunOnStartup": true,
       "Start": null,
       "Sleep": null,
@@ -34,7 +34,7 @@
     },
     {
       "Name": "ProductsToDb",
-      "Active": false,
+      "Active": true,
       "RunOnStartup": true,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
@@ -52,7 +52,7 @@
     },
     {
       "Name": "CustomerReturnsToDb",
-      "Active": false,
+      "Active": true,
       "RunOnStartup": true,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
@@ -70,7 +70,7 @@
     },
     {
       "Name": "AdjustmentsFromP4W",
-      "Active": false,
+      "Active": true,
       "RunOnStartup": true,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
@@ -88,7 +88,7 @@
     },
     {
       "Name": "CustomerReturnsFromP4W",
-      "Active": false,
+      "Active": true,
       "RunOnStartup": true,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
