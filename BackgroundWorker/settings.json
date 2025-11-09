@@ -33,6 +33,15 @@
       "ThreadName": "Default"
     },
     {
+      "Name": "3PLInvoicing",
+      "Active": true,
+      "RunOnStartup": true,
+      "Start": "2020-01-01T00:00:00-05:00",
+      "Sleep": "00:00:10",
+      "Class": "Pro4Soft.BackgroundWorker.Workers.Download.ToDb.InvoicesToDb",
+      "ThreadName": "Default"
+    },
+    {
       "Name": "ProductsToDb",
       "Active": true,
       "RunOnStartup": true,
@@ -102,6 +111,15 @@
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
       "Class": "Pro4Soft.BackgroundWorker.Workers.Upload.FromP4W.PickticketsFromP4W",
+      "ThreadName": "Default"
+    },
+    {
+      "Name": "ServiceInvoicesFromDb",
+      "Active": true,
+      "RunOnStartup": true,
+      "Start": "2020-01-01T00:00:00-05:00",
+      "Sleep": "00:00:10",
+      "Class": "Pro4Soft.BackgroundWorker.Workers.Upload.FromDb.ServiceInvoicesFromDb",
       "ThreadName": "Default"
     },
     {

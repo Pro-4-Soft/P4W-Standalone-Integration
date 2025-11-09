@@ -50,6 +50,9 @@ public class DatabaseContext(DbContextOptions options) : DbContext(options)
     public DbSet<ProductInventory> ProductInventory { get; set; }
     public DbSet<ProductInventoryDetail> ProductInventoryDetails { get; set; }
 
+    public DbSet<ServiceInvoice> ServiceInvoices { get; set; }
+    public DbSet<ServiceInvoiceLine> ServiceInvoiceLines { get; set; }
+
     //Overrides
     public override int SaveChanges()
     {
