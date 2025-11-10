@@ -61,6 +61,7 @@ public class PickTicketsToP4W(ScheduleSetting settings) : BaseWorker(settings)
                         CustomerId = so.Customer.P4WId ?? throw new BusinessWebException($"Customer [{so.Customer.Code}] has not been synced"),
                         WarehouseId = warehouse.Id.Value,
                         PickTicketNumber = so.PickTicketNumber,
+                        RouteNumber = so.RouteNumber,
                         Comments = so.Comments,
                         ReferenceNumber = so.referenceNumber,
                         FreightType = so.FreightType.ToString(),
