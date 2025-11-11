@@ -4,7 +4,7 @@
   "P4WApiKey": "e55600ea-8768-4dbe-a315-814b20cb9dc8_hiRBhClAYjFFFQFNVOJhy0LPyhhWa6Vy2QgvL1W6kqfkxZDgBtftP5qkqEzs+bOqn5M050UAbETHtbRoiHd6Qg==",
   "Companies": [
     {
-      "SapUrl": "https://SapB1v10.barrdega.com:50000/b1s/v2",
+      "SapUrl": "https://94.74.75.8:50000/",
       "SapCompanyDb": "casamedico",
       "SapUsername": "manager",
       "SapPassword": "2025@Sap",
@@ -21,7 +21,7 @@
   "Schedules": [
     {
       "Name": "Install",
-      "Active": false,
+      "Active": true,
       "RunOnStartup": true,
       "Start": null,
       "Sleep": null,
@@ -29,8 +29,17 @@
       "ThreadName": "Default"
     },
     {
+      "Name": "3PLInvoicing",
+      "Active": true,
+      "RunOnStartup": true,
+      "Start": "2020-01-01T00:00:00-05:00",
+      "Sleep": "00:00:10",
+      "Class": "Pro4Soft.BackgroundWorker.Workers.Download.ToDb.InvoicesToDb",
+      "ThreadName": "Default"
+    },
+    {
       "Name": "ProductsToDb",
-      "Active": false,
+      "Active": true,
       "RunOnStartup": true,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
@@ -39,8 +48,8 @@
     },
     {
       "Name": "PurchaseOrdersToDb",
-      "Active": true,
-      "RunOnStartup": true,
+      "Active": false,
+      "RunOnStartup": false,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
       "Class": "Pro4Soft.BackgroundWorker.Workers.Download.ToDb.PurchaseOrdersToDb",
@@ -49,7 +58,7 @@
     {
       "Name": "CustomerReturnsToDb",
       "Active": false,
-      "RunOnStartup": true,
+      "RunOnStartup": false,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
       "Class": "Pro4Soft.BackgroundWorker.Workers.Download.ToDb.CustomerReturnsToDb",
@@ -57,8 +66,8 @@
     },
     {
       "Name": "PickticketsToDb",
-      "Active": true,
-      "RunOnStartup": true,
+      "Active": false,
+      "RunOnStartup": false,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
       "Class": "Pro4Soft.BackgroundWorker.Workers.Download.ToDb.PickticketsToDb",
@@ -67,7 +76,7 @@
     {
       "Name": "AdjustmentsFromP4W",
       "Active": false,
-      "RunOnStartup": true,
+      "RunOnStartup": false,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
       "Class": "Pro4Soft.BackgroundWorker.Workers.Upload.FromP4W.AdjustmentsFromP4W",
@@ -75,8 +84,8 @@
     },
     {
       "Name": "PurchaseOrdersFromP4W",
-      "Active": true,
-      "RunOnStartup": true,
+      "Active": false,
+      "RunOnStartup": false,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
       "Class": "Pro4Soft.BackgroundWorker.Workers.Upload.FromP4W.PurchaseOrdersFromP4W",
@@ -85,7 +94,7 @@
     {
       "Name": "CustomerReturnsFromP4W",
       "Active": false,
-      "RunOnStartup": true,
+      "RunOnStartup": false,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
       "Class": "Pro4Soft.BackgroundWorker.Workers.Upload.FromP4W.CustomerReturnsFromP4W",
@@ -93,11 +102,20 @@
     },
     {
       "Name": "PickticketsFromP4W",
+      "Active": false,
+      "RunOnStartup": false,
+      "Start": "2020-01-01T00:00:00-05:00",
+      "Sleep": "00:00:10",
+      "Class": "Pro4Soft.BackgroundWorker.Workers.Upload.FromP4W.PickticketsFromP4W",
+      "ThreadName": "Default"
+    },
+    {
+      "Name": "ServiceInvoicesFromDb",
       "Active": true,
       "RunOnStartup": true,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
-      "Class": "Pro4Soft.BackgroundWorker.Workers.Upload.FromP4W.PickticketsFromP4W",
+      "Class": "Pro4Soft.BackgroundWorker.Workers.Upload.FromDb.ServiceInvoicesFromDb",
       "ThreadName": "Default"
     },
     {
