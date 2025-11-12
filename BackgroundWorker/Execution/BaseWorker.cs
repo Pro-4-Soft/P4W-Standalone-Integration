@@ -73,10 +73,9 @@ public abstract class BaseWorker
 
     private static string GetLocalLogsPath()
     {
-        var dataPath = Environment.GetEnvironmentVariable("WEBJOBS_DATA_PATH")
-                       ?? AppDomain.CurrentDomain.BaseDirectory;
-
-        var logsDir = Path.Combine(dataPath, "Logs");
+        // Always write logs to the /Logs folder inside the application's base directory
+        var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+        var logsDir = Path.Combine(baseDir, "Logs");
 
         try
         {
@@ -85,7 +84,8 @@ public abstract class BaseWorker
         }
         catch
         {
-            logsDir = dataPath;
+            // If creating the folder fails, fallback to baseDir so AppendTextFile can still try
+            logsDir = baseDir;
         }
 
         var fileName = Utils.ProcessName + ".log";

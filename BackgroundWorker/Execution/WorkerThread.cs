@@ -55,8 +55,7 @@ public class WorkerThread
 
     private void Run()
     {
-        Console.Out.WriteLineAsync($"Thread: [{Thread.CurrentThread.Name}] started").Wait();
-        BaseWorker.LogAsync($"Thread: [{Thread.CurrentThread.Name}] started").Wait();
+        Console.Out.WriteLineAsync($"Thread: [{Thread.CurrentThread.Name}] started");
         while (!_pendingStop)
         {
             try
@@ -77,11 +76,8 @@ public class WorkerThread
                     _queue.RemoveAt(0);
                 }
 
-                lock (lockObj)
-                {
-                    Console.Out.WriteLine($"Thread: [{Thread.CurrentThread.Name}]: Start {task.Name}");
-                    BaseWorker.LogAsync($"Thread: [{Thread.CurrentThread.Name}]: Start {task.Name}").Wait();
-                }
+                //lock (lockObj)
+                //    BaseWorker.LogAsync($"Thread: [{Thread.CurrentThread.Name}]: [{task.Name}] started.").Wait();
 
                 var type = Assembly.GetEntryAssembly()?.GetType(task.Class);
                 if (type == null)
@@ -92,11 +88,8 @@ public class WorkerThread
                 {
                     worker.Execute();
 
-                    lock (lockObj)
-                    {
-                        Console.Out.WriteLine($"Thread: [{Thread.CurrentThread.Name}]: Finish {task.Name}");
-                        BaseWorker.LogAsync($"Thread: [{Thread.CurrentThread.Name}]: Finish {task.Name}").Wait();
-                    }
+                    //lock (lockObj)
+                    //    BaseWorker.LogAsync($"Thread: [{Thread.CurrentThread.Name}]: [{task.Name}] finished.").Wait();
                 }
                 catch (Exception e)
                 {
@@ -109,7 +102,6 @@ public class WorkerThread
                 BaseWorker.LogErrorAsync(new Exception($"Thread: [{Thread.CurrentThread.Name}]", e)).Wait();
             }
         }
-        Console.Out.WriteLineAsync($"Thread: [{Thread.CurrentThread.Name}] stopped").Wait();
         BaseWorker.LogAsync($"Thread: [{Thread.CurrentThread.Name}] stopped").Wait();
     }
 }
