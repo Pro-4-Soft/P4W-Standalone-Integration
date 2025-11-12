@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.IO;
 using Pro4Soft.BackgroundWorker.Dto.P4W.Entities;
 using Pro4Soft.BackgroundWorker.Execution.Common;
 using Pro4Soft.BackgroundWorker.Execution.SettingsFramework;
@@ -36,10 +37,10 @@ public abstract class BaseWorker
         msg = $"Data [{DateTime.Now:G}] {msg}";
         try
         {
-            Utils.AppendTextFile(Path.Combine(App<IntegrationSettings>.Instance.TempFolder, "Logs", Utils.ProcessName + ".log"), msg);
+            Utils.AppendTextFile(GetLocalLogsPath(), msg);
         }
-        catch{}
-        
+        catch { }
+
         await Console.Out.WriteLineAsync(msg);
     }
 
@@ -53,7 +54,7 @@ public abstract class BaseWorker
         msg = $"Error [{DateTime.Now:G}] {msg}";
         try
         {
-            Utils.AppendTextFile(Path.Combine(App<IntegrationSettings>.Instance.TempFolder, "Logs", Utils.ProcessName + ".log"), msg);
+            Utils.AppendTextFile(GetLocalLogsPath(), msg);
         }
         catch { }
 
@@ -68,5 +69,26 @@ public abstract class BaseWorker
         if (clients.Count == 0)
             throw new BusinessWebException($"Client [{company.P4WClientName}] does not exist in P4W");
         return clients.First().Id;
+    }
+
+    private static string GetLocalLogsPath()
+    {
+        // Always write logs to the /Logs folder inside the application's base directory
+        var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+        var logsDir = Path.Combine(baseDir, "Logs");
+
+        try
+        {
+            if (!Directory.Exists(logsDir))
+                Directory.CreateDirectory(logsDir);
+        }
+        catch
+        {
+            // If creating the folder fails, fallback to baseDir so AppendTextFile can still try
+            logsDir = baseDir;
+        }
+
+        var fileName = Utils.ProcessName + ".log";
+        return Path.Combine(logsDir, fileName);
     }
 }

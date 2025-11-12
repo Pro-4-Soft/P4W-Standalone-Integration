@@ -1,23 +1,25 @@
 ﻿{
   "SqlConnection": "Server=p4sql.westus3.cloudapp.azure.com;Database=master;User Id=p4portal-server-admin;Password=YUSj$ui1UueoIGGM;TrustServerCertificate=True;",
+
+
+
   "P4WUrl": "https://api.p4warehouse.com/",
-  "P4WApiKey": "e55600ea-8768-4dbe-a315-814b20cb9dc8_hiRBhClAYjFFFQFNVOJhy0LPyhhWa6Vy2QgvL1W6kqfkxZDgBtftP5qkqEzs+bOqn5M050UAbETHtbRoiHd6Qg==",
+  "P4WApiKey": "9fdd0ede-3bb0-4bed-9939-4081c6d0fea7_BzgeHKngsSRV9dhn1YsSN6oLgxVKlmLK/Y3hikDavRWMkcWvYpZ+U9hwP1NDTEZUx2A1u+7ETbh4vVpMEUvMrw==",
+
   "Companies": [
     {
-      "SapUrl": "https://SapB1v10.barrdega.com:50000/b1s/v2",
-      "SapCompanyDb": "casamedico",
-      "SapUsername": "manager",
-      "SapPassword": "2025@Sap",
-      "P4WClientName": "Default",
-      "Warehouses": [
-        "101",
-        "999"
-      ]
+      "SapUrl": "https://rp.boyala.com/su11/b1s/v2",
+      "SapCompanyDb": "MAPIEX_AVIATION",
+      "SapUsername": "mpx188",
+      "SapPassword": "Panama123@@",
+      "P4WClientName": "Mapiex",
+      "Warehouses": [ "04", "06" ],
+      "SyncWarehouses": [ "04" ]
     }
   ],
-  "SyncWarehouses": [
-    "101"
-  ],
+
+  
+
   "Schedules": [
     {
       "Name": "Install",
