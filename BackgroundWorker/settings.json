@@ -48,7 +48,7 @@
     },
     {
       "Name": "CustomerReturnsToDb",
-      "Active": false,
+      "Active": true,
       "RunOnStartup": true,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
@@ -66,7 +66,7 @@
     },
     {
       "Name": "AdjustmentsFromP4W",
-      "Active": false,
+      "Active": true,
       "RunOnStartup": true,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
@@ -84,7 +84,7 @@
     },
     {
       "Name": "CustomerReturnsFromP4W",
-      "Active": false,
+      "Active": true,
       "RunOnStartup": true,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",

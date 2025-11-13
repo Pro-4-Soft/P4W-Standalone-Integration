@@ -69,7 +69,7 @@ public class PickticketsToDb(ScheduleSetting settings) : BaseWorker(settings)
                             await LogErrorAsync(e);
                         }
                     }
-                    
+
                     continue;
                 }
 
@@ -95,14 +95,14 @@ public class PickticketsToDb(ScheduleSetting settings) : BaseWorker(settings)
                         await context.Customers.AddAsync(customer);
                         await context.SaveChangesAsync();
                     }
-                    
+
                     //Push to P4W
                     await new CustomersToP4W(Settings).ExecuteAsync();
                     await context.Entry(customer).ReloadAsync();
                 }
 
                 var whGroups = so.DocumentLines.GroupBy(c => c.WarehouseCode).Where(c => company.Warehouses.Contains(c.Key)).ToList();
-                var sosToDelete = await context.PickTickets.Where(c => c.Reference1 == so.DocEntry).ToListAsync();
+                var sosToDelete = await context.PickTickets.Include(c => c.Totes).Where(c => c.Reference1 == so.DocEntry).ToListAsync();
                 foreach (var whGroup in whGroups)
                 {
                     if (whGroup.All(c => c.RemainingOpenQuantity == 0))
@@ -158,7 +158,7 @@ public class PickticketsToDb(ScheduleSetting settings) : BaseWorker(settings)
                     pickTicketP4W.BillToStateProvince = so.AddressExtension.BillToState;
                     pickTicketP4W.BillToZipPostal = so.AddressExtension.BillToZipCode;
                     pickTicketP4W.BillToCountry = so.AddressExtension.BillToCountry;
-                    
+
                     foreach (var line in whGroup.Where(c => c.RemainingOpenQuantity > 0).OrderBy(c => c.LineNum))
                     {
                         var product = await context.Products
@@ -171,7 +171,7 @@ public class PickticketsToDb(ScheduleSetting settings) : BaseWorker(settings)
                             await context.PickTicketLines.AddAsync(new()
                             {
                                 ProductId = product.Id,
-                                
+
                                 NumberOfPacks = (int)line.RemainingOpenQuantity,
                                 Packsize = (int)line.UnitsOfMeasurment,
 
@@ -201,13 +201,14 @@ public class PickticketsToDb(ScheduleSetting settings) : BaseWorker(settings)
                     await LogAsync($"Pickticket [{pickTicketP4W.PickTicketNumber}] written to DB");
                 }
 
-                if (sosToDelete.Count > 0)
+                if (sosToDelete.Any(c => c.Totes.Count == 0))
                 {
                     foreach (var ord in sosToDelete)
                     {
                         ord.State = DownloadState.ReadyForDownload;
                         ord.IsManualCancelledClosed = true;
                     }
+
                     await context.SaveChangesAsync();
                 }
             }
