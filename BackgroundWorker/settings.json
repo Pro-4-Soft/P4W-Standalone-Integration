@@ -18,12 +18,12 @@
     }
   ],
 
-  
+
 
   "Schedules": [
     {
       "Name": "Install",
-      "Active": false,
+      "Active": true,
       "RunOnStartup": true,
       "Start": null,
       "Sleep": null,
@@ -32,7 +32,7 @@
     },
     {
       "Name": "ProductsToDb",
-      "Active": false,
+      "Active": true,
       "RunOnStartup": true,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
@@ -106,6 +106,7 @@
       "Name": "InventoryFromP4W",
       "Active": false,
       "RunOnStartup": false,
+
       "Start": null,
       "Sleep": null,
       "Class": "Pro4Soft.BackgroundWorker.Workers.Upload.FromP4W.InventoryFromP4W",
