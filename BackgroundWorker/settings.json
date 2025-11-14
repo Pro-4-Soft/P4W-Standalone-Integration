@@ -1,25 +1,27 @@
 ﻿{
   "SqlConnection": "Server=p4sql.westus3.cloudapp.azure.com;Database=master;User Id=p4portal-server-admin;Password=YUSj$ui1UueoIGGM;TrustServerCertificate=True;",
-
-
-
   "P4WUrl": "https://api.p4warehouse.com/",
-  "P4WApiKey": "9fdd0ede-3bb0-4bed-9939-4081c6d0fea7_BzgeHKngsSRV9dhn1YsSN6oLgxVKlmLK/Y3hikDavRWMkcWvYpZ+U9hwP1NDTEZUx2A1u+7ETbh4vVpMEUvMrw==",
-
+  "P4WApiKey": "8fdf819c-20ba-4633-ba68-4d12328b1181_g1C6lQmon6FFpcsBpo7brTJfzw9mRacNzWCk80fG5AYuUr++YESZe12p0fPTl30M4QyttD9rB1bggIVaIf73Vw==",
   "Companies": [
     {
-      "SapUrl": "https://rp.boyala.com/su11/b1s/v2",
-      "SapCompanyDb": "MAPIEX_AVIATION",
-      "SapUsername": "mpx188",
-      "SapPassword": "Panama123@@",
-      "P4WClientName": "Mapiex",
-      "Warehouses": [ "04", "06" ],
-      "SyncWarehouses": [ "04" ]
+      "SapUrl": "https://SapB1v10.barrdega.com:50000/b1s/v2",
+      "SapCompanyDb": "BDFRIGOSERVICEDEMO",
+      "SapUsername": "manager",
+      "SapPassword": "friinc123",
+      "P4WClientName": "FRIGOSER",
+      "SoDownloadPath": "C:\\Testing",
+      "SoDownloadPathCompleted": "C:\\Testing\\Finished",
+      "ClientId": "31730e70-4e41-4885-9cb3-5efb5f0ac21b",
+      "CustomerCode": "FRIGOSER",
+      "CompanyName": "Frigo Services Inc.",
+      "Warehouses": [
+        "01"
+      ]
     }
   ],
-
-
-
+  "SyncWarehouses": [
+    "01"
+  ],
   "Schedules": [
     {
       "Name": "Install",
@@ -28,6 +30,15 @@
       "Start": null,
       "Sleep": null,
       "Class": "Pro4Soft.BackgroundWorker.Workers.Setup.Install",
+      "ThreadName": "Default"
+    },
+    {
+      "Name": "3PLInvoicing",
+      "Active": true,
+      "RunOnStartup": true,
+      "Start": "2020-01-01T00:00:00-05:00",
+      "Sleep": "00:00:10",
+      "Class": "Pro4Soft.BackgroundWorker.Workers.Download.ToDb.InvoicesToDb",
       "ThreadName": "Default"
     },
     {
@@ -103,10 +114,18 @@
       "ThreadName": "Default"
     },
     {
+      "Name": "ServiceInvoicesFromDb",
+      "Active": true,
+      "RunOnStartup": true,
+      "Start": "2020-01-01T00:00:00-05:00",
+      "Sleep": "00:00:10",
+      "Class": "Pro4Soft.BackgroundWorker.Workers.Upload.FromDb.ServiceInvoicesFromDb",
+      "ThreadName": "Default"
+    },
+    {
       "Name": "InventoryFromP4W",
       "Active": false,
       "RunOnStartup": false,
-
       "Start": null,
       "Sleep": null,
       "Class": "Pro4Soft.BackgroundWorker.Workers.Upload.FromP4W.InventoryFromP4W",
