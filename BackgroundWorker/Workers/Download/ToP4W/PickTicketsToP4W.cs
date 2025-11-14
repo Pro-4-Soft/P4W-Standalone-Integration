@@ -63,6 +63,7 @@ public class PickTicketsToP4W(ScheduleSetting settings) : BaseWorker(settings)
                         PickTicketNumber = so.PickTicketNumber,
                         Comments = so.Comments,
                         ReferenceNumber = so.referenceNumber,
+                        RouteNumber = so.RouteNumber,
                         FreightType = so.FreightType.ToString(),
                         ShipFrom = new()
                         {
@@ -136,6 +137,12 @@ public class PickTicketsToP4W(ScheduleSetting settings) : BaseWorker(settings)
 
                         so.P4WId = p4Pickticket.Id;
                         so.State = DownloadState.Downloaded;
+                        if (!so.FileDownloadPath.IsNullOrEmpty())
+                        {
+                            var fileName = Path.GetFileName(so.FileDownloadPath);
+                            var destinationPath = Path.Combine(company.SoDownloadPathCompleted, fileName);
+                            File.Move(so.FileDownloadPath, destinationPath);
+                        }
 
                         await LogAsync($"Pickticket [{so.PickTicketNumber}] sent to P4W");
                     }

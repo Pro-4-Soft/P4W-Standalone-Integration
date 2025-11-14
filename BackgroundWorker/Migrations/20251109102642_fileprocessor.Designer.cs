@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Pro4Soft.BackgroundWorker.Dto.Database;
 
@@ -11,13 +12,15 @@ using Pro4Soft.BackgroundWorker.Dto.Database;
 namespace Pro4Soft.BackgroundWorker.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20251109102642_fileprocessor")]
+    partial class fileprocessor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.10")
+                .HasAnnotation("ProductVersion", "9.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -1577,127 +1580,6 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.ToTable("PurchaseOrderLineDetails");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.ServiceInvoice", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ClientId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CustomerCode")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<DateTimeOffset>("DateCreated")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset>("DateModified")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTime?>("EndPeriod")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ErrorMessage")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InvoiceNumber")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
-                    b.Property<Guid?>("P4WId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("PostingDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<DateTime?>("StartPeriod")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("State")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
-                    b.Property<decimal?>("SubTotal")
-                        .HasPrecision(15, 6)
-                        .HasColumnType("decimal(15,6)");
-
-                    b.Property<decimal?>("Total")
-                        .HasPrecision(15, 6)
-                        .HasColumnType("decimal(15,6)");
-
-                    b.Property<bool>("Uploaded")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InvoiceNumber")
-                        .IsUnique();
-
-                    b.HasIndex("P4WId");
-
-                    b.HasIndex("State");
-
-                    b.ToTable("ServiceInvoices");
-                });
-
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.ServiceInvoiceLine", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("DateCreated")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset>("DateModified")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("Item")
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
-                    b.Property<decimal>("Quantity")
-                        .HasPrecision(15, 6)
-                        .HasColumnType("decimal(15,6)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<Guid>("ServiceInvoiceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("Total")
-                        .HasPrecision(15, 6)
-                        .HasColumnType("decimal(15,6)");
-
-                    b.Property<decimal>("UnitPrice")
-                        .HasPrecision(15, 6)
-                        .HasColumnType("decimal(15,6)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ServiceInvoiceId");
-
-                    b.ToTable("ServiceInvoiceLines");
-                });
-
             modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Tote", b =>
                 {
                     b.Property<Guid>("Id")
@@ -2141,17 +2023,6 @@ namespace Pro4Soft.BackgroundWorker.Migrations
                     b.Navigation("PurchaseOrderLine");
                 });
 
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.ServiceInvoiceLine", b =>
-                {
-                    b.HasOne("Pro4Soft.BackgroundWorker.Dto.Database.Entities.ServiceInvoice", "ServiceInvoice")
-                        .WithMany("Lines")
-                        .HasForeignKey("ServiceInvoiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ServiceInvoice");
-                });
-
             modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Tote", b =>
                 {
                     b.HasOne("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Pickticket", "Pickticket")
@@ -2248,11 +2119,6 @@ namespace Pro4Soft.BackgroundWorker.Migrations
             modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.PurchaseOrderLine", b =>
                 {
                     b.Navigation("Details");
-                });
-
-            modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.ServiceInvoice", b =>
-                {
-                    b.Navigation("Lines");
                 });
 
             modelBuilder.Entity("Pro4Soft.BackgroundWorker.Dto.Database.Entities.Tote", b =>

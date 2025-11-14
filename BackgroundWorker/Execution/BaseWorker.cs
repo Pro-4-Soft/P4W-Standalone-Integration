@@ -6,6 +6,8 @@ using Pro4Soft.BackgroundWorker.Workers;
 
 namespace Pro4Soft.BackgroundWorker.Execution;
 
+//GT
+
 public abstract class BaseWorker
 {
     protected static ConcurrentDictionary<string, SapServiceClient> SapServiceClientCache = new();

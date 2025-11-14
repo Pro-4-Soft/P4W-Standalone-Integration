@@ -12,7 +12,7 @@ namespace Pro4Soft.BackgroundWorker.Dto.Database;
 
 public class DatabaseContext(DbContextOptions options) : DbContext(options)
 {
-    public DatabaseContext() : this($"Server=localhost;Database=p4i_casamedico;User Id=sa;Password=;TrustServerCertificate=True;")
+    public DatabaseContext() : this($"Server=p4sql.westus3.cloudapp.azure.com;Database=master;User Id=p4portal-server-admin;Password=YUSj$ui1UueoIGGM;TrustServerCertificate=True;")
     {
         
     }
@@ -49,6 +49,9 @@ public class DatabaseContext(DbContextOptions options) : DbContext(options)
     public DbSet<Adjustment> Adjustments { get; set; }
     public DbSet<ProductInventory> ProductInventory { get; set; }
     public DbSet<ProductInventoryDetail> ProductInventoryDetails { get; set; }
+
+    public DbSet<ServiceInvoice> ServiceInvoices { get; set; }
+    public DbSet<ServiceInvoiceLine> ServiceInvoiceLines { get; set; }
 
     //Overrides
     public override int SaveChanges()

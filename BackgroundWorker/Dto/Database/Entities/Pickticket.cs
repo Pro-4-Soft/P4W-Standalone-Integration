@@ -96,6 +96,7 @@ public class Pickticket : P4WStateEntity
     public string Carrier { get; set; }
     public string ShippingService { get; set; }
 
+    public string FileDownloadPath { get; set; }
     public FreightType FreightType { get; set; } = FreightType.PrivateFleet;
 
     public bool Uploaded { get; set; }
