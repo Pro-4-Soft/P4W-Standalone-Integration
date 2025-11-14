@@ -5,6 +5,7 @@
   "Companies": [
     {
       "SapUrl": "https://SapB1v10.barrdega.com:50000/b1s/v2",
+
       "SapCompanyDb": "BDFRIGOSERVICEDEMO",
       "SapUsername": "manager",
       "SapPassword": "friinc123",
