@@ -30,4 +30,10 @@
     <EmbeddedResource Remove="**/*.resx" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Logs\" />
+  </ItemGroup>
+
+
+
 </Project>

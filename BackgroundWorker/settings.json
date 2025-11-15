@@ -1,19 +1,16 @@
 ﻿{
   "SqlConnection": "Server=p4sql.westus3.cloudapp.azure.com;Database=master;User Id=p4portal-server-admin;Password=YUSj$ui1UueoIGGM;TrustServerCertificate=True;",
   "P4WUrl": "https://api.p4warehouse.com/",
-  "P4WApiKey": "8fdf819c-20ba-4633-ba68-4d12328b1181_g1C6lQmon6FFpcsBpo7brTJfzw9mRacNzWCk80fG5AYuUr++YESZe12p0fPTl30M4QyttD9rB1bggIVaIf73Vw==",
+  "P4WApiKey": "8fdf819c-20ba-4633-ba68-4d12328b1181_jdoyJch0TyuxLANyz7sE9x5ra2+SeGS318+KwR/Nua3CX2ruJeG8QNFKu0pIVceAT8TuPNjnXX6i0C+LMsET9A==",
   "Companies": [
     {
       "SapUrl": "https://SapB1v10.barrdega.com:50000/b1s/v2",
-      "SapCompanyDb": "BDFRIGOSERVICE",
+      "SapCompanyDb": "BDFRIGOSERVICEDEMO",
       "SapUsername": "manager",
       "SapPassword": "friinc123",
-      "P4WClientName": "FRIGSERV",
       "SoDownloadPath": "C:\\Testing",
       "SoDownloadPathCompleted": "C:\\Testing\\Finished",
-      "ClientId": "2fab49f7-5c6c-4010-8669-6aa9d9fc006e",
-      "CustomerCode": "FRIGOSER",
-      "CompanyName": "Frigo Services Inc.",
+      "P4WClient": "FRIGSERV",
       "Warehouses": [
         "01"
       ]
@@ -25,8 +22,8 @@
   "Schedules": [
     {
       "Name": "Install",
-      "Active": true,
-      "RunOnStartup": true,
+      "Active": false,
+      "RunOnStartup": false,
       "Start": null,
       "Sleep": null,
       "Class": "Pro4Soft.BackgroundWorker.Workers.Setup.Install",
@@ -43,8 +40,8 @@
     },
     {
       "Name": "ProductsToDb",
-      "Active": true,
-      "RunOnStartup": true,
+      "Active": false,
+      "RunOnStartup": false,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
       "Class": "Pro4Soft.BackgroundWorker.Workers.Download.ToDb.ProductsToDb",
@@ -52,8 +49,8 @@
     },
     {
       "Name": "PurchaseOrdersToDb",
-      "Active": true,
-      "RunOnStartup": true,
+      "Active": false,
+      "RunOnStartup": false,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
       "Class": "Pro4Soft.BackgroundWorker.Workers.Download.ToDb.PurchaseOrdersToDb",
@@ -61,8 +58,8 @@
     },
     {
       "Name": "CustomerReturnsToDb",
-      "Active": true,
-      "RunOnStartup": true,
+      "Active": false,
+      "RunOnStartup": false,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
       "Class": "Pro4Soft.BackgroundWorker.Workers.Download.ToDb.CustomerReturnsToDb",
@@ -70,8 +67,8 @@
     },
     {
       "Name": "PickticketsToDb",
-      "Active": true,
-      "RunOnStartup": true,
+      "Active": false,
+      "RunOnStartup": false,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
       "Class": "Pro4Soft.BackgroundWorker.Workers.Download.ToDb.PickticketsToDb",
@@ -79,8 +76,8 @@
     },
     {
       "Name": "AdjustmentsFromP4W",
-      "Active": true,
-      "RunOnStartup": true,
+      "Active": false,
+      "RunOnStartup": false,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
       "Class": "Pro4Soft.BackgroundWorker.Workers.Upload.FromP4W.AdjustmentsFromP4W",
@@ -88,8 +85,8 @@
     },
     {
       "Name": "PurchaseOrdersFromP4W",
-      "Active": true,
-      "RunOnStartup": true,
+      "Active": false,
+      "RunOnStartup": false,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
       "Class": "Pro4Soft.BackgroundWorker.Workers.Upload.FromP4W.PurchaseOrdersFromP4W",
@@ -97,8 +94,8 @@
     },
     {
       "Name": "CustomerReturnsFromP4W",
-      "Active": true,
-      "RunOnStartup": true,
+      "Active": false,
+      "RunOnStartup": false,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
       "Class": "Pro4Soft.BackgroundWorker.Workers.Upload.FromP4W.CustomerReturnsFromP4W",
@@ -106,8 +103,8 @@
     },
     {
       "Name": "PickticketsFromP4W",
-      "Active": true,
-      "RunOnStartup": true,
+      "Active": false,
+      "RunOnStartup": false,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
       "Class": "Pro4Soft.BackgroundWorker.Workers.Upload.FromP4W.PickticketsFromP4W",
@@ -132,4 +129,4 @@
       "ThreadName": "Default"
     }
   ]
-}
+}   
