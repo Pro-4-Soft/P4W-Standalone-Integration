@@ -59,7 +59,7 @@ public class PickticketsFromP4W(ScheduleSetting settings) : BaseWorker(settings)
                     {
                         var pickTicketLineP4W = pickTicketP4W.Lines.Single(c => c.Id == toteLineP4W.PickTicketLineId);
                         var pickTicketLineDb = pickTicketDb.Lines.SingleOrDefault(c => c.Id == pickTicketLineP4W.Reference1.ParseGuid()) ??
-                                     throw new BusinessWebException($"Line [{pickTicketLineP4W.LineNumber}] with Sku [{toteLineP4W.Product.Sku}] does not existing on original PO. Line Id [{pickTicketLineP4W.Reference1}] not found");
+                                     throw new BusinessWebException($"Line [{pickTicketLineP4W.LineNumber}] with Sku [{toteLineP4W.Product.Sku}] does not existing on original SO. Line Id [{pickTicketLineP4W.Reference1}] not found");
 
                         var existingToteLine = existingTote.Lines.SingleOrDefault(c => c.P4WId == toteLineP4W.Id && c.PickTicketLineId == pickTicketLineDb.Id);
                         if (existingToteLine == null)
