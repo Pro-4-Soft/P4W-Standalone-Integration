@@ -14,6 +14,9 @@ public class PurchaseOrderP4 : BaseP4Entity
     [JsonProperty("vendorId")]
     public Guid? VendorId { get; set; }
 
+    [JsonProperty("closeDate")]
+    public DateTime? CloseDate { get; set; }
+
     [JsonProperty("vendor")]
     public VendorP4 Vendor { get; set; }
 

@@ -102,7 +102,7 @@ public class PickticketsToDb(ScheduleSetting settings) : BaseWorker(settings)
                 }
 
                 var whGroups = so.DocumentLines.GroupBy(c => c.WarehouseCode).Where(c => company.Warehouses.Contains(c.Key)).ToList();
-                var sosToDelete = await context.PickTickets.Include(c => c.Totes).Where(c => c.Reference1 == so.DocEntry).ToListAsync();
+                var sosToDelete = await context.PickTickets.Include(c => c.Totes).Where(c => c.Reference1 == so.DocEntry && c.State == DownloadState.Downloaded).ToListAsync();
                 foreach (var whGroup in whGroups)
                 {
                     if (whGroup.All(c => c.RemainingOpenQuantity == 0))

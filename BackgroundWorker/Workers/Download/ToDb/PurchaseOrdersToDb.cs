@@ -99,7 +99,7 @@ public class PurchaseOrdersToDb(ScheduleSetting settings) : BaseWorker(settings)
                 }
 
                 var whGroups = po.DocumentLines.GroupBy(c => c.WarehouseCode).Where(c => company.Warehouses.Contains(c.Key)).ToList();
-                var posToDelete = await context.PurchaseOrders.Where(c => c.Reference1 == po.DocEntry).ToListAsync();
+                var posToDelete = await context.PurchaseOrders.Where(c => c.Reference1 == po.DocEntry && c.State == DownloadState.Downloaded).ToListAsync();
                 foreach (var whGroup in whGroups)
                 {
                     if (whGroup.All(c => c.RemainingOpenQuantity == 0))

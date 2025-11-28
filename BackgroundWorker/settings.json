@@ -1,23 +1,39 @@
 ﻿{
-  "SqlConnection": "Server=p4sql.westus3.cloudapp.azure.com;Database=master;User Id=p4portal-server-admin;Password=YUSj$ui1UueoIGGM;TrustServerCertificate=True;",
+  //"SqlConnection": "Server=p4sql.westus3.cloudapp.azure.com;Database=master;User Id=p4portal-server-admin;Password=YUSj$ui1UueoIGGM;TrustServerCertificate=True;",
+  //"P4WUrl": "https://api.p4warehouse.com/",
+  //"P4WApiKey": "e55600ea-8768-4dbe-a315-814b20cb9dc8_hiRBhClAYjFFFQFNVOJhy0LPyhhWa6Vy2QgvL1W6kqfkxZDgBtftP5qkqEzs+bOqn5M050UAbETHtbRoiHd6Qg==",
+  //"Companies": [
+  //  {
+  //    "SapUrl": "https://SapB1v10.barrdega.com:50000/b1s/v2",
+  //    "SapCompanyDb": "casamedico",
+  //    "SapUsername": "manager",
+  //    "SapPassword": "2025@Sap",
+  //    "P4WClientName": "Default",
+  //    "Warehouses": [
+  //      "101",
+  //      "999"
+  //    ],
+  //    "SyncWarehouses": [
+  //      "101"
+  //    ]
+  //  }
+  //],  
+
+  "SqlConnection": "Server=p4sql.westus3.cloudapp.azure.com;Database=p4i_DEMO_MAPIEX_AVIATION;User Id=p4portal-server-admin;Password=YUSj$ui1UueoIGGM;TrustServerCertificate=True;",
   "P4WUrl": "https://api.p4warehouse.com/",
-  "P4WApiKey": "e55600ea-8768-4dbe-a315-814b20cb9dc8_hiRBhClAYjFFFQFNVOJhy0LPyhhWa6Vy2QgvL1W6kqfkxZDgBtftP5qkqEzs+bOqn5M050UAbETHtbRoiHd6Qg==",
+  "P4WApiKey": "9cb8880e-375e-423b-9a0f-a986fb8c6f23_T4+xOu1qeCC6cYXA24t6uDjkIbnxlek2nl8+/dfr5ZmkapM0fmZoFCnn2mUZlQbbDV/zMpiKHw88w7sOgjttZg==",
   "Companies": [
     {
-      "SapUrl": "https://SapB1v10.barrdega.com:50000/b1s/v2",
-      "SapCompanyDb": "casamedico",
-      "SapUsername": "manager",
-      "SapPassword": "2025@Sap",
-      "P4WClientName": "Default",
-      "Warehouses": [
-        "101",
-        "999"
-      ]
+      "SapUrl": "https://rp.boyala.com/su11/b1s/v2",
+      "SapCompanyDb": "DEMO_MAPIEX_AVIATION",
+      "SapUsername": "mpx188",
+      "SapPassword": "Panama123@@",
+      "P4WClientName": "Mapiex",
+      "Warehouses": [ "101", "106", "09" ],
+      "SyncWarehouses": [ "101" ]
     }
   ],
-  "SyncWarehouses": [
-    "101"
-  ],
+
   "Schedules": [
     {
       "Name": "Install",
@@ -48,7 +64,7 @@
     },
     {
       "Name": "CustomerReturnsToDb",
-      "Active": true,
+      "Active": false,
       "RunOnStartup": true,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
@@ -57,7 +73,7 @@
     },
     {
       "Name": "PickticketsToDb",
-      "Active": true,
+      "Active": false,
       "RunOnStartup": true,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
@@ -66,7 +82,7 @@
     },
     {
       "Name": "AdjustmentsFromP4W",
-      "Active": true,
+      "Active": false,
       "RunOnStartup": true,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
@@ -84,7 +100,7 @@
     },
     {
       "Name": "CustomerReturnsFromP4W",
-      "Active": true,
+      "Active": false,
       "RunOnStartup": true,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
@@ -93,8 +109,8 @@
     },
     {
       "Name": "PickticketsFromP4W",
-      "Active": true,
-      "RunOnStartup": true,
+      "Active": false,
+      "RunOnStartup": false,
       "Start": "2020-01-01T00:00:00-05:00",
       "Sleep": "00:00:10",
       "Class": "Pro4Soft.BackgroundWorker.Workers.Upload.FromP4W.PickticketsFromP4W",
@@ -103,7 +119,7 @@
     {
       "Name": "InventoryFromP4W",
       "Active": false,
-      "RunOnStartup": false,
+      "RunOnStartup": true,
       "Start": null,
       "Sleep": null,
       "Class": "Pro4Soft.BackgroundWorker.Workers.Upload.FromP4W.InventoryFromP4W",
